@@ -1,0 +1,268 @@
+<!-- catlogging, open source tool for viewing, monitoring and analysing log
+	data.
+	software: you can redistribute it and/or modify it under the terms of the
+	GNU General Public License as published by the Free Software Foundation, 
+	either version 3 of the License, or (at your option) any later version. catlogging
+	is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU General Public License for more details. You should 
+	have received a copy of the GNU General Public License along with this program. 
+	If not, see <http://www.gnu.org/licenses />. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>catlogging-web</artifactId>
+	<packaging>war</packaging>
+	<name>catlogging web module</name>
+	<parent>
+		<groupId>com.catlogging</groupId>
+		<artifactId>catlogging-parent</artifactId>
+		<version>1.0.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<excludes>
+						<exclude>com/catlogging/web/ide/*</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-dependency-plugin
+										</artifactId>
+										<versionRange>
+											[2.3,)
+										</versionRange>
+										<goals>
+											<goal>
+												copy-dependencies
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.mortbay.jetty
+										</groupId>
+										<artifactId>
+											jetty-jspc-maven-plugin
+										</artifactId>
+										<versionRange>
+											[8.1.0.v20120127,)
+										</versionRange>
+										<goals>
+											<goal>jspc</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>distribution</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<!-- Precompile JSPs -->
+					<plugin>
+						<groupId>org.eclipse.jetty</groupId>
+						<artifactId>jetty-jspc-maven-plugin</artifactId>
+						<version>${jetty.version}</version>
+						<executions>
+							<execution>
+								<id>jspc-precompile-jsps</id>
+								<goals>
+									<goal>jspc</goal>
+								</goals>
+								<configuration>
+									<includes>**\/*.jsp,**\/*.jspx</includes>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Package instructions to make the WAR executable -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.1.1</version>
+						<configuration>
+							<!-- Merged by JSPC -->
+							<webXml>${basedir}/target/web.xml</webXml>
+							<webResources>
+								<resource>
+									<directory>${project.build.directory}/generated-resources</directory>
+								</resource>
+							</webResources>
+							<!-- Make war executable -->
+							<archive>
+								<manifest>
+									<mainClass>com.catlogging.web.util.Starter</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Implementation-Version>${project.version}</Implementation-Version>
+									<catlogging-Version>${project.version}</catlogging-Version>
+								</manifestEntries>
+							</archive>
+							<warName>catlogging</warName>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<version>2.3</version>
+						<executions>
+							<execution>
+								<id>copy-jetty-libs</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<includeGroupIds>org.eclipse.jetty,org.mortbay.jasper,org.apache.taglibs,javax.servlet,javax.annotation,org.ow2.asm</includeGroupIds>
+									<outputDirectory>${project.build.directory}/generated-resources/WEB-INF/exec</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>main-class-placement</id>
+								<phase>prepare-package</phase>
+								<configuration>
+									<tasks>
+										<move todir="${project.build.directory}/${project.artifactId}-${project.version}/">
+											<fileset dir="${project.build.directory}/classes/">
+												<include name="**/Starter.class" />
+											</fileset>
+										</move>
+										<fileset id="jettLibsSet" dir="${project.build.directory}/generated-resources/WEB-INF/exec">
+											<include name="*.jar" />
+										</fileset>
+
+										<pathconvert pathsep=":" property="jettyLibs" refid="jettLibsSet">
+											<map from="${project.build.directory}/generated-resources/WEB-INF/exec/" to="" />
+										</pathconvert>
+										<echo file="${project.build.directory}/generated-resources/WEB-INF/exec/libs.txt">${jettyLibs}</echo>
+									</tasks>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>upload-distribution</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>de.jutzig</groupId>
+						<artifactId>github-release-plugin</artifactId>
+						<version>1.1.0</version>
+						<configuration>
+							<tag>${project.version}</tag>
+							<repositoryId>catlogging/catlogging</repositoryId>
+							<artifact>${project.build.directory}/catlogging.war</artifact>
+						</configuration>
+						<executions>
+							<execution>
+								<id>upload2github</id>
+								<phase>install</phase>
+								<goals>
+									<goal>release</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.catlogging</groupId>
+			<artifactId>catlogging-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- Jetty Exec -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-annotations</artifactId>
+			<version>${jetty.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-webapp</artifactId>
+			<version>${jetty.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>apache-jsp</artifactId>
+			<version>${jetty.version}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>apache-jstl</artifactId>
+			<version>${jetty.version}</version>
+			<type>pom</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>4.2.2</version>
+		</dependency>
+	</dependencies>
+</project>
