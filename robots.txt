@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://leesang-pack.github.io/CatLogging/sitemap.xml
