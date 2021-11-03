@@ -205,7 +205,7 @@
 	<uib-tabset>
     	<uib-tab heading="Main">
 	   		<uib-tab-heading>
-				Main <i class="glyphicon muted" ng-class="{'glyphicon-ok-circle': formValidation.main, 'glyphicon-remove-circle': !formValidation.main}"></i>
+				<spring:message code="catlogging.common.form.main" /> <i class="glyphicon muted" ng-class="{'glyphicon-ok-circle': formValidation.main, 'glyphicon-remove-circle': !formValidation.main}"></i>
 			</uib-tab-heading>
 	    	<div ng-form="mainForm">
 	    		<lsf-form-valid-observer form="mainForm" on-valid-change="mainFormValid" />
@@ -309,7 +309,7 @@
 	<!-- Scanner wizard -->
 	<uib-tab>
    		<uib-tab-heading>
-			Scanner <i class="glyphicon muted" ng-class="{'glyphicon-ok-circle': formValidation.scanner, 'glyphicon-remove-circle': !formValidation.scanner}"></i>
+			<spring:message code="catlogging.common.form.scanner" /> <i class="glyphicon muted" ng-class="{'glyphicon-ok-circle': formValidation.scanner, 'glyphicon-remove-circle': !formValidation.scanner}"></i>
 		</uib-tab-heading>
 		<div id="sniffer-scanner-editor" ng-form="scannerForm">
 			<lsf-form-valid-observer form="scannerForm" on-valid-change="scannerFormValid" />
@@ -370,7 +370,7 @@
 	</script>
 	<uib-tab>
    		<uib-tab-heading>
-			Publishers <i class="glyphicon muted" ng-class="{'glyphicon-ok-circle': formValidation.publishers, 'glyphicon-remove-circle': !formValidation.publishers}"></i>
+			<spring:message code="catlogging.common.form.publishers" /> <i class="glyphicon muted" ng-class="{'glyphicon-ok-circle': formValidation.publishers, 'glyphicon-remove-circle': !formValidation.publishers}"></i>
 		</uib-tab-heading>
 		<div id="sniffer-publishers" ng-form="publishersForm">
 			<lsf-form-valid-observer form="publishersForm" on-valid-change="publishersFormValid" />

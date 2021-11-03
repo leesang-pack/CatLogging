@@ -28,7 +28,7 @@
 <!-- Reader wizard -->
 <div id="log-reader-editor" ng-controller="ReaderBeanWizardControllerWrapper" ng-form="form">
 	<div ng-controller="BeanWizardController">
-		<h4>Log entry reader</h4>
+		<h4><spring:message code="catlogging.common.form.logEntryReader" /></h4>
 		<div class="row">
 			<div class="col-md-6 form-group" ng-class="{'has-error': form.selectedWizard.$invalid && !form.selectedWizard.$pristine}">
 				<label class="control-label">Reader type*:</label>

@@ -58,7 +58,7 @@
 		</script>
 		<div ng-controller="SnifferEditController" ng-cloak >
 			<jsp:include page="sniffer.breadcrumb.jsp">
-				<jsp:param value="Edit" name="context"/>
+				<jsp:param value="catlogging.common.form.edit" name="context"/>
 			</jsp:include>
 	
 			<c:if test="${param.created}">

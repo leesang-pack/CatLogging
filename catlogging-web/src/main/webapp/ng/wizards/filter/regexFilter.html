@@ -22,19 +22,19 @@
 			</lsf-form-group>
 		</div>
 		<div class="form-group col-md-6">
-			<label class="control-label">Pattern flags:</label>
+			<label class="control-label" ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.form.patternFlags'">{{localeMessage}}:</label>
 			<div class="controls controls-row">
 				<label class="checkbox-inline">
-					<input type="checkbox" ng-model="bean.grokBean.subStringSearch" class="subStringSearch"/> Sub string search
+					<input type="checkbox" ng-model="bean.grokBean.subStringSearch" class="subStringSearch"/> <text ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.form.patternSubString'">{{localeMessage}}</text>
 				</label>
 				<label class="checkbox-inline">
-					<input type="checkbox" ng-model="bean.grokBean.caseInsensitive" class="caseInsensitive"/> Case-insensitive matching
+					<input type="checkbox" ng-model="bean.grokBean.caseInsensitive" class="caseInsensitive"/> <text ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.form.patternCaseMatch'">{{localeMessage}}</text>
 				</label>
 				<label class="checkbox-inline">
-					<input type="checkbox" ng-model="bean.grokBean.multiLine" class="multiLine"/> Multiline mode
+					<input type="checkbox" ng-model="bean.grokBean.multiLine" class="multiLine"/> <text ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.form.patternMultiline'">{{localeMessage}}</text>
 				</label>
 				<label class="checkbox-inline">
-					<input type="checkbox" ng-model="bean.grokBean.dotAll" class="dotAll"/> Dotall mode
+					<input type="checkbox" ng-model="bean.grokBean.dotAll" class="dotAll"/> <text ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.form.patternDotAil'">{{localeMessage}}</text>
 				</label>
 			</div>
 		</div>

@@ -19,7 +19,7 @@
 				<form:errors path="${status.expression}" cssClass="help-block" />
 			</div>
 			<div class="form-group col-md-6">
-				<label>Pattern flags:</label>
+				<label><spring:message code="catlogging.common.form.patternFlags" />:</label>
 				<div>
 					<label class="checkbox-inline">
 						<form:checkbox path="${param.formPath}.wizard.formData.caseInsensitive" cssClass="caseInsensitive"/> Case-insensitive matching

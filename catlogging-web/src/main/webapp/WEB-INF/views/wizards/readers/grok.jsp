@@ -9,19 +9,18 @@
 
 
 <div id="reader-grok-wizard" class="wizard">
-	<lsf-info-label label="Regex / Grok pattern reader">
-		This reader reads the content of a log and parses each line using the specified regular or grok expression.
-		The below pattern is evaluated against each log line. <span ng-include="contextPath + '/ng/help/regexGrokPattern.html?v='+version"></span>
+	<lsf-info-label label="<spring:message code="catlogging.wizard.reader.grok" />">
+		<p ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.wizard.reader.grok.text.1'" ng-bind-html="sanitizeLocalMessage()"></p>
 	</lsf-info-label>
 	<div class="row">
 		<t:ngFormFieldWrapper cssClass="form-group col-md-10 required" fieldName="grokPattern" bindErrorsPath="grokBean.pattern">
-			<label for="grokPattern" class="control-label">Pattern:</label>
+			<label for="grokPattern" class="control-label"><spring:message code="catlogging.common.form.pattern" />:</label>
 			<div class="controls controls-row">
 				<input type="text" class="form-control pattern" ng-model="bean.grokBean.pattern" name="grokPattern" id="grokPattern" required/>
 			</div>
 		</t:ngFormFieldWrapper>
 		<t:ngFormFieldWrapper cssClass="form-group col-md-2" fieldName="charset">
-			<label for="charset" class="control-label">Character set*:</label>
+			<label for="charset" class="control-label"><spring:message code="catlogging.common.form.characterSet" />*:</label>
 			<select name="charset" id="charset" ng-model="bean.charset" class="form-control" required>
 				<option value=""><spring:message code="catlogging.common.pleaseSelect" /></option>
 				<c:forEach items="<%=Charset.availableCharsets() %>" var="entry">
@@ -33,13 +32,13 @@
 	
 	<div class="row">
 		<div class="form-group col-md-6">
-			<label class="control-label">Pattern flags:</label>
+			<label class="control-label"><spring:message code="catlogging.common.form.patternFlags" />:</label>
 			<div class="controls controls-row">
 				<label class="checkbox-inline">
-					<input type="checkbox" ng-model="bean.grokBean.subStringSearch" class="subStringSearch"/> Sub string search
+					<input type="checkbox" ng-model="bean.grokBean.subStringSearch" class="subStringSearch"/> <spring:message code="catlogging.common.form.patternSubString" />
 				</label>
 				<label class="checkbox-inline">
-					<input type="checkbox" ng-model="bean.grokBean.caseInsensitive" class="caseInsensitive"/> Case-insensitive matching
+					<input type="checkbox" ng-model="bean.grokBean.caseInsensitive" class="caseInsensitive"/> <spring:message code="catlogging.common.form.patternCaseMatch" />
 				</label>
 				<!-- 
 				<label class="checkbox-inline">
@@ -51,10 +50,8 @@
 			</div>
 		</div>
 		<t:ngFormFieldWrapper cssClass="form-group col-md-6" fieldName="overflowAttribute">
-			<lsf-info-label label="Overflow attribute:" for="overflowAttribute">
-				In case of lines not matching the pattern these can be attached to a field of last well parsed log line.
-				 The overflow field can reference an existing or a new field. If not set, the not matching lines will be attached (as default)
-				 to the <code>lf_raw</code> field of the last well parsed log entry.
+			<lsf-info-label label="<spring:message code="catlogging.common.form.overflowAttr" />:" for="overflowAttribute">
+				<p ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.form.overflowAttr.text'" ng-bind-html="sanitizeLocalMessage()"></p>
 			</lsf-info-label>
 			<input type="text" class="form-control pattern" ng-model="bean.overflowAttribute" id="overflowAttribute" name="overflowAttribute" />
 		</t:ngFormFieldWrapper>		

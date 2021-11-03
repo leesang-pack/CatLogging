@@ -82,8 +82,23 @@
 					$scope.systemNotificationSummary = summary;
 				});
 			}]);
+			catloggingNgApp.controller("LocaleMessageController", ['$scope', '$http', '$log', '$sce', function($scope, $http, $log, $sce) {
+				$scope.localeMessageKey= null;
+				$scope.$watch('localeMessageKey', function(newValue, oldValue) {
+					if (newValue) {
+						new catlogging.getLocaleMessage($scope, $http, $log, $scope.localeMessageKey);
+					}
+				}, true);
+				$scope.sanitizeLocalMessage = function() {
+					return $sce.trustAsHtml($scope.localeMessage);
+				};
+				$scope.getLocalMessage = function(localeMessageKey) {
+					$scope.localeMessageKey	= localeMessageKey
+					return $scope.localeMessage;
+				};
+			}]);
 			catloggingNgApp.filter('escape', function() {
-				  return window.encodeURIComponent;
+				return window.encodeURIComponent;
 			});
 			$.catlogging.zoomLogEntry = function(context) {
 				angular.element(document.body).scope().zoomEntry(context);

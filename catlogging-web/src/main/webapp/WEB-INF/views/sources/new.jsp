@@ -58,7 +58,7 @@
 			role="form" novalidate="novalidate">
 		
 			<jsp:include page="source.form.jsp">
-				<jsp:param value="Create" name="submitLabel"/>
+				<jsp:param value="catlogging.common.form.create" name="submitLabel"/>
 			</jsp:include>
 		</form>
 	</jsp:body>

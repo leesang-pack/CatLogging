@@ -15,8 +15,8 @@
 	<li class="dropdown">
 		<button data-toggle="dropdown" href="#" class="btn btn-xs"><i class="glyphicon glyphicon-cog"></i> <span class="caret"></span></button>
 		<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-			<li><a href="${showHref}"><i class="glyphicon glyphicon-search"></i> Viewer</a></li>
-			<li><a href="${infoHref}"><i class="glyphicon glyphicon-info-sign"></i> Info</a></li>
+			<li><a href="${showHref}"><i class="glyphicon glyphicon-search"></i> <spring:message code="catlogging.common.form.viewer" /></a></li>
+			<li><a href="${infoHref}"><i class="glyphicon glyphicon-info-sign"></i> <spring:message code="catlogging.common.form.info" /></a></li>
 		</ul>
 	</li>
 </ul>

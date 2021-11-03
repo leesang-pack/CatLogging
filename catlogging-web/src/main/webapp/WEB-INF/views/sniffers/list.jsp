@@ -12,7 +12,7 @@
 	<jsp:body>
 		<ul class="breadcrumb">
 			<li class="active"><spring:message code="catlogging.breadcrumb.sniffers"/></li>
-			<li class="pull-right dropdown"><a href="<c:url value="/c/sniffers/new" />" class="btn btn-primary btn-xs" role="menuitem"><i class="glyphicon glyphicon-plus"></i> New sniffer</a></li>
+			<li class="pull-right dropdown"><a href="<c:url value="/c/sniffers/new" />" class="btn btn-primary btn-xs" role="menuitem"><i class="glyphicon glyphicon-plus"></i> <spring:message code="catlogging.common.new"/> <spring:message code="catlogging.common.sniffer"/></a></li>
 			<!-- 
 				<li class="pull-right dropdown">
 					<button data-toggle="dropdown" href="#" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-cog"></i> <span class="caret"></span></button>
@@ -78,7 +78,7 @@
 		<c:choose>
 			<c:when test="${empty sniffers}">
 				<div class="alert alert-info">
-					<i class="glyphicon glyphicon-exclamation-sign"></i> You have not created any sniffers.
+					<i class="glyphicon glyphicon-exclamation-sign"></i> <spring:message code="catlogging.common.list.text.1"/>
 				</div>
 			</c:when>
 			<c:otherwise>
@@ -107,11 +107,11 @@
 										<div class="pull-right">
 											<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
 												<a href="#" class="btn btn-sm btn-default" ng-if="!sniffer.aspects.scheduleInfo.scheduled"
-													ng-click="start()"><i class="glyphicon glyphicon-play"></i>Start</a>
+													ng-click="start()"><i class="glyphicon glyphicon-play"></i><spring:message code="catlogging.common.form.start"/></a>
 												<a href="#" class="btn btn-sm btn-default" ng-if="sniffer.aspects.scheduleInfo.scheduled"
-													ng-click="stop()"><i class="glyphicon glyphicon-pause"></i>Pause</a>
-												<a href="{{contextPath}}/c/sniffers/{{sniffer.id}}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-edit"></i> Edit</a>
-												<a href="{{contextPath}}/c/sniffers/{{sniffer.id}}/status" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-play-circle"></i> Control</a>
+													ng-click="stop()"><i class="glyphicon glyphicon-pause"></i><spring:message code="catlogging.common.form.pause"/></a>
+												<a href="{{contextPath}}/c/sniffers/{{sniffer.id}}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-edit"></i> <spring:message code="catlogging.common.form.edit"/></a>
+												<a href="{{contextPath}}/c/sniffers/{{sniffer.id}}/status" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-play-circle"></i> <spring:message code="catlogging.common.form.control"/></a>
 											</div>
 										</div>
 									</div>

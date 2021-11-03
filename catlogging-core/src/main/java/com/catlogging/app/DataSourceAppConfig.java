@@ -105,6 +105,7 @@ public class DataSourceAppConfig {
 				final ResourceDatabasePopulator dbPopulator = new ResourceDatabasePopulator();
 				dbPopulator.addScript(new ClassPathResource("/sql/quartz/tables_h2.sql"));
 				dbPopulator.addScript(new ClassPathResource("/sql/model/schema_h2.sql"));
+				dbPopulator.addScript(new ClassPathResource("/sql/model/schema_h2_data.sql"));
 				dbPopulator.populate(con);
 				newSchema = true;
 				logger.info("Established H2 connection pool with new database");
@@ -115,6 +116,15 @@ public class DataSourceAppConfig {
 			}
 		} else {
 			logger.info("Established H2 connection pool with existing database");
+			try {
+				final ResourceDatabasePopulator dbPopulator = new ResourceDatabasePopulator();
+				dbPopulator.addScript(new ClassPathResource("/sql/model/schema_h2_data.sql"));
+				dbPopulator.populate(con);
+			} finally {
+				if (con != null) {
+					con.close();
+				}
+			}
 			if (tpl.queryForObject("select count(*) from information_schema.tables where table_name = 'schema_version'",
 					int.class) == 0) {
 				logger.info("Flyway's DB migration not setup in this version, set baseline version to 0.5.0");

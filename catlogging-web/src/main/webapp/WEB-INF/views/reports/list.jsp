@@ -44,7 +44,7 @@
 							|
 							Created: <t:outputDate value="${report.createdAt}" />
 							|
-							<a href="<c:url value="/c/reports/${report.id}" />"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+							<a href="<c:url value="/c/reports/${report.id}" />"><i class="glyphicon glyphicon-edit"></i> <spring:message code="catlogging.common.form.edit"/></a>
 						</div>
 					</div>
 				</div>

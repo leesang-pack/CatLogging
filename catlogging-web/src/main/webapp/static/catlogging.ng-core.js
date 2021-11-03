@@ -220,7 +220,30 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 	      '<div><div class="well well-sm" ng-show="infoExpanded"><button type="button" class="close" ng-click="expand(false)"><span>&times;</span></button><i class="glyphicon glyphicon-info-sign help-icon pull-left" style="margin-right:0.5em"></i> <div ng-transclude></div></div><label class="control-label">{{label}} <a href ng-click="expand(!infoExpanded)"><i class="glyphicon glyphicon-info-sign help-icon"></i></a></label></div>'
        };
    })
-   .directive('lfsBeanWizard', function() {
+	.directive('lsfInfoLabelKey', function() {
+		return {
+			restrict: 'AE',
+			replace: true,
+			transclude: true,
+			scope: {
+				labelKey: '@',
+				label: '@'
+			},
+			controller: function($scope, $http, $log) {
+				$scope.infoExpanded = false;
+				$scope.expand = function(expand) {
+					$scope.infoExpanded = expand;
+				};
+				$scope.$watch('labelKey', function(newValue, oldValue) {
+					$scope.labelKey = newValue;
+					new catlogging.getLocaleMessage($scope, $http, $log, $scope.labelKey);
+				});
+			},
+			template:
+				'<div><div class="well well-sm" ng-show="infoExpanded"><button type="button" class="close" ng-click="expand(false)"><span>&times;</span></button><i class="glyphicon glyphicon-info-sign help-icon pull-left" style="margin-right:0.5em"></i> <div ng-transclude></div></div><label class="control-label">{{localeMessage}}{{label}} <a href ng-click="expand(!infoExpanded)"><i class="glyphicon glyphicon-info-sign help-icon"></i></a></label></div>'
+		};
+	})
+	.directive('lfsBeanWizard', function() {
        return {
 	   restrict: 'AE',
 	   replace: true,
@@ -314,10 +337,10 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 	      	'<lsf-model-editor model="bean" exclude="modelExclude()" name="{{beanTypeLabel}}"></lsf-model-editor>' +
 		    '<div class="row">' +
 	      	'<div class="col-md-6 form-group required" ng-class="{\'has-error\': form.selectedWizard.$invalid && !form.selectedWizard.$pristine}">' +
-			'<label class="control-label">{{beanTypeLabel}} type</label>' +
+			'<label class="control-label" ng-controller="LocaleMessageController" ng-init="localeMessageKey=\'catlogging.common.type\'">{{beanTypeLabel}} {{localeMessage}}</label>' +
 			'<div class="controls">' +
 				'<select ng-model="selectedWizard" name="selectedWizard" ng-change="wizardTypeChanged()" class="form-control" ng-options="w.label for w in wizards" required>' +
-					'<option value="">- Please select -</option>' +
+					'<option value="" ng-controller="LocaleMessageController" ng-init="localeMessageKey=\'catlogging.common.pleaseSelect\'">{{localeMessage}}</option>' +
 				'</select>' +
 			'</div>' +
 		 '</div>' +

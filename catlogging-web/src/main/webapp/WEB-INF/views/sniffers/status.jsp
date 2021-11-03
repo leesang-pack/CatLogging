@@ -155,7 +155,7 @@
 		
 		<div ng-controller="catloggingStatusController">
 			<jsp:include page="sniffer.breadcrumb.jsp">
-				<jsp:param value="Control" name="context"/>
+				<jsp:param value="catlogging.common.form.control" name="context"/>
 			</jsp:include>
 			<div lsf-busy-container busy="busy">
 				<div class="clearfix">

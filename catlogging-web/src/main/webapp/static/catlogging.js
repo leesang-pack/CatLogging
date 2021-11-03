@@ -898,3 +898,27 @@ catlogging.get = function(obj, key) {
         return (typeof o == "undefined" || o === null) ? o : o[x];
     }, obj);
 };
+
+catlogging.getLocaleMessage = function($scope, $http, $log, localeMessageKey) {
+
+	$scope.localeMessage = null;
+	$scope.busy = true;
+	$http({
+		url : "/c/utils/i18n",
+		method : "POST",
+		data: {
+			"messageKey": localeMessageKey
+		}
+	})
+	.success(
+		function(data, status, headers, config) {
+			$scope.busy = false;
+			$scope.localeMessage = data;
+		})
+	.error(
+		function(data, status, headers, config, statusText) {
+			$scope.busy = false;
+			$log.error("Failed to get lang" + data, status, headers, config, statusText);
+		}
+	);
+}

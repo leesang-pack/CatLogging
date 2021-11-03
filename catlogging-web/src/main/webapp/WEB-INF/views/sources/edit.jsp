@@ -7,6 +7,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 
+<%--<spring:message code="catlogging.common.form.save" var="formSave" javaScriptEscape="true" />--%>
 <tpl:bodyFull title="${activeSource.name } - Edit" activeNavbar="sources" ngModules="'SourceEditorModule'">
 	<jsp:attribute name="htmlHead">
 		<script type="text/javascript" src="<c:url value="/ng/source/readerTest.js" />"></script>
@@ -64,7 +65,7 @@
 				role="form" novalidate="novalidate">
 	
 				<jsp:include page="source.form.jsp">
-					<jsp:param value="Save" name="submitLabel"/>
+					<jsp:param value="catlogging.common.form.save" name="submitLabel"/>
 				</jsp:include>
 			</form>
 		</div>

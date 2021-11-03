@@ -10,7 +10,7 @@
 	<jsp:body>
 		<ul class="breadcrumb">
 			<li class="active">${title}</li>
-			<li class="pull-right dropdown"><a href="<c:url value="/c/sources/new" />" class="btn btn-primary btn-xs" role="menuitem"><i class="glyphicon glyphicon-plus"></i> New log source</a></li>
+			<li class="pull-right dropdown"><a href="<c:url value="/c/sources/new" />" class="btn btn-primary btn-xs" role="menuitem"><i class="glyphicon glyphicon-plus"></i> <spring:message code="catlogging.common.new"/> <spring:message code="catlogging.type.com.catlogging.model.LogSource"/></a></li>
 			<!-- 
 				<li class="pull-right dropdown">
 					<button data-toggle="dropdown" href="#" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-cog"></i> <span class="caret"></span></button>
@@ -27,7 +27,7 @@
 			<c:when test="${empty logSources}">
 				<div class="alert alert-info">
 					<button type="button" class="close" data-dismiss="alert">&times;</button>
-					<i class="glyphicon glyphicon-exclamation-sign"></i> You have not created any log source.
+					<i class="glyphicon glyphicon-exclamation-sign"></i> <spring:message code="catlogging.common.list.text.2"/>
 				</div>
 			</c:when>
 			<c:otherwise>
@@ -45,7 +45,7 @@
 									<i class="glyphicon glyphicon-list"></i> Log files: <a href="${logsLink}"><span class="label label-info">${source.logs.size()}</span></a>
 									<div class="pull-right">
 										<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
-											<a href="<c:url value="/c/sources/${source.id}" />" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+											<a href="<c:url value="/c/sources/${source.id}" />" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-edit"></i> <spring:message code="catlogging.common.form.edit"/></a>
 										</div>
 									</div>
 								</div>

@@ -46,7 +46,7 @@
 							</select>
 						</div>
 						<div class="col-md-6 form-group">
-							<label class="control-label">Name*:</label>
+							<label class="control-label" ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.form.name'">{{localeMessage}}</label>
 							<div class="controls">
 								<input type="text" ng-model="builderData.name" class="form-control" placeholder="Name" />
 							</div>
