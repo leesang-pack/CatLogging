@@ -250,12 +250,12 @@
 			<div ng-form="filtersForm">
 				<div id="source-reader-filters" ng-if="beanWrapper[0]['@type']" ng-form="form">
 					<lsf-form-valid-observer form="filtersForm" on-valid-change="filtersFormValid" />
-					<h4>Filters
-						<small>Used to filter log entries e.g. for field transformation, normalization etc.</small></h4>
+					<h4><spring:message code="catlogging.common.form.filters" />
+						<small><spring:message code="catlogging.wizard.filter.text.2" /></small></h4>
 					<div class="panel panel-default" ng-repeat="filter in beanWrapper[0].reader.filters">
 						<div class="panel-heading">
 							<button type="button" class="close pull-right" title="Delete" ng-click="deleteReaderFilter($index)"><i class="glyphicon glyphicon-trash"></i></button>
-							<h3 class="panel-title">Filter {{$index+1}}</h3>
+							<h3 class="panel-title"><spring:message code="catlogging.common.form.filter" /> {{$index+1}}</h3>
 						</div>
 						<div class="panel-body" ng-form="form">
 							<div ng-controller="SourceReaderFilterHelpController">
@@ -268,7 +268,7 @@
 					<div class="row post-desc">
 						<div class="col-md-12">
 							<a class="btn btn-link" ng-click="addReaderFilter()">
-								<i class="glyphicon glyphicon-plus"></i> Add new filter</a>
+								<i class="glyphicon glyphicon-plus"></i> <spring:message code="catlogging.wizard.eventScanner.add" /></a>
 						</div>
 					</div>
 				</div>

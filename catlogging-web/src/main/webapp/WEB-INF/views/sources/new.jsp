@@ -7,14 +7,16 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 
-<tpl:bodyFull title="New Log Source" activeNavbar="sources" ngModules="'SourceEditorModule'">
+<spring:message code="catlogging.type.com.catlogging.model.LogSource" var="paramLogSource"/>
+<spring:message code="catlogging.common.new" var="paramNew"/>
+<tpl:bodyFull title="${paramNew} ${paramLogSource}" activeNavbar="sources" ngModules="'SourceEditorModule'">
 	<jsp:attribute name="htmlHead">
 		<script type="text/javascript" src="<c:url value="/ng/source/readerTest.js" />"></script>
 	</jsp:attribute>
 	<jsp:body>
 		<ul class="breadcrumb">
 			<li><a href="<c:url value="/c/sources" />"><spring:message code="catlogging.breadcrumb.sources" /></a></li>
-			<li class="active">New</li>
+			<li class="active"><spring:message code="catlogging.common.new" /></li>
 		</ul>
 
 		<script type="text/javascript">

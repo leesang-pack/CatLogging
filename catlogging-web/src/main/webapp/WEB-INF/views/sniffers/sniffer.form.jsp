@@ -314,8 +314,8 @@
 		<div id="sniffer-scanner-editor" ng-form="scannerForm">
 			<lsf-form-valid-observer form="scannerForm" on-valid-change="scannerFormValid" />
 			<div ng-form="form">
-				<h4>Event scanner configuration
-					<small>Configures the scanner sniffing the log consecutively for new events</small></h4>
+				<h4><spring:message code="catlogging.common.form.eventScanner" />
+					<small><spring:message code="catlogging.wizard.eventScanner.text.1" /></small></h4>
 				<lfs-bean-wizard bean="bean.scanner.targetScanner" bean-type-label="Scanner" wizards="scannerWizards"
 					shared-scope="sharedScope" bind-errors="bindErrors" bind-errors-prefix="scanner.targetScanner."
 					model-exclude="['fieldTypes']">
@@ -323,12 +323,12 @@
 		
 				<!-- Filters -->
 				<div id="scanner-filters">
-					<h4>Filters
-						<small>Used to filter events e.g. for field transformation, normalization etc.</small></h4>
+					<h4><spring:message code="catlogging.common.form.filters" />
+						<small><spring:message code="catlogging.wizard.filter.text.1" /></small></h4>
 					<div class="panel panel-default" ng-repeat="filter in bean.scanner.filters">
 						<div class="panel-heading">
 							<button type="button" class="close pull-right" title="Delete" ng-click="deleteScannerFilter($index)"><i class="glyphicon glyphicon-trash"></i></button>
-							<h3 class="panel-title">Filter {{$index+1}}</h3>
+							<h3 class="panel-title"><spring:message code="catlogging.common.form.filter" /> {{$index+1}}</h3>
 						</div>
 						<div class="panel-body" ng-form="form">
 							<div ng-controller="ScannerFilterHelpController">
@@ -341,14 +341,14 @@
 					<div class="row post-desc">
 						<div class="col-md-12">
 							<a class="btn btn-link" ng-click="addScannerFilter()">
-								<i class="glyphicon glyphicon-plus"></i> Add new filter</a>
+								<i class="glyphicon glyphicon-plus"></i> <spring:message code="catlogging.wizard.eventScanner.add" /></a>
 						</div>
 					</div>
 				</div>
 		
 				<div class="row">
 					<div class="col-md-12">
-						<button type="button" class="btn btn-default btn-sm" ng-click="testScanner()" ng-disabled="scannerForm.$invalid || !bean.logSourceId"><i class="glyphicon glyphicon-check"></i> Test scanning</button>
+						<button type="button" class="btn btn-default btn-sm" ng-click="testScanner()" ng-disabled="scannerForm.$invalid || !bean.logSourceId"><i class="glyphicon glyphicon-check"></i> <spring:message code="catlogging.common.form.testScan" /></button>
 					</div>
 				</div>
 			</div>

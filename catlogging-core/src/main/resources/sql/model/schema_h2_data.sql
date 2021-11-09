@@ -14,6 +14,18 @@ INSERT INTO LANGUAGES (LOCALE, MESSAGEKEY,MESSAGECONTENT) VALUES
 ('ko', 'catlogging.common.form.filters','필터'),
 ('zh', 'catlogging.common.form.filters','筛选'),
 
+('en', 'catlogging.common.form.filter','Filter'),
+('ko', 'catlogging.common.form.filter','필터'),
+('zh', 'catlogging.common.form.filter','筛选'),
+
+('en', 'catlogging.common.form.testScan','Test scanning'),
+('ko', 'catlogging.common.form.testScan','테스트 스캔'),
+('zh', 'catlogging.common.form.testScan','测试扫描'),
+
+('en', 'catlogging.common.form.eventScanner','Event scanner configuration'),
+('ko', 'catlogging.common.form.eventScanner','이벤트 스캐너 구성'),
+('zh', 'catlogging.common.form.eventScanner','事件扫描器配置'),
+
 ('en', 'catlogging.common.form.name','Name'),
 ('ko', 'catlogging.common.form.name','이름'),
 ('zh', 'catlogging.common.form.name','姓名'),
@@ -188,7 +200,104 @@ INSERT INTO LANGUAGES (LOCALE, MESSAGEKEY,MESSAGECONTENT) VALUES
 ('ko', 'catlogging.wizard.filter.regexFilter','정규식 맵핑 필터'),
 ('zh', 'catlogging.wizard.filter.regexFilter','正则表达式提取'),
 
+('en', 'catlogging.wizard.reader.conversion','Conversion pattern'),
+('ko', 'catlogging.wizard.reader.conversion','패턴 전환'),
+('zh', 'catlogging.wizard.reader.conversion','模式转换'),
+
+('en','catlogging.wizard.reader.conversion.text.1','In your log4j configuration the &lt;i&gt;ConversionPattern&lt;/i&gt; parameter of the desired appender controls the contents of each line of output inside the log file.
+				 In order to parse the content attributes correctly please insert the used &lt;i&gt;ConversionPattern&lt;/i&gt; into this field. For example:
+				 &lt;code&gt;%d %-5p [%c] (%t) %m%n&lt;/code&gt;.
+				 For more detail about the syntax, see the &lt;a href=''http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html'' target=''_blank''&gt;ConversionPattern&lt;/a&gt;
+				 API documentation.'),
+('ko','catlogging.wizard.reader.conversion.text.1','log4j 구성에서 &lt;i&gt;ConversionPattern&lt;/i&gt; 원하는 추가 매개변수는 로그 파일 내의 각 출력 라인의 내용을 제어합니다.
+콘텐츠 속성을 올바르게 구문 분석하려면 사용된 &lt;i&gt;ConversionPattern&lt;/i&gt; 이 부분에. 예를 들어:
+&lt;code&gt;%d %-5p [%c] (%t) %m%n&lt;/code&gt;.
+구문에 대한 자세한 내용은 &lt;a href=''http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html'' target=''_blank''&gt;ConversionPattern&lt;/a&gt;
+API 문서 참고.'),
+('zh','catlogging.wizard.reader.conversion.text.1','在 log4j 配置中,&lt;i&gt;ConversionPattern&lt;/i&gt; 您想要控制日志文件中每个输出行的内容的附加参数.
+要正确解析内容属性,请使用 &lt;i&gt;ConversionPattern&lt;/i&gt; 在这部分. 例如：
+&lt;code&gt;%d %-5p [%c] (%t) %m%n&lt;/code&gt;.
+语法细节参见 &lt;a href=''http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html'' target=''_blank''&gt;ConversionPattern&lt;/a&gt
+请参阅 API 文档.'),
+
+('en','catlogging.wizard.reader.conversion.label.1','Log4j Conversion Pattern'),
+('ko','catlogging.wizard.reader.conversion.label.1','log4j 패턴 전환'),
+('zh','catlogging.wizard.reader.conversion.label.1','log4j 模式转换'),
+
+('en', 'catlogging.wizard.reader.conversion.mapping','Conversion specifier field mapping'),
+('ko', 'catlogging.wizard.reader.conversion.mapping','필드 지정자 매핑'),
+('zh', 'catlogging.wizard.reader.conversion.mapping','字段说明符映射'),
+
+('en','catlogging.wizard.reader.conversion.mapping.text.1','To assign the extracted log parts to fields with legible names define for each used log4j conversion specifier
+					a mapping to the desired field name. For example: &lt;br/&gt;&lt;code&gt;%c=category&lt;/code&gt;&lt;br/&gt;
+					&lt;code&gt;%t=thread&lt;/code&gt;&lt;br/&gt;
+					&lt;small&gt;Note: The specifier &lt;code&gt;%d&lt;/code&gt; and &lt;code&gt;%p&lt;/code&gt; are parsed and
+					mapped additionally to the internal fields &lt;code&gt;lf_timestamp&lt;/code&gt; and &lt;code&gt;lf_severity&lt;/code&gt;
+					by default.&lt;/small&gt;'),
+('ko','catlogging.wizard.reader.conversion.mapping.text.1','추출된 로그 부분을 읽기 쉬운 이름을 가진 필드에 할당하려면 사용된 각 log4j 변환 지정자에 대해 정의하십시오.
+원하는 필드 이름에 대한 매핑. 예: &lt;br/&gt;&lt;code&gt;%c=category&lt;/code&gt;&lt;br/&gt;
+&lt;code&gt;%t=thread&lt;/code&gt;&lt;br/&gt;
+&lt;small&gt;참고: 지정자 &lt;code&gt;%d&lt;/code&gt; 및 &lt;code&gt;%p&lt;/code&gt; 구문 분석되고
+내부 필드 &lt;code&gt;lf_timestamp&lt;/code&gt;에 추가로 매핑됨 및 &lt;code&gt;lf_severity&lt;/code&gt;
+기본적으로.&lt;/small&gt;'),
+('zh','catlogging.wizard.reader.conversion.mapping.text.1','要将提取的日志部分分配给具有清晰名称的字段,请为每个使用的 log4j 转换说明符定义
+到所需字段名称的映射. 例如:&lt;br/&gt;&lt;code&gt;%c=category&lt;/code&gt;&lt;br/&gt;
+&lt;code&gt;%t=thread&lt;/code&gt;&lt;br/&gt;
+&lt;small&gt;注意:说明符&lt;code&gt;%d&lt;/code&gt; 和&lt;code&gt;%p&lt;/code&gt; 被解析和
+另外映射到内部字段<code>lf_timestamp</code>; 和&lt;code&gt;lf_severity&lt;/code&gt;
+默认情况下.&lt;/small&gt;'),
+
+('en','catlogging.wizard.reader.conversion.mapping.label.1','Conversion Specifier Mapping'),
+('ko','catlogging.wizard.reader.conversion.mapping.label.1','변환할 지정자 맵'),
+('zh','catlogging.wizard.reader.conversion.mapping.label.1','要转换的说明符映射'),
+
+('en','catlogging.wizard.reader.conversion.mapping.text.2','Please configure first the proper conversion pattern.'),
+('ko','catlogging.wizard.reader.conversion.mapping.text.2','먼저 변환 패턴을 구성이 필요합니다.'),
+('zh','catlogging.wizard.reader.conversion.mapping.text.2','请先配置正确的转换模式.'),
+
+('en','catlogging.wizard.filter.text.1','Used to filter events e.g. for field transformation, normalization etc.'),
+('ko','catlogging.wizard.filter.text.1','이벤트를 필터링하는 데 사용됩니다. 필드 변환, 정규화 등.'),
+('zh','catlogging.wizard.filter.text.1','用于过滤事件,例如 用于场变换、归一化等.'),
+
+('en','catlogging.wizard.filter.text.2','Used to filter log entries e.g. for field transformation, normalization etc.'),
+('ko','catlogging.wizard.filter.text.2','필드 변환, 정규화 등을 위해 로그 항목을 필터링하는 데 사용됩니다.'),
+('zh','catlogging.wizard.filter.text.2','用于过滤日志条目,例如 用于场变换、归一化等.'),
+
+('en','catlogging.wizard.eventScanner.text.1','Configures the scanner sniffing the log consecutively for new events'),
+('ko','catlogging.wizard.eventScanner.text.1','새 이벤트에 대해 연속적으로 로그를 스니핑하는 스캐너를 구성합니다.'),
+('zh','catlogging.wizard.eventScanner.text.1','配置扫描仪连续嗅探新事件的日志'),
+
+('en','catlogging.wizard.eventScanner.add','Add new filter'),
+('ko','catlogging.wizard.eventScanner.add','필터 추가'),
+('zh','catlogging.wizard.eventScanner.add','添加过滤器'),
+
 -- # Common
+
+('en','catlogging.common.timestampLocale','Timestamp locale'),
+('ko','catlogging.common.timestampLocale','지역의 타임스탬프'),
+('zh','catlogging.common.timestampLocale','本地时间戳'),
+
+('en','catlogging.common.timestampLocale.text.1','The locale whose date format symbols (e.g. month names) should be used during parsing the timestamp string.'),
+('ko','catlogging.common.timestampLocale.text.1','타임스탬프 문자열을 구문 분석하는 동안 날짜 형식 기호(예: 월 이름)를 사용해야 하는 로케일입니다.'),
+('zh','catlogging.common.timestampLocale.text.1','在解析时间戳字符串期间应使用其日期格式符号（例如月份名称）的语言环境.'),
+
+('en','catlogging.common.timeZone','Time zone'),
+('ko','catlogging.common.timeZone','시간 영역'),
+('zh','catlogging.common.timeZone','时区'),
+
+('en','catlogging.common.timeZone.text.1','When no time zone information is present in the input timestamp string,
+you should explictly set the time zone it’s meant to refer to.'),
+('ko','catlogging.common.timeZone.text.1','입력 타임스탬프 문자열에 표준 시간대 정보가 없으면 참조할 표준 시간대를 명시적으로 설정해야 합니다.'),
+('zh','catlogging.common.timeZone.text.1','当输入时间戳字符串中不存在时区信息时,您应该明确设置它要引用的时区.'),
+
+('en','catlogging.common.deriveInput','- Derived from input string -'),
+('ko','catlogging.common.deriveInput','- 입력된 로케일 의해 파생됨 -'),
+('zh','catlogging.common.deriveInput','- 由输入区域派生 -'),
+
+('en','catlogging.common.defaultLocale','- System default locale -'),
+('ko','catlogging.common.defaultLocale','- 시스템 기본 로케일 -'),
+('zh','catlogging.common.defaultLocale','- 系统默认语言环境 -'),
+
 ('en','catlogging.common.pleaseSelect','- Please select -'),
 ('ko','catlogging.common.pleaseSelect','- 선택해 주세요 -'),
 ('zh','catlogging.common.pleaseSelect','- 请选择 -'),
@@ -214,7 +323,7 @@ INSERT INTO LANGUAGES (LOCALE, MESSAGEKEY,MESSAGECONTENT) VALUES
 ('zh', 'catlogging.common.source', '来源'),
 
 ('en','catlogging.common.new','New'),
-('ko','catlogging.common.new','새로운'),
+('ko','catlogging.common.new','신규'),
 ('zh','catlogging.common.new','新的'),
 
 ('en','catlogging.common.sniffer','observer'),
@@ -460,6 +569,10 @@ field (e.g. using the timestamp filter).'),
 ('zh','catlogging.exception.refintg.detail','{0} 由于引用无法删除. 要继续，您必须先检查引用并删除它们.'),
 
 -- # Breadcrumb
+('en','catlogging.breadcrumb.eventObserver','Event Observer'),
+('ko','catlogging.breadcrumb.eventObserver','이벤트 감시자'),
+('zh','catlogging.breadcrumb.eventObserver','事件观察者'),
+
 ('en','catlogging.breadcrumb.sources','Log sources'),
 ('ko','catlogging.breadcrumb.sources','로그 소스'),
 ('zh','catlogging.breadcrumb.sources','日志源'),

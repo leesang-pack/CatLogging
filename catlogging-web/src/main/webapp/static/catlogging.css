@@ -106,7 +106,7 @@ footer, .push {
 }
 
 .navbar .navbar-brand {
-	background: url(images/logo25x34.png) no-repeat left center;
+	background: url(/static/images/logo25x34.png) no-repeat left center;
 	margin-left: 15px !important;
 	padding-left: 35px;
 }
