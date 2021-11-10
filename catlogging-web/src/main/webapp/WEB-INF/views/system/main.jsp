@@ -6,9 +6,11 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <spring:message code="catlogging.breadcrumb.settings" var="settingsLabel" />
+<spring:message code="${activeNode.title}" var="activeNodeTitle" />
+<spring:message code="${rootNode.title}" var="rootNodeTitle" />
 <c:set var="isNgPage" value="${activeNode.pageContext.typeName=='ngPage'}" />
 <c:set var="isNgTemplate" value="${activeNode.pageContext.typeName=='ngTemplate'}" />
-<tpl:bodySidebar title="${activeNode.title} - ${rootNode.title}" activeNavbar="system" ngModules="'SystemRootModule'">
+<tpl:bodySidebar title="${activeNodeTitle} - ${rootNodeTitle}" activeNavbar="system" ngModules="'SystemRootModule'">
 	<jsp:attribute name="htmlHead">
 		<c:if test="${isNgPage}">
 			<!-- NG page -->
@@ -119,7 +121,8 @@
 				<c:url value="/c/system" var="url">
 					<c:if test="${node1!=rootNode}"><c:param name="path" value="${node1.path}"/></c:if>
 				</c:url>
-				<li class="${logfn:contains(breadcrumbNodes, node1) || node1 == activeNode ? 'active':''}"><a href="${url}">${node1.title}</a>
+				<spring:message code="${node1.title}" var="Node1Title" />
+				<li class="${logfn:contains(breadcrumbNodes, node1) || node1 == activeNode ? 'active':''}"><a href="${url}">${Node1Title}</a>
 				</li>
 			</c:forEach>
 		</ul>
@@ -131,9 +134,10 @@
 				<c:url value="/c/system" var="url">
 					<c:if test="${node!=rootNode}"><c:param name="path" value="${node.path}"/></c:if>
 				</c:url>
-				<li><a href="${url}">${node.title}</a></li>
+				<spring:message code="${node.title}" var="NodeTitle" />
+				<li><a href="${url}">${NodeTitle}</a></li>
 			</c:forEach>
-			<li class="active">${activeNode.title}</li>
+			<li class="active">${activeNodeTitle}</li>
 		</ul>
 		
 		<div ng-controller="SystemAbstractController">

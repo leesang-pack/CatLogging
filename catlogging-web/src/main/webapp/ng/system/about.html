@@ -1,12 +1,10 @@
 <div class="about">
 	<img src="{{contextPath}}/static/images/logo-109x150.png" class="pull-right">
 	<h1>
-		About catlogging
+		<p ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.form.about'" ng-bind-html="sanitizeLocalMessage()"></p>
 	</h1>
-	<p>
-		Version: {{version}}
-	</p>
-	<p class="lead">catlogging makes it easy to view logs.</p>
+	<text ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.form.version'" ng-bind-html="sanitizeLocalMessage()"></text>: {{version}}
+	<p class="lead"><text ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.form.about.text.1'" ng-bind-html="sanitizeLocalMessage()"></text></p>
 
 	<div ng-include="contextPath+'/snippets/system/contactsShareTeaser.html'"></div>
 

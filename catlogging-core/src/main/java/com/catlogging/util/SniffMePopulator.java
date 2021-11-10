@@ -63,7 +63,7 @@ public class SniffMePopulator implements ApplicationContextAware {
 	public void populate() {
 		final RollingLogsSource myLogSource = new RollingLogsSource();
 		myLogSource.setPattern(new File(home.getHomeDir(), "logs/catlogging.log").getPath());
-		myLogSource.setName("catlogging's own log");
+		myLogSource.setName("catlogging's server log");
 		final Log4jTextReader reader = new Log4jTextReader();
 		reader.setFormatPattern("%d %-5p [%c] %m%n");
 		final Map<String, String> specifiersFieldMapping = new HashMap<>();
@@ -74,7 +74,7 @@ public class SniffMePopulator implements ApplicationContextAware {
 		reader.setSpecifiersFieldMapping(specifiersFieldMapping);
 		myLogSource.setReader(new FilteredLogEntryReader(reader, null));
 		sourceProvider.createSource(myLogSource);
-		logger.info("Created source for catlogging's own log: {}", myLogSource);
+		logger.info("Created source for catlogging's server log: {}", myLogSource);
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class SniffMePopulator implements ApplicationContextAware {
 			try {
 				populate();
 			} catch (final Exception e) {
-				logger.error("Failed to create catlogging's own log", e);
+				logger.error("Failed to create catlogging's server log", e);
 			}
 		}
 	}

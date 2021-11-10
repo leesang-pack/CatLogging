@@ -17,13 +17,16 @@
  *******************************************************************************/
 package com.catlogging.web.app;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.catlogging.web.nav.NavNode;
 import com.catlogging.web.nav.support.NgPage;
 import com.catlogging.web.nav.support.NgTemplate;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 /**
  * Spring app config for navigation.
@@ -42,24 +45,25 @@ public class NavigationAppConfig {
 	 */
 	@Bean(name = NAV_NODE_SYSTEM)
 	public NavNode systemNode() {
-		final NavNode systemNode = new NavNode("System", "system");
 
-		final NavNode general = new NavNode("General settings", "general");
+		final NavNode systemNode = new NavNode("catlogging.nav.system", "system");
+
+		final NavNode general = new NavNode("catlogging.nav.generalSet", "general");
 		systemNode.addSubNode(general);
 		general.setPageContext(new NgPage("ng/system/settings/general/app.js", "SystemSettingsGeneralModule",
 				"SystemSettingsGeneralController", "ng/system/settings/general/main.html"));
 
-		final NavNode elasticsearch = new NavNode("Elasticsearch", "elastic");
+		final NavNode elasticsearch = new NavNode("catlogging.nav.elastic", "elastic");
 		elasticsearch.setPageContext(new NgPage("ng/system/settings/elastic/app.js", "SystemSettingsElasticModule",
 				"SystemSettingsElasticController", "ng/system/settings/elastic/main.html"));
 		systemNode.addSubNode(elasticsearch);
 
-		final NavNode notifications = new NavNode("Notifications", "notifications");
+		final NavNode notifications = new NavNode("catlogging.nav.notice", "notifications");
 		notifications.setPageContext(new NgPage("ng/system/notifications/app.js", "SystemNotificationsModule",
 				"SystemNotificationsController", "ng/system/notifications/main.html"));
 		systemNode.addSubNode(notifications);
 
-		final NavNode about = new NavNode("About", "about");
+		final NavNode about = new NavNode("catlogging.nav.about", "about");
 		about.setPageContext(new NgTemplate("ng/system/about.html"));
 		systemNode.addSubNode(about);
 		return systemNode;

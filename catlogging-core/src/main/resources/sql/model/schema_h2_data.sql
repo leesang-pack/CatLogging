@@ -124,6 +124,77 @@ INSERT INTO LANGUAGES (LOCALE, MESSAGEKEY,MESSAGECONTENT) VALUES
 ('ko', 'catlogging.common.form.test.view','테스트 로그파일 뷰'),
 ('zh', 'catlogging.common.form.test.view','测试日志文件查看'),
 
+('en', 'catlogging.common.form.logFiles','Log files'),
+('ko', 'catlogging.common.form.logFiles','로그 파일들'),
+('zh', 'catlogging.common.form.logFiles','日志文件'),
+
+('en', 'catlogging.common.form.about','About catlogging'),
+('ko', 'catlogging.common.form.about','catlogging에 대해'),
+('zh', 'catlogging.common.form.about','catlogging 关于'),
+
+('en', 'catlogging.common.form.version','version'),
+('ko', 'catlogging.common.form.version','버전'),
+('zh', 'catlogging.common.form.version','版本'),
+
+('en', 'catlogging.common.form.about.text.1','catlogging makes it easy to view logs.'),
+('ko', 'catlogging.common.form.about.text.1','catlogging을 사용하면 로그를 쉽게 볼 수 있습니다.'),
+('zh', 'catlogging.common.form.about.text.1','catlogging 使查看日志变得容易.'),
+
+('en', 'catlogging.common.form.about.text.2','If you have any suggestions or bugs, please let us know in the issue. Thanks for your feedback.
+  <a href="https://github.com/leesang-pack/CatLogging/issues" target="_blank">Issue Tracker</a>.'),
+('ko', 'catlogging.common.form.about.text.2','제안 사항이나 버그 사항이 있는 경우 이슈에 알려주시기 바랍니다. 귀하의 피드백에 감사합니다.
+ <a href="https://github.com/leesang-pack/CatLogging/issues" target="_blank">이슈 추적기</a>.'),
+('zh', 'catlogging.common.form.about.text.2','如果您有任何建议或错误,请在问题中告诉我们. 感谢您的反馈意见.
+  <a href="https://github.com/leesang-pack/CatLogging/issues" target="_blank">问题跟踪器</a>.'),
+
+('en', 'catlogging.common.form.about.text.3','catlogging makes it easy to view logs.'),
+('ko', 'catlogging.common.form.about.text.3','catlogging을 사용하면 로그를 쉽게 볼 수 있습니다.'),
+('zh', 'catlogging.common.form.about.text.3','catlogging 使查看日志变得容易.'),
+
+('en', 'catlogging.common.form.HomeDir','Home directory'),
+('ko', 'catlogging.common.form.HomeDir','서비스 디렉토리 경로'),
+('zh', 'catlogging.common.form.HomeDir','服务目录路径'),
+
+('en', 'catlogging.common.form.ValidationPath','Validation String Path'),
+('ko', 'catlogging.common.form.ValidationPath','포함될 경로 명(검증용)'),
+('zh', 'catlogging.common.form.ValidationPath','要包含的路径名称（用于验证）'),
+
+('en', 'catlogging.common.form.baseUrl','Base URL'),
+('ko', 'catlogging.common.form.baseUrl','접속 기본 URL'),
+('zh', 'catlogging.common.form.baseUrl','访问基本 URL'),
+
+('en', 'catlogging.common.form.SystemUpdateChk','System updates check'),
+('ko', 'catlogging.common.form.SystemUpdateChk','서비스 버전 체크'),
+('zh', 'catlogging.common.form.SystemUpdateChk','系统更新检查'),
+
+('en', 'catlogging.common.form.mailSetting','Mail settings'),
+('ko', 'catlogging.common.form.mailSetting','메일 설정'),
+('zh', 'catlogging.common.form.mailSetting','邮件设置'),
+
+('en', 'catlogging.common.form.proxySetting','proxy settings'),
+('ko', 'catlogging.common.form.proxySetting','프록시 설정'),
+('zh', 'catlogging.common.form.proxySetting','代理设置'),
+
+('en', 'catlogging.common.form.proxyEnable','proxy enabled'),
+('ko', 'catlogging.common.form.proxyEnable','프록시 활성화'),
+('zh', 'catlogging.common.form.proxyEnable','启用代理'),
+
+('en', 'catlogging.common.form.host','Host'),
+('ko', 'catlogging.common.form.host','호스트 주소'),
+('zh', 'catlogging.common.form.host','主机地址'),
+
+('en', 'catlogging.common.form.port','Port'),
+('ko', 'catlogging.common.form.port','포트'),
+('zh', 'catlogging.common.form.port','港口'),
+
+('en', 'catlogging.common.form.username','Username'),
+('ko', 'catlogging.common.form.username','사용자이름'),
+('zh', 'catlogging.common.form.username','用户名'),
+
+('en', 'catlogging.common.form.password','Password'),
+('ko', 'catlogging.common.form.password','사용자패스워드'),
+('zh', 'catlogging.common.form.password','用户密码'),
+
 -- #Wizards
 ('en', 'catlogging.wizard.scanner.level','Severity level scanner'),
 ('ko', 'catlogging.wizard.scanner.level','로그 레벨 단위 스캐너'),
@@ -606,6 +677,22 @@ field (e.g. using the timestamp filter).'),
 ('en', 'catlogging.nav.system', 'System'),
 ('ko', 'catlogging.nav.system', '설정'),
 ('zh', 'catlogging.nav.system', '系统'),
+
+('en', 'catlogging.nav.generalSet', 'General settings'),
+('ko', 'catlogging.nav.generalSet', '일반 설정'),
+('zh', 'catlogging.nav.generalSet', '通用设置'),
+
+('en', 'catlogging.nav.elastic', 'Elasticsearch'),
+('ko', 'catlogging.nav.elastic', '엘라스틱서치'),
+('zh', 'catlogging.nav.elastic', '弹性搜索'),
+
+('en', 'catlogging.nav.notice', 'Notifications'),
+('ko', 'catlogging.nav.notice', '알림'),
+('zh', 'catlogging.nav.notice', '通知'),
+
+('en', 'catlogging.nav.about', 'About'),
+('ko', 'catlogging.nav.about', '설명'),
+('zh', 'catlogging.nav.about', '关于'),
 
 -- # Lang
 ('en', 'catlogging.lang.en','English'),

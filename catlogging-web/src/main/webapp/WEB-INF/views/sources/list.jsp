@@ -42,7 +42,7 @@
 							</div>
 							<div class="row">
 								<div class="col-md-12">
-									<i class="glyphicon glyphicon-list"></i> Log files: <a href="${logsLink}"><span class="label label-info">${source.logs.size()}</span></a>
+									<i class="glyphicon glyphicon-list"></i> <spring:message code="catlogging.common.form.logFiles"/>: <a href="${logsLink}"><span class="label label-info">${source.logs.size()}</span></a>
 									<div class="pull-right">
 										<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
 											<a href="<c:url value="/c/sources/${source.id}" />" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-edit"></i> <spring:message code="catlogging.common.form.edit"/></a>
