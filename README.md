@@ -11,10 +11,11 @@
 
 ## Documentation
 
-Base logsniffer
+Add Support i18n(en, kr, ch)
+Add Support validation path
+Change Dark theme UI
 
 ## Develop Run From InteliJ
 
-Enable external tomcat
-
-Enable ide/JettyIDELauncher
+Enable external tomcat Run
+Enable ide/JettyIDELauncher Run
