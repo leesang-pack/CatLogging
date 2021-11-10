@@ -79,7 +79,7 @@
 				<hr>
 				<div class="row">
 					<div class="col-md-12" us-spinner spinner-key="update">
-						<button type="button" class="btn btn-primary" ng-disabled="${scheduled} || form.$invalid" ng-click="submit(form)">Save</button>
+						<button type="button" class="btn btn-primary btn-sm" ng-disabled="${scheduled} || form.$invalid" ng-click="submit(form)">Save</button>
 					</div>
 				</div>
 			</form>

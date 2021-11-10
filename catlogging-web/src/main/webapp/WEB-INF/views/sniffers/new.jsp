@@ -71,7 +71,7 @@
 			<hr>
 			<div class="row">
 				<div class="col-md-12" us-spinner spinner-key="update">
-					<button type="button" class="btn btn-primary" ng-disabled="form.$invalid" ng-click="submit(form)"><spring:message code="catlogging.common.form.create" /></button>
+					<button type="button" class="btn btn-primary btn-sm" ng-disabled="form.$invalid" ng-click="submit(form)"><spring:message code="catlogging.common.form.create" /></button>
 				</div>
 			</div>
 		</form>

@@ -12,16 +12,14 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link href="<%=request.getContextPath()%>/static/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" media="screen" />
 		<link href="<%=request.getContextPath()%>/static/bootstrap/3.3.6/css/bootstrap-theme.min.css" rel="stylesheet" />
-		<script
-			src="<%=request.getContextPath()%>/static/jquery/jquery-1.9.1.min.js"></script>
+		<script src="<%=request.getContextPath()%>/static/jquery/jquery-1.9.1.min.js"></script>
 		<script type="text/javascript" src="<c:url value="/static/angular/1.5.3/angular.min.js" />"></script>
 		<script type="text/javascript" src="<c:url value="/static/angular/1.5.3/angular-route.min.js" />"></script>
 		<script type="text/javascript" src="<c:url value="/static/angular/1.5.3/angular-animate.min.js" />"></script>
 		<script type="text/javascript" src="<c:url value="/static/angular/1.5.3/angular-sanitize.min.js" />"></script>
 		<script src="<c:url value="/static/angular-ui/ui-bootstrap-tpls-1.3.2.min.js" />"></script>
 		<script type="text/javascript" src="<c:url value="/static/angular/message-center-master/message-center.js?v=${catloggingProps['catlogging.version']}" />"></script>
-		<script
-			src="<%=request.getContextPath()%>/static/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script src="<%=request.getContextPath()%>/static/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<script
 			src="<%=request.getContextPath()%>/static/jquery/jquery.endless-scroll.js?v=${catloggingProps['catlogging.version']}"></script>
 		<script src="<%=request.getContextPath()%>/static/jquery/spin.min.js?v=${catloggingProps['catlogging.version']}"></script>
@@ -77,7 +75,7 @@
 				      }
 				    });
 			    };
-				$scope.systemNotificationSummary = {worstLevel:'${not empty systemNotificationSummary.worstLevel?systemNotificationSummary.worstLevel:''}', count: ${systemNotificationSummary.count}};
+				$scope.systemNotificationSummary = {worstLevel:'${not empty systemNotificationSummary.worstLevel?systemNotificationSummary.worstLevel:''}', count: ${not empty systemNotificationSummary.count?systemNotificationSummary.count:0}};
 				$scope.$on("systemNotificationSummaryChanged", function(event, summary) {
 					$scope.systemNotificationSummary = summary;
 				});

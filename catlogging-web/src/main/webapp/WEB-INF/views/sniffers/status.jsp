@@ -166,7 +166,7 @@
 					</div>
 					<div class="btn-toolbar">
 						<div class="btn-group">
-							<button class="btn btn-default dropdown-toggle"
+							<button class="btn btn-default dropdown-toggle btn-sm"
 								ng-disabled="scheduleInfo.scheduled" data-toggle="dropdown">Reset all positions
 								<span class="caret"></span>
 							</button>
@@ -177,11 +177,11 @@
 									<i class="glyphicon glyphicon-fast-forward"></i> All to end</a></li>
 							</ul>
 						</div>
-						<button class="btn btn-default" ng-disabled="scheduleInfo.scheduled" type="button" ng-click="start()">
+						<button class="btn btn-default btn-sm" ng-disabled="scheduleInfo.scheduled" type="button" ng-click="start()">
 							<i class="glyphicon glyphicon-play"></i> Start</button>						
-						<button class="btn btn-default" ng-disabled="!scheduleInfo.scheduled" type="button" ng-click="stop()">
+						<button class="btn btn-default btn-sm" ng-disabled="!scheduleInfo.scheduled" type="button" ng-click="stop()">
 							<i class="glyphicon glyphicon-pause"></i> Pause</button>						
-						<button class="btn btn-default" type="button" ng-click="reload()">
+						<button class="btn btn-default btn-sm" type="button" ng-click="reload()">
 							<i class="glyphicon glyphicon-repeat"></i> Reload</button>						
 					</div>
 	

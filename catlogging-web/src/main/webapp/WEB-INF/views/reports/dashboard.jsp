@@ -285,7 +285,7 @@
 										${widget.title}
 										<div class="btn-group pull-right">
 											<button class="btn btn-xs"><i class="glyphicon glyphicon-wrench"></i></button>
-											<button class="btn btn-xs dropdown-toggle" data-toggle="dropdown">
+											<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
 											  <span class="caret"></span>
 											</button>
 											<ul class="dropdown-menu">
@@ -303,7 +303,7 @@
 											${widget.title}
 											<div class="btn-group pull-right">
 												<button class="btn btn-xs"><i class="glyphicon glyphicon-wrench"></i></button>
-												<button class="btn btn-xs dropdown-toggle" data-toggle="dropdown">
+												<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
 												  <span class="caret"></span>
 												</button>
 												<ul class="dropdown-menu">
@@ -329,7 +329,7 @@
 							{{widget.title}}
 							<div class="btn-group pull-right">
 								<button class="btn btn-xs"><i class="glyphicon glyphicon-wrench"></i></button>
-								<button class="btn btn-xs dropdown-toggle" data-toggle="dropdown">
+								<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
 								  <span class="caret"></span>
 								</button>
 								<ul class="dropdown-menu">
@@ -345,7 +345,7 @@
 								{{widget.title}}
 								<div class="btn-group pull-right">
 									<button class="btn btn-xs"><i class="glyphicon glyphicon-wrench"></i></button>
-									<button class="btn btn-xs dropdown-toggle" data-toggle="dropdown">
+									<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
 									  <span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu">
@@ -363,7 +363,7 @@
 						</div>
 	  				</div>
 				</div>
-				<a ng-click="addWidgetWizard()" class="btn btn-primary"><i class="glyphicon glyphicon-plus icon-white"></i> Add Widget</a>
+				<a ng-click="addWidgetWizard()" class="btn btn-primary btn-sm"><i class="glyphicon glyphicon-plus icon-white"></i> Add Widget</a>
 			</form:form>
 		</div>
 		

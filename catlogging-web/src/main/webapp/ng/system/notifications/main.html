@@ -12,7 +12,7 @@
 			<p ng-bind-html="sanitizeMessage(n)"></p>
 			<small>{{n.creationDate | date:'medium'}}</small>
 			<p>
-				<button type="button" class="btn"
+				<button type="button" class="btn btn-default btn-sm"
 					ng-class="n.level=='ERROR'?'btn-danger':(n.level=='WARN'?'btn-warning':'btn-info')"
 					ng-click="acknowledge(n.id)"><i class="glyphicon glyphicon-check"></i> Got it</button>
 			</p>

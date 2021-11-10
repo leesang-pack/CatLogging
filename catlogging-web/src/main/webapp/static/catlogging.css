@@ -27,7 +27,7 @@ body {
 
 .sub-header {
   padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #292929;
 }
 
 /*
@@ -49,8 +49,8 @@ body {
     padding: 20px;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    background-color: #f5f5f5;
-    border-right: 1px solid #eee;
+    background-color: #292929;
+    border-right: 1px solid #292929;
   }
 }
 
@@ -66,7 +66,7 @@ body {
 }
 .nav-sidebar > .active > a {
   color: #fff;
-  background-color: #428bca;
+  background-color: #123350;
 }
 
 /* Footer */
@@ -166,7 +166,7 @@ ul.bordered-list {
 
 ul.bordered-list li {
 	padding: 5px 0;
-	border-bottom: 1px solid #EEE;
+	border-bottom: 1px solid #292929;
 	overflow: hidden;
 	display: block;
 	margin: 0px;
@@ -179,7 +179,7 @@ ul.bordered-list li {
 }
 
 .panel-body {
-    background-color: #f9f9f9;
+    background-color: #323232;
 }
 
 /** Angular UI **/
@@ -244,7 +244,7 @@ ul.bordered-list li {
 }
 
 .log-viewer tr.selected {
-	background-color: #d9edf7;
+	background-color: #005376;
 	font-weight: bold;
 }
 

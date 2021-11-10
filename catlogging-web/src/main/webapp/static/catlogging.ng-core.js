@@ -1438,11 +1438,11 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 	      				'<th><input type="checkbox" ng-model="f.enabled" id="cf-{{f.key}}"></th>'+
 		      			'<th class="text"><label for="cf-{{f.key}}">{{f.key}}</label></th>'+
 		      			'<td class="text">{{f.type}}</td>'+
-		      				'<td style="width:1em;border-right:none"><button ng-if="!$first" class="btn btn-default" type="button" ng-click="moveUpField($index)"><i class="glyphicon glyphicon-chevron-up"></i></button></td>' +
-		      				'<td style="width:1em;border-left:none;border-right:none"><button ng-if="!$last" class="btn btn-default" type="button" ng-click="moveDownField($index)"><i class="glyphicon glyphicon-chevron-down"></i></button></td>' +
-		      				'<td style="width:1em;border-left:none;"><button class="btn btn-default" type="button" ng-click="deleteField($index)"><i class="glyphicon glyphicon-trash"></i></button></td>' +
+		      				'<td style="width:1em;border-right:none"><button ng-if="!$first" class="btn btn-default btn-sm" type="button" ng-click="moveUpField($index)"><i class="glyphicon glyphicon-chevron-up"></i></button></td>' +
+		      				'<td style="width:1em;border-left:none;border-right:none"><button ng-if="!$last" class="btn btn-default btn-sm" type="button" ng-click="moveDownField($index)"><i class="glyphicon glyphicon-chevron-down"></i></button></td>' +
+		      				'<td style="width:1em;border-left:none;"><button class="btn btn-default btn-sm" type="button" ng-click="deleteField($index)"><i class="glyphicon glyphicon-trash"></i></button></td>' +
 		      		'</tr>'+
-		      		'<tr><td></td><td><div class="input-group"><input type="text" ng-model="newField" placeholder="Add a new field" class="form-control"><div class="input-group-btn"><button class="btn btn-default" type="button" ng-click="addNewField(newField)"><i class="glyphicon glyphicon-plus"></i></button></div></td></tr>'+
+		      		'<tr><td></td><td><div class="input-group"><input type="text" ng-model="newField" placeholder="Add a new field" class="form-control"><div class="input-group-btn"><button class="btn btn-default btn-sm" type="button" ng-click="addNewField(newField)"><i class="glyphicon glyphicon-plus"></i></button></div></td></tr>'+
 		      	 '</table>'+
 		      	'</div>'
     };

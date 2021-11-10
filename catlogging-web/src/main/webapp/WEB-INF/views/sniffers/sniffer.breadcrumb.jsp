@@ -9,7 +9,7 @@
 	<li><a href="<c:url value="/c/sniffers" />"><spring:message code="catlogging.breadcrumb.sniffers"/></a></li>
 	<li><a href="<c:url value="/c/sniffers/${activeSniffer.id}/events" />">${activeSniffer.name}</a></li>
 	<li class="dropdown">
-		<button data-toggle="dropdown" href="#" class="btn btn-xs"><i class="glyphicon glyphicon-cog"></i> <span class="caret"></span></button>
+		<button data-toggle="dropdown" href="#" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-cog"></i> <span class="caret"></span></button>
 		
 		<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 			<li><a href="<c:url value="/c/sniffers/${activeSniffer.id}/events" />"><i class="glyphicon glyphicon-bullhorn"></i> <spring:message code="catlogging.nav.events"/></a></li>

@@ -6,7 +6,7 @@
 }
 
 .log-viewer {
-	background: #fff;
+	background: #313131;
 }
 
 #log-entries-frame {
@@ -126,7 +126,7 @@
 			<a class="btn btn-default btn-sm pull-right tail" id="tail"
 				ng-click="fromTail()" style="margin-left:4px"><i
 				class="glyphicon glyphicon-fast-forward"></i> Tail</a>
-			<button data-toggle="dropdown" href="#" class="btn btn-xs btn-info pull-right" style="margin:4px 0"
+			<button data-toggle="dropdown" href="#" class="btn btn-default btn-xs btn-info pull-right" style="margin:4px 0"
 				title="Navigate by {{navType=='BYTE' ? 'byte offset':(navType=='DATE' ? 'timestamp' : '')}}">
 					<i class="glyphicon"
 						ng-class="{'glyphicon-transfer': navType=='BYTE', 'glyphicon-time': navType=='DATE'}"></i>
@@ -160,10 +160,10 @@
 				<i class="fa fa-refresh" ng-class="{'fa-spin': tailFollowEnabled}"></i> tail &amp; follow
 			</button>
 		</span>
-		<button ng-if="viewerFieldsConfigEnabled()" type="button" class="btn btn-default" ng-disabled="tailFollowEnabled" ng-click="configureFields()">
+		<button ng-if="viewerFieldsConfigEnabled()" type="button" class="btn btn-default btn-sm" ng-disabled="tailFollowEnabled" ng-click="configureFields()">
 			<i class="glyphicon glyphicon-th" title="Resize log viewer to full screen"></i> Configure fields
 		</button>
-		<button ng-if="isFullscreenEnabled" type="button" class="btn btn-default" ng-class="fullscreen ? 'btn-info' : 'btn-default'" ngsf-toggle-fullscreen>
+		<button ng-if="isFullscreenEnabled" type="button" class="btn btn-default btn-sm" ng-class="fullscreen ? 'btn-info' : 'btn-default'" ngsf-toggle-fullscreen>
 			<i class="glyphicon" ng-class="fullscreen ? 'glyphicon-resize-small' : 'glyphicon-fullscreen'" title="Resize log viewer to full screen"></i>
 		</button>
 	</div>

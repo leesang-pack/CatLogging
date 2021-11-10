@@ -55,7 +55,7 @@
 		<div class="input-group form-group">
 			<input type="text" ng-model="termFilterNewTerm" class="form-control"
 				placeholder="Term" /> <span class="input-group-btn">
-				<button class="btn btn-default" type="button" ng-click="addTerm()">
+				<button class="btn btn-default btn-sm" type="button" ng-click="addTerm()">
 					<i class="glyphicon glyphicon-plus"></i>
 				</button>
 			</span>
@@ -63,7 +63,7 @@
 		<div class="input-group form-group" ng-repeat="term in terms">
 			<input type="text" ng-model="term.value" class="form-control"
 				disabled="disabled" /> <span class="input-group-btn">
-				<button class="btn btn-default" type="button"
+				<button class="btn btn-default btn-sm" type="button"
 					ng-click="deleteTerm($index)">
 					<i class="glyphicon glyphicon-trash"></i>
 				</button>

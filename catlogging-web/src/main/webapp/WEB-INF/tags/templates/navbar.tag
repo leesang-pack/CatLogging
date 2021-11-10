@@ -33,9 +33,9 @@
                 </li>
             </ul>
             <ul class="nav navbar-right navbar-nav">
-                <li><a href="?lang=en" > <spring:message code="catlogging.lang.en"/> </a></li>
-                <li><a href="?lang=ko" > <spring:message code="catlogging.lang.ko"/> </a></li>
-                <li><a href="?lang=zh" > <spring:message code="catlogging.lang.zh"/> </a></li>
+                <li><a href="/c/sources?lang=en" > <spring:message code="catlogging.lang.en"/> </a></li>
+                <li><a href="/c/sources?lang=ko" > <spring:message code="catlogging.lang.ko"/> </a></li>
+                <li><a href="/c/sources?lang=zh" > <spring:message code="catlogging.lang.zh"/> </a></li>
                 <li>
                     <a href="<c:url value="/c/system?path=notifications" />" title="{{systemNotificationSummary.count}} unread notification{{systemNotificationSummary.count!=1?'s':''}}"><i class="fa fa-bell"></i>
                         <sup ng-if="systemNotificationSummary.count!=0"><span class="label" ng-class="systemNotificationSummary.worstLevel=='ERROR'?'label-danger':(systemNotificationSummary.worstLevel=='WARN'?'label-warning':'label-info')">{{systemNotificationSummary.count}}</span></sup></a>

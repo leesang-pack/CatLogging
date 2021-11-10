@@ -320,7 +320,7 @@
 
 	<div class="row">
 		<div class="col-md-12" us-spinner spinner-key="update">
-			<button type="button" class="btn btn-primary" ng-disabled="form2.$invalid" ng-click="submit(form2)"><spring:message code="${param.submitLabel}" /> </button>
+			<button type="button" class="btn btn-primary btn-sm" ng-disabled="form2.$invalid" ng-click="submit(form2)"><spring:message code="${param.submitLabel}" /> </button>
 			<button type="button" class="btn btn-default btn-sm" ng-click="testLogViewing()" ng-disabled="form2.$invalid">
 				<i class="glyphicon glyphicon-check"></i> <text ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.form.test.view'">{{localeMessage}}</text>
 			</button>
