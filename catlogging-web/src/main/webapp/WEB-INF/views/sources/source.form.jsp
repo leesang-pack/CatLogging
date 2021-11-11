@@ -254,7 +254,7 @@
 						<small><spring:message code="catlogging.wizard.filter.text.2" /></small></h4>
 					<div class="panel panel-default" ng-repeat="filter in beanWrapper[0].reader.filters">
 						<div class="panel-heading">
-							<button type="button" class="close pull-right" title="Delete" ng-click="deleteReaderFilter($index)"><i class="glyphicon glyphicon-trash"></i></button>
+							<button type="button" class="close pull-right btn-sm" title="Delete" ng-click="deleteReaderFilter($index)"><i class="glyphicon glyphicon-trash"></i></button>
 							<h3 class="panel-title"><spring:message code="catlogging.common.form.filter" /> {{$index+1}}</h3>
 						</div>
 						<div class="panel-body" ng-form="form">

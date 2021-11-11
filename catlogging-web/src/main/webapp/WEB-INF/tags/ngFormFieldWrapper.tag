@@ -2,6 +2,7 @@
 <%@attribute name="cssClass" required="false" type="java.lang.String"%>
 <%@attribute name="fieldName" required="true" type="java.lang.String"%>
 <%@attribute name="bindErrorsPath" required="false" type="java.lang.String"%>
+<%@attribute name="isValidationPath" required="false" type="java.lang.Boolean"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <div class="${cssClass}" ng-class="
@@ -17,6 +18,7 @@
 	<p class="help-block" ng-show="
 								form.${fieldName}.$invalid
 							&& !form.${fieldName}.$pristine
+							&& form.${empty isValidationPath?false:isValidationPath}
 							|| form.${fieldName}.$error.pattern"> <spring:message code="catlogging.common.absolutePath" arguments="${catloggingProps['catlogging.validationPath']}" /></p>
 
 	<jsp:doBody />

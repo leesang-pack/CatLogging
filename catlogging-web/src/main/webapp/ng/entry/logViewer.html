@@ -153,7 +153,7 @@
 	<div class="text-right">
 		<span ng-if="isFollowEnabled">
 			<span style="visibility:hidden" id="slow-following-popup" data-toggle="popover" data-placement="left" data-content="The log is being written to fast in the background. Following is lagging behind the tail...">x</span>
-			<button type="button" class="btn tail-follow"
+			<button type="button" class="btn tail-follow btn-sm"
 				data-toggle="button"
 				ng-click="toggleTailFollow()" ng-class="tailFollowEnabled ? 'btn-info' : 'btn-default'"
 				onclick="this.blur()">

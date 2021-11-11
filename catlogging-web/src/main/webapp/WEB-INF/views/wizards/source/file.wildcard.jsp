@@ -12,7 +12,7 @@
 			ngFormFieldWrapper에서 필수 인자 fieldName이 필요하다.
 			그것을 가지고 validation을 확인 후에 div에 has-error를 넣을지 말지 결정
         --%>
-		<t:ngFormFieldWrapper cssClass="form-group col-md-12 required" fieldName="pattern">
+		<t:ngFormFieldWrapper cssClass="form-group col-md-12 required" fieldName="pattern" isValidationPath="true">
 
 		<%--
 			툴팁
