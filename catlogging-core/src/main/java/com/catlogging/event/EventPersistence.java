@@ -184,6 +184,7 @@ public interface EventPersistence {
 		NativeQueryBuilder withNativeQuery(final String nativeQuery);
 	}
 
+	public void refreshIndex();
 	public String persist(Event event);
 
 	public void delete(long snifferId, String[] eventIds);

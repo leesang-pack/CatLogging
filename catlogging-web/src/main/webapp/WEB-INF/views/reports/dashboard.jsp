@@ -258,7 +258,7 @@
 				</div>
 			</c:if>
 
-			<form:form id="dashboard-form" method="post" action="/c/reports/${report.id}/reload" commandName="report">
+			<form:form id="dashboard-form" method="post" action="/c/reports/${report.id}/reload" modelAttribute="report">
 				<div class="alert alert-warning animate-show" ng-show="changed">
 					<strong>Dashboard configuration changed. Please click the save button to persist changes!</strong>
 					<button class="btn btn-warning" type="submit">Save</button>

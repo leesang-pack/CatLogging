@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -39,8 +40,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.catlogging.app.ElasticSearchAppConfig.ClientCallback;
-import com.catlogging.app.ElasticSearchAppConfig.ElasticClientTemplate;
+//import com.catlogging.app.ElasticSearchAppConfig.ClientCallback;
+//import com.catlogging.app.ElasticSearchAppConfig.ElasticClientTemplate;
 
 /**
  * Provides searching for events persisted in the Elasticsearch index.
@@ -55,8 +56,8 @@ public class ElasticEventsController {
 	@Value(value = "${catlogging.es.indexName}")
 	private String indexName;
 
-	@Autowired
-	private ElasticClientTemplate clientTpl;
+//	@Autowired
+//	private ElasticClientTemplate clientTpl;
 
 	@RequestMapping(value = "/reports/eventSearch", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void eventSearch(final HttpEntity<String> httpEntity,
@@ -65,24 +66,24 @@ public class ElasticEventsController {
 		String jsonRequest = httpEntity.getBody();
 		final SearchRequest searchRequest = new SearchRequest(indexName);
 		try {
-			searchRequest.source(jsonRequest);
-			searchRequest.types("event");
-			SearchResponse r = clientTpl
-					.executeWithClient(new ClientCallback<SearchResponse>() {
-						@Override
-						public SearchResponse execute(final Client client) {
-							return client.search(searchRequest).actionGet();
-						}
-					});
-			response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-			OutputStream responseStream = response.getOutputStream();
-			XContentBuilder builder = XContentFactory
-					.jsonBuilder(responseStream);
-			builder.startObject();
-			r.toXContent(builder, ToXContent.EMPTY_PARAMS);
-			builder.endObject();
-			builder.close();
-			responseStream.close();
+//			searchRequest.source(jsonRequest);
+//			searchRequest.types("event");
+//			SearchResponse r = clientTpl
+//					.executeWithClient(new ClientCallback<SearchResponse>() {
+//						@Override
+//						public SearchResponse execute(final RestHighLevelClient client) {
+//							return client.search(searchRequest).actionGet();
+//						}
+//					});
+//			response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//			OutputStream responseStream = response.getOutputStream();
+//			XContentBuilder builder = XContentFactory
+//					.jsonBuilder(responseStream);
+//			builder.startObject();
+//			r.toXContent(builder, ToXContent.EMPTY_PARAMS);
+//			builder.endObject();
+//			builder.close();
+//			responseStream.close();
 		} finally {
 			logger.debug("Executed search in {}ms: {}",
 					System.currentTimeMillis() - start, jsonRequest);

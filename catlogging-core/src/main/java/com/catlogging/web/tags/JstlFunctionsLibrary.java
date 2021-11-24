@@ -26,7 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.elasticsearch.common.Base64;
+//import org.elasticsearch.common.Base64;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -142,7 +143,7 @@ public class JstlFunctionsLibrary {
 	 * @throws UnsupportedEncodingException
 	 */
 	public static String btoa(final String strToEncode) throws UnsupportedEncodingException {
-		return Base64.encodeBytes(strToEncode.getBytes("UTF-8"));
+		return Base64.encodeBase64String(strToEncode.getBytes("UTF-8"));
 	}
 
 	/**

@@ -36,11 +36,11 @@ public class FieldJsonMapper {
 	 *         otherwise null
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> Class<T> resolveDeserializationType(final String type) {
+	public <T> Class<? super Object> resolveDeserializationType(final String type) {
 		try {
 			if (type != null) {
 				final FieldBaseTypes baseType = FieldBaseTypes.valueOf(type);
-				return (Class<T>) baseType.getDeserializationType();
+				return baseType.getDeserializationType();
 			}
 		} catch (final IllegalArgumentException e) {
 			// Accepted
