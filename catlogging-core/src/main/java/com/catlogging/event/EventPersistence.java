@@ -144,8 +144,7 @@ public interface EventPersistence {
 			super();
 		}
 
-		public EventsResult(final long totalCount, final List<AspectEvent> items,
-				final EventsCountHistogram histogram) {
+		public EventsResult(final long totalCount, final List<AspectEvent> items, final EventsCountHistogram histogram) {
 			super(totalCount, items);
 			this.eventsCountHistogram = histogram;
 		}

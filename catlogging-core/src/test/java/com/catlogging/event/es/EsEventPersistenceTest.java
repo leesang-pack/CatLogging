@@ -161,6 +161,7 @@ public class EsEventPersistenceTest {
 		Assert.assertEquals(1, persister.getEventsQueryBuilder(sniffer1.getId(), 0, 10).list().getItems().size());
 		Assert.assertEquals(1, persister.getEventsQueryBuilder(sniffer1.getId(), 0, 10).list().getTotalCount());
 		final Event checkEvent = persister.getEvent(sniffer1.getId(), eventId);
+		logger.info("checkEvent... {}", checkEvent);
 		Assert.assertEquals(sniffer1.getId(), checkEvent.getSnifferId());
 		Assert.assertEquals(source1.getId(), checkEvent.getLogSourceId());
 		Assert.assertEquals("log", checkEvent.getLogPath());
@@ -168,14 +169,13 @@ public class EsEventPersistenceTest {
 		Assert.assertEquals(2, checkEvent.getEntries().size());
 		Assert.assertEquals("1", checkEvent.getEntries().get(0).getRawContent());
 		Assert.assertEquals(new Date(0), checkEvent.getEntries().get(0).get("f1"));
-		Assert.assertEquals(entry1.getStartOffset().getJson(),
-				checkEvent.getEntries().get(0).getStartOffset().getJson());
+		Assert.assertEquals(entry1.getStartOffset().getJson(), checkEvent.getEntries().get(0).getStartOffset().getJson());
 		Assert.assertEquals("2", checkEvent.getEntries().get(1).getRawContent());
 		Assert.assertEquals("value", checkEvent.get("my"));
-//
-//		// Check offset
-//		Assert.assertEquals(0, persister.getEventsQueryBuilder(sniffer1.getId(), 1, 10).list().getItems().size());
-//		Assert.assertEquals(1, persister.getEventsQueryBuilder(sniffer1.getId(), 1, 10).list().getTotalCount());
+
+		// Check offset
+		Assert.assertEquals(0, persister.getEventsQueryBuilder(sniffer1.getId(), 1, 10).list().getItems().size());
+		Assert.assertEquals(1, persister.getEventsQueryBuilder(sniffer1.getId(), 1, 10).list().getTotalCount());
 //
 //		// Delete event
 //		Assert.assertNotNull(persister.getEvent(sniffer1.getId(), eventId));

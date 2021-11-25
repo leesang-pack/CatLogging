@@ -24,13 +24,12 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import javax.annotation.PreDestroy;
 import javax.net.ssl.SSLContext;
@@ -40,11 +39,15 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.NodeBuilder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.http.HttpHost;
+import org.apache.http.client.methods.HttpGet;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -73,6 +76,7 @@ import com.catlogging.util.value.Configured;
 import pl.allegro.tech.embeddedelasticsearch.EmbeddedElastic;
 import pl.allegro.tech.embeddedelasticsearch.PopularProperties;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 /**
@@ -89,6 +93,8 @@ public class ElasticSearchAppConfig {
 	private static final String ELASTIC_VERSION = "6.3.0";
 	static final int HTTP_PORT_VALUE = 9999;
 	static final int TCP_PORT_VALUE = 9998;
+
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 	@Bean
 	public EmbeddedElastic initEmbeddedElastic() {
@@ -525,4 +531,50 @@ public class ElasticSearchAppConfig {
 //		return embeddedElastic;
 //	}
 
+	private Stream<String> searchForDocuments(Optional<String> indexMaybe, Optional<String> routing, RestHighLevelClient restHighLevelClient) {
+		String searchCommand = prepareQuery(indexMaybe, routing);
+		String body = fetchDocuments(searchCommand, restHighLevelClient);
+		return parseDocuments(body);
+	}
+
+	private String prepareQuery(Optional<String> indexMaybe, Optional<String> routing) {
+
+		String routingQueryParam = routing
+				.map(r -> "?routing=" + r)
+				.orElse("");
+
+		return indexMaybe
+				.map(index -> "/" + index + "/_search" + routingQueryParam)
+				.orElse("/_search");
+	}
+
+	private String fetchDocuments(String searchCommand, RestHighLevelClient restHighLevelClient) {
+//		HttpGet request = new HttpGet(url(searchCommand));
+//		return restHighLevelClient.execute(request, response -> {
+//			assertOk(response, "Error during search (" + searchCommand + ")");
+//			return readBodySafely(response);
+//		})
+
+		try {
+			RestClient restClient = restHighLevelClient.getLowLevelClient();
+			Response response = restClient.performRequest("GET", searchCommand);
+
+			return IOUtils.toString(response.getEntity().getContent(), UTF_8);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
+	private Stream<String> parseDocuments(String body) {
+		try {
+			JsonNode jsonNode = OBJECT_MAPPER.readTree(body);
+			return StreamSupport.stream(jsonNode.get("hits").get("hits").spliterator(), false)
+					.map(hitNode -> hitNode.get("_source"))
+					.map(JsonNode::toString);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
