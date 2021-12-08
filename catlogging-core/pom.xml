@@ -73,9 +73,9 @@
 									<goal>run</goal>
 								</goals>
 								<configuration>
-									<tasks>
+									<target>
 										<move file="${project.build.directory}/web.xml" tofile="${project.build.outputDirectory}/META-INF/web-fragment.xml" />
-									</tasks>
+									</target>
 								</configuration>
 							</execution>
 						</executions>
@@ -127,6 +127,10 @@
 			<artifactId>log4j</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 		</dependency>
@@ -168,6 +172,23 @@
 			<artifactId>elasticsearch</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>elasticsearch-rest-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>elasticsearch-rest-high-level-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>pl.allegro.tech</groupId>
+			<artifactId>embedded-elasticsearch</artifactId>
+		</dependency>
+		<!--Lombok-->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 		</dependency>
@@ -188,6 +209,11 @@
 			<artifactId>wiremock</artifactId>
 			<classifier>standalone</classifier>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
 		</dependency>
 	</dependencies>
 </project>

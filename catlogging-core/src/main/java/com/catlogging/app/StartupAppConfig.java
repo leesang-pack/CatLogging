@@ -18,15 +18,14 @@
  *******************************************************************************/
 package com.catlogging.app;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Properties;
 
 /**
  * App config for startup routines.
@@ -35,8 +34,8 @@ import org.springframework.context.annotation.Configuration;
  * 
  */
 @Configuration
+@Slf4j
 public class StartupAppConfig {
-	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Value(value = "${catlogging.home}")
 	private String catloggingHomeDir;
@@ -54,14 +53,14 @@ public class StartupAppConfig {
 	@Bean
 	public CatLoggingHome homeDir() throws Exception {
 		File catloggingHomeDirFile = new File(catloggingHomeDir);
-		logger.info("Starting catlogging {} with home directory {}", version,
+		log.info("Starting catlogging {} with home directory {}", version,
 				catloggingHomeDirFile.getPath());
 		if (!catloggingHomeDirFile.exists()) {
-			logger.info("Home directory is't present, going to create it");
+			log.info("Home directory is't present, going to create it");
 			try {
 				catloggingHomeDirFile.mkdirs();
 			} catch (Exception e) {
-				logger.error(
+				log.error(
 						"Failed to create home directory \""
 								+ catloggingHomeDirFile.getPath()
 								+ "\". catlogging can't operate without a write enabled home directory. Please create the home directory manually and grant the user catlogging is running as the write access.",
@@ -69,7 +68,7 @@ public class StartupAppConfig {
 				throw e;
 			}
 		} else if (!catloggingHomeDirFile.canWrite()) {
-			logger.error(
+			log.error(
 					"Configured home directory \"{}\" isn't write enabled. catlogging can't operate without a write enabled home directory. Please grant the user catlogging is running as the write access.",
 					catloggingHomeDirFile.getPath());
 			throw new SecurityException("Configured home directory \""

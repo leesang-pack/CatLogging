@@ -18,20 +18,17 @@
  *******************************************************************************/
 package com.catlogging.event.support;
 
-import java.io.IOException;
-
-import javax.validation.constraints.Min;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.catlogging.event.LogEntryReaderStrategy;
 import com.catlogging.model.Log;
 import com.catlogging.model.LogEntry;
 import com.catlogging.model.LogPointer;
 import com.catlogging.model.LogPointerFactory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.validation.constraints.Min;
+import java.io.IOException;
 
 /**
  * Reader strategy that reads at minimum the configured amount of bytes
@@ -41,9 +38,8 @@ import com.catlogging.model.LogPointerFactory;
  * @author Tester
  * 
  */
+@Slf4j
 public class MinBAmountReadStrategy implements LogEntryReaderStrategy {
-	private static Logger logger = LoggerFactory
-			.getLogger(MinBAmountReadStrategy.class);
 	@JsonIgnore
 	private LogPointer startedAt;
 
@@ -64,13 +60,13 @@ public class MinBAmountReadStrategy implements LogEntryReaderStrategy {
 	}
 
 	@Override
-	public void reset(final Log log, final LogPointerFactory pointerFactory,
+	public void reset(final Log logg, final LogPointerFactory pointerFactory,
 			final LogPointer start) {
 		this.startedAt = start;
 	}
 
 	@Override
-	public boolean continueReading(final Log log,
+	public boolean continueReading(final Log logg,
 			final LogPointerFactory pointerFactory,
 			final LogEntry currentReadEntry) throws IOException {
 		long read = pointerFactory.getDifference(startedAt,
@@ -78,7 +74,7 @@ public class MinBAmountReadStrategy implements LogEntryReaderStrategy {
 		if (read < getMinBytesAmount()) {
 			return true;
 		} else {
-			logger.debug(
+			log.debug(
 					"Interrupt further scanning due to already read the destined min bytes amount: {}",
 					read);
 			return false;

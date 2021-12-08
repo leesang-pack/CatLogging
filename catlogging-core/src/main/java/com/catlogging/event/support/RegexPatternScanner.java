@@ -58,7 +58,7 @@ public class RegexPatternScanner extends SingleEntryIncrementalMatcher
 	private GrokPatternBean grokBean = new GrokPatternBean();
 
 	@JsonProperty
-	@NotEmpty
+	@NotNull
 	private String sourceField = LogEntry.FIELD_RAW_CONTENT;
 
 	@Override

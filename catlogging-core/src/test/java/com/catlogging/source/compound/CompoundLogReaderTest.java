@@ -1,5 +1,24 @@
 package com.catlogging.source.compound;
 
+import com.catlogging.app.CoreAppConfig;
+import com.catlogging.event.Event;
+import com.catlogging.fields.FieldBaseTypes;
+import com.catlogging.model.*;
+import com.catlogging.model.support.ByteArrayLog;
+import com.catlogging.model.support.DefaultPointer;
+import com.catlogging.reader.FormatException;
+import com.catlogging.reader.LogEntryReader;
+import com.catlogging.reader.LogEntryReader.LogEntryConsumer;
+import com.catlogging.reader.support.BufferedConsumer;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.springframework.test.annotation.Repeat;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,44 +26,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.test.annotation.Repeat;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.catlogging.app.CoreAppConfig;
-import com.catlogging.event.Event;
-import com.catlogging.fields.FieldBaseTypes;
-import com.catlogging.model.Log;
-import com.catlogging.model.LogEntry;
-import com.catlogging.model.LogInputStream;
-import com.catlogging.model.LogPointer;
-import com.catlogging.model.LogPointerFactory;
-import com.catlogging.model.LogRawAccess;
-import com.catlogging.model.SeverityLevel;
-import com.catlogging.model.support.ByteArrayLog;
-import com.catlogging.model.support.DefaultPointer;
-import com.catlogging.reader.FormatException;
-import com.catlogging.reader.LogEntryReader;
-import com.catlogging.reader.LogEntryReader.LogEntryConsumer;
-import com.catlogging.reader.support.BufferedConsumer;
-
 /**
  * Test for {@link CompositionReader}.
  * 
  * @author Tester
  *
  */
+@Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { CoreAppConfig.class })
 public class CompoundLogReaderTest {
-	private static Logger logger = LoggerFactory.getLogger(CompoundLogReaderTest.class);
-
 	private static final class DummySubReader implements LogEntryReader<LogRawAccess<LogInputStream>> {
 		private final int maxCount;
 		private final double factor;
@@ -218,7 +209,7 @@ public class CompoundLogReaderTest {
 					}
 				});
 		final long end = System.currentTimeMillis() - start;
-		logger.info("Read composed {} entries in {}ms, throughput: {} entries/s", count.get(), end,
+		log.info("Read composed {} entries in {}ms, throughput: {} entries/s", count.get(), end,
 				Math.round((double) count.get() / (end / 1000)));
 		Assert.assertEquals(45000000, count.get());
 

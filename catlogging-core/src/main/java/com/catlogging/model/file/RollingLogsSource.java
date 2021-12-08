@@ -18,22 +18,20 @@
  *******************************************************************************/
 package com.catlogging.model.file;
 
+import com.catlogging.model.Log;
+import com.catlogging.model.support.DailyRollingLog;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.catlogging.model.Log;
-import com.catlogging.model.support.DailyRollingLog;
 
 /**
  * Source for timestamp rolled log files with a live file where the name is
@@ -44,9 +42,9 @@ import com.catlogging.model.support.DailyRollingLog;
  * @author Tester
  * 
  */
+@Slf4j
 @Component
 public class RollingLogsSource extends AbstractTimestampRollingLogsSource {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@JsonProperty
 	private String pastLogsSuffixPattern = ".*";
@@ -72,7 +70,7 @@ public class RollingLogsSource extends AbstractTimestampRollingLogsSource {
 		final List<Log> rollingLogs = new ArrayList<Log>(logs.size());
 		for (int i = 0; i < logs.size(); i++) {
 			final Log liveLog = logs.get(i);
-			logger.debug("Adapting live log to rolling log: {}", liveLog);
+			log.debug("Adapting live log to rolling log: {}", liveLog);
 			rollingLogs.add(
 					new DailyRollingLog(liveLog.getName(), liveLog.getPath(), liveLog, getPastLogs(liveLog.getPath())));
 		}
@@ -91,7 +89,7 @@ public class RollingLogsSource extends AbstractTimestampRollingLogsSource {
 			// TODO Decouple direct file log association
 			logs[i++] = new FileLog(file);
 		}
-		logger.debug("Found {} past logs for {} with pattern {}", logs.length, liveLog, pastPattern);
+		log.debug("Found {} past logs for {} with pattern {}", logs.length, liveLog, pastPattern);
 		return logs;
 	}
 
@@ -99,7 +97,7 @@ public class RollingLogsSource extends AbstractTimestampRollingLogsSource {
 	public Log getLog(final String path) throws IOException {
 		final Log liveLog = super.getLog(path);
 		if (liveLog != null) {
-			logger.debug("Adapting live log to rolling log: {}", liveLog);
+			log.debug("Adapting live log to rolling log: {}", liveLog);
 			return new DailyRollingLog(liveLog.getName(), liveLog.getPath(), liveLog, getPastLogs(liveLog.getPath()));
 		} else {
 			return null;

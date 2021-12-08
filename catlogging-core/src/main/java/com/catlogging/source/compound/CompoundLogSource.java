@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -47,9 +47,9 @@ import com.catlogging.validators.NotDefaultPrimitiveValue;
  * @author Tester
  *
  */
+@Slf4j
 @PostConstructed(constructor = ComposedLogSourceProducer.class)
 public class CompoundLogSource extends BaseLogsSource<CompoundLogAccess> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CompoundLogSource.class);
 
 	/**
 	 * Passes the {@link LogSourceProvider} dependency to the source.
@@ -80,7 +80,7 @@ public class CompoundLogSource extends BaseLogsSource<CompoundLogAccess> {
 		@NotDefaultPrimitiveValue
 		private long sourceId;
 
-		@NotEmpty
+		@NotNull
 		private String logPath;
 
 		/**
@@ -147,7 +147,7 @@ public class CompoundLogSource extends BaseLogsSource<CompoundLogAccess> {
 					final Map<Long, LogSource<LogRawAccess<? extends LogInputStream>>> logSources = new HashMap<>();
 					for (final LogPartBean part : parts) {
 						if (cycleDetector.get().contains(Long.valueOf(part.getSourceId()))) {
-							LOGGER.warn(
+							log.warn(
 									"Part log source with id {} would build a cycle, it's excluded in composition for log: {}",
 									part.sourceId, this);
 							continue;
@@ -156,7 +156,7 @@ public class CompoundLogSource extends BaseLogsSource<CompoundLogAccess> {
 						if (source == null) {
 							source = logSourceProvider.getSourceById(part.sourceId);
 							if (source == null) {
-								LOGGER.warn(
+								log.warn(
 										"Part log source with id {} not found, it will be excluded in composition for log: {}",
 										part.sourceId, getId());
 								continue;
@@ -165,11 +165,11 @@ public class CompoundLogSource extends BaseLogsSource<CompoundLogAccess> {
 						}
 						try {
 							if (StringUtils.isNotBlank(part.getLogPath())) {
-								final Log log = source.getLog(part.getLogPath());
-								if (log != null) {
-									instances.add(new LogInstance(part.sourceId, log, source));
+								final Log logg = source.getLog(part.getLogPath());
+								if (logg != null) {
+									instances.add(new LogInstance(part.sourceId, logg, source));
 								} else {
-									LOGGER.warn(
+									log.warn(
 											"Part log {} in source {} not found, it will be excluded in composition for log: {}",
 											part.sourceId, part.getLogPath(), getId());
 
@@ -182,12 +182,12 @@ public class CompoundLogSource extends BaseLogsSource<CompoundLogAccess> {
 							}
 
 						} catch (final IOException e) {
-							LOGGER.warn("Failed to load part log " + part.logPath + " in source" + part.sourceId
+							log.warn("Failed to load part log " + part.logPath + " in source" + part.sourceId
 									+ ", it will be excluded", e);
 						}
 					}
 				}
-				LOGGER.debug("Resolved for compound source {} the following log parts: {}", this, instances);
+				log.debug("Resolved for compound source {} the following log parts: {}", this, instances);
 			}
 			return instances;
 		} finally {

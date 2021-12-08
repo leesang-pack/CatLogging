@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.ui.velocity.VelocityEngineFactory;
+//import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import com.catlogging.util.value.ConfigValue;
 import com.catlogging.util.value.Configured;
@@ -109,13 +109,18 @@ public class MailAppConfig {
 	@Bean
 	public VelocityEngine velocityEngine() throws VelocityException,
 			IOException {
-		VelocityEngineFactory factory = new VelocityEngineFactory();
-		Properties props = new Properties();
-		props.put("resource.loader", "class");
-		props.put("class.resource.loader.class",
-				"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-		factory.setVelocityProperties(props);
-		return factory.createVelocityEngine();
+//		VelocityEngineFactory factory = new VelocityEngineFactory();
+//		Properties props = new Properties();
+//		props.put("resource.loader", "class");
+//		props.put("class.resource.loader.class",
+//				"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+//		factory.setVelocityProperties(props);
+
+		Properties properties = new Properties();
+		properties.setProperty("resource.loader", "class");
+		properties.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+		VelocityEngine velocityEngine = new VelocityEngine(properties);
+		return velocityEngine;
 	}
 
 	@Bean

@@ -51,7 +51,7 @@ public final class SeverityLevel implements Comparable<SeverityLevel> {
 	private int ordinalNumber;
 	@NotNull
 	private SeverityClassification classification = SeverityClassification.INFORMATIONAL;
-	@NotEmpty
+	@NotNull
 	private String name;
 
 	public SeverityLevel() {

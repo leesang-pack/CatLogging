@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  * catlogging, open source tool for viewing, monitoring and analysing log data.
  * Copyright (c) 2021 xzpluszone, www.catlogging.com

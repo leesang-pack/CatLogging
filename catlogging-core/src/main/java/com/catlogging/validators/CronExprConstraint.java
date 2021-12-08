@@ -18,24 +18,18 @@
  *******************************************************************************/
 package com.catlogging.validators;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.text.ParseException;
-
-import javax.validation.Constraint;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.Payload;
-
+import com.catlogging.validators.CronExprConstraint.CronExprValidator;
 import org.quartz.CronExpression;
 import org.quartz.CronScheduleBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.catlogging.validators.CronExprConstraint.CronExprValidator;
+import javax.validation.Constraint;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import javax.validation.Payload;
+import java.lang.annotation.*;
+import java.text.ParseException;
 
 /**
  * Validates the string input for a valid {@link CronExpression} syntax.

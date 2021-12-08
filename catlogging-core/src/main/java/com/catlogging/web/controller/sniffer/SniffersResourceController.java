@@ -18,31 +18,22 @@
  *******************************************************************************/
 package com.catlogging.web.controller.sniffer;
 
-import java.text.ParseException;
-
-import javax.validation.Valid;
-
-import org.quartz.SchedulerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.catlogging.event.EventPersistence;
 import com.catlogging.event.Sniffer;
 import com.catlogging.event.SnifferPersistence;
 import com.catlogging.event.SnifferScheduler;
 import com.catlogging.web.controller.exception.ActionViolationException;
 import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import org.quartz.SchedulerException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.text.ParseException;
 
 /**
  * REST resource for sniffers.
@@ -50,9 +41,9 @@ import com.catlogging.web.controller.exception.ResourceNotFoundException;
  * @author Tester
  * 
  */
+@Slf4j
 @RestController
 public class SniffersResourceController {
-	private static Logger logger = LoggerFactory.getLogger(SniffersResourceController.class);
 
 	@Autowired
 	protected SnifferPersistence snifferPersistence;
@@ -77,7 +68,7 @@ public class SniffersResourceController {
 	long createSniffer(@Valid @RequestBody final Sniffer newSniffer)
 			throws ResourceNotFoundException, SchedulerException {
 		final long snifferId = snifferPersistence.createSniffer(newSniffer);
-		logger.info("Created new Sniffer with id: {}", snifferId);
+		log.info("Created new Sniffer with id: {}", snifferId);
 		return snifferId;
 	}
 
@@ -87,7 +78,7 @@ public class SniffersResourceController {
 	void updateSniffer(@PathVariable("snifferId") final long snifferId, @Valid @RequestBody final Sniffer sniffer)
 			throws ResourceNotFoundException, SchedulerException {
 		snifferPersistence.updateSniffer(sniffer);
-		logger.info("Updated sniffer with id: {}", snifferId);
+		log.info("Updated sniffer with id: {}", snifferId);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -95,17 +86,17 @@ public class SniffersResourceController {
 	@ResponseStatus(HttpStatus.OK)
 	void start(@PathVariable("snifferId") final long snifferId)
 			throws ResourceNotFoundException, SchedulerException, ParseException {
-		logger.info("Starting sniffer: {}", snifferId);
+		log.info("Starting sniffer: {}", snifferId);
 		snifferScheduler.startSniffing(snifferId);
-		logger.info("Started sniffer: {}", snifferId);
+		log.info("Started sniffer: {}", snifferId);
 	}
 
 	@RequestMapping(value = "/sniffers/{snifferId}/stop", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
 	void stop(@PathVariable("snifferId") final long snifferId) throws ResourceNotFoundException, SchedulerException {
-		logger.info("Stopping sniffer: {}", snifferId);
+		log.info("Stopping sniffer: {}", snifferId);
 		snifferScheduler.stopSniffing(snifferId);
-		logger.info("Stopped sniffer: {}", snifferId);
+		log.info("Stopped sniffer: {}", snifferId);
 	}
 
 	@RequestMapping(value = "/sniffers/{snifferId}", method = RequestMethod.DELETE)
@@ -113,7 +104,7 @@ public class SniffersResourceController {
 	@Transactional(rollbackFor = Exception.class)
 	void deleteSniffer(@PathVariable("snifferId") final long snifferId)
 			throws ResourceNotFoundException, SchedulerException, ActionViolationException {
-		logger.info("Deleting sniffer: {}", snifferId);
+		log.info("Deleting sniffer: {}", snifferId);
 		final Sniffer sniffer = snifferPersistence.getSniffer(snifferId);
 		if (sniffer == null) {
 			throw new ResourceNotFoundException(Sniffer.class, snifferId, "Sniffer not found for id: " + snifferId);
@@ -121,13 +112,13 @@ public class SniffersResourceController {
 			throw new ActionViolationException("Can't delete a running sniffer");
 		}
 		snifferPersistence.deleteSniffer(sniffer);
-		logger.info("Deleting all sniffer events: {}", snifferId);
+		log.info("Deleting all sniffer events: {}", snifferId);
 		try {
 			eventPersistence.deleteAll(snifferId);
 		} catch (final Exception e) {
-			logger.error("Failed to delete events of sniffer: " + snifferId, e);
+			log.error("Failed to delete events of sniffer: " + snifferId, e);
 		}
-		logger.info("Deleted sniffer: {}", snifferId);
+		log.info("Deleted sniffer: {}", snifferId);
 
 	}
 }

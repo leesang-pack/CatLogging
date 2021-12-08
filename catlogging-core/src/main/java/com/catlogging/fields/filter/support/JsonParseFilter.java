@@ -18,22 +18,20 @@
  *******************************************************************************/
 package com.catlogging.fields.filter.support;
 
-import java.io.IOException;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.catlogging.config.BeanConfigFactoryManager;
 import com.catlogging.config.BeanPostConstructor;
 import com.catlogging.config.ConfigException;
 import com.catlogging.config.PostConstructed;
 import com.catlogging.fields.FieldBaseTypes;
 import com.catlogging.validators.JsonStringConastraint;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 /**
  * Parses the string value of a source field and converts it to an (JSON) object
@@ -42,10 +40,9 @@ import com.catlogging.validators.JsonStringConastraint;
  * @author Tester
  *
  */
+@Slf4j
 @PostConstructed(constructor = JsonParseFilter.JsonParseFilterBuilder.class)
 public final class JsonParseFilter extends AbstractTransformationFilter<Object> {
-	private static final Logger logger = LoggerFactory
-			.getLogger(JsonParseFilter.class);
 	private ObjectMapper objectMapper;
 
 	@Component
@@ -94,7 +91,7 @@ public final class JsonParseFilter extends AbstractTransformationFilter<Object> 
 					fallbackJsonObject = objectMapper.readValue(
 							fallbackJsonValue, Object.class);
 				} catch (IOException e) {
-					logger.warn("Failed to deserialize fallback JSON string: "
+					log.warn("Failed to deserialize fallback JSON string: "
 							+ fallbackJsonValue, e);
 				}
 			} else {
@@ -114,7 +111,7 @@ public final class JsonParseFilter extends AbstractTransformationFilter<Object> 
 		try {
 			return objectMapper.readValue(sourceValue, Object.class);
 		} catch (IOException e) {
-			logger.trace("Failed to parse source as JSON",e);
+			log.trace("Failed to parse source as JSON",e);
 			return null;
 		}
 	}

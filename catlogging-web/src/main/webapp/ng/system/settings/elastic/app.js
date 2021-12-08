@@ -39,11 +39,11 @@ angular
 			$log.info("Update ES settings and status: ", data)
      		$scope.settings = data.settings;
      		$scope.status = data;
-     		if (!$scope.settings.remoteAddresses) {
+     		if ($scope.settings.remoteAddresses == null) {
      			$scope.settings.remoteAddresses = [
      			   {
      				   host: "localhost",
-     				   port: 9300
+     				   port: 9200
      			   }
      			];
      		}
@@ -57,13 +57,13 @@ angular
 		 };
 		 
 		 $scope.addNode = function() {
-			 if (!$scope.settings.remoteAddresses) {
+			 if ($scope.settings.remoteAddresses == null) {
 				 $scope.settings.remoteAddresses = [];
 			 }
 			 if ($scope.settings.remoteAddresses.length==0) {
 				 $scope.settings.remoteAddresses.push({
  				   host: "localhost",
- 				   port: 9300
+ 				   port: 9200
  			   });
 			 } else {
 				 $scope.settings.remoteAddresses.push({});

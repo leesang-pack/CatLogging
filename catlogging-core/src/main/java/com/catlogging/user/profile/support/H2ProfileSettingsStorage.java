@@ -1,21 +1,19 @@
 package com.catlogging.user.profile.support;
 
-import java.io.IOException;
-import java.util.List;
-
+import com.catlogging.fields.FieldsMap;
+import com.catlogging.user.profile.ProfileSettingsStorage;
+import com.catlogging.util.DataAccessException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.NotImplementedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.catlogging.fields.FieldsMap;
-import com.catlogging.user.profile.ProfileSettingsStorage;
-import com.catlogging.util.DataAccessException;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * H2 implementation for {@link ProfileSettingsStorage}. Recursive retrieval
@@ -24,9 +22,9 @@ import com.catlogging.util.DataAccessException;
  * @author Tester
  *
  */
+@Slf4j
 @Component
 public class H2ProfileSettingsStorage implements ProfileSettingsStorage {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -39,11 +37,11 @@ public class H2ProfileSettingsStorage implements ProfileSettingsStorage {
 	public void storeSettings(final String token, final String settingsPath, final FieldsMap data) {
 		try {
 			if (getSettings(token, settingsPath, false) == null) {
-				logger.info("Inserting profile settings for path: {}", settingsPath);
+				log.info("Inserting profile settings for path: {}", settingsPath);
 				jdbcTemplate.update("INSERT INTO USER_PROFILE_SETTINGS SET TOKEN=?, PATH=?, DATA=?", token,
 						settingsPath, objectMapper.writeValueAsString(data));
 			} else {
-				logger.info("Updating existing profile settings for path: {}", settingsPath);
+				log.info("Updating existing profile settings for path: {}", settingsPath);
 				jdbcTemplate.update("UPDATE USER_PROFILE_SETTINGS SET DATA=? WHERE TOKEN=? AND PATH=?",
 						objectMapper.writeValueAsString(data), token, settingsPath);
 			}
@@ -55,7 +53,7 @@ public class H2ProfileSettingsStorage implements ProfileSettingsStorage {
 
 	@Override
 	public void deleteSettings(final String token, final String path, final boolean recursive) {
-		logger.info("Deleting profile settings recursively={} for path: {}", recursive, path);
+		log.info("Deleting profile settings recursively={} for path: {}", recursive, path);
 		if (recursive) {
 			jdbcTemplate.update("DELETE FROM USER_PROFILE_SETTINGS WHERE TOKEN=? AND PATH LIKE ? || '%' ", token, path);
 		} else {
@@ -72,14 +70,14 @@ public class H2ProfileSettingsStorage implements ProfileSettingsStorage {
 				"SELECT DATA FROM USER_PROFILE_SETTINGS WHERE TOKEN=? AND PATH=?", String.class, token, path);
 		try {
 			if (list.isEmpty()) {
-				logger.debug("No profile settings found for token={} and path={}", token, path);
+				log.debug("No profile settings found for token={} and path={}", token, path);
 				return null;
 			} else {
-				logger.debug("Loaded profile settings for token={} and path={}", token, path);
+				log.debug("Loaded profile settings for token={} and path={}", token, path);
 				return objectMapper.readValue(list.get(0), FieldsMap.class);
 			}
 		} catch (final IOException e) {
-			logger.error("Failed to deserialize profile setting: " + list.get(0), e);
+			log.error("Failed to deserialize profile setting: " + list.get(0), e);
 			return null;
 		}
 	}

@@ -18,22 +18,6 @@
  *******************************************************************************/
 package com.catlogging.model.h2;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.stereotype.Component;
-
 import com.catlogging.config.BeanConfigFactoryManager;
 import com.catlogging.config.ConfigException;
 import com.catlogging.model.LogInputStream;
@@ -43,6 +27,20 @@ import com.catlogging.model.LogSource.LogSourceWrapper;
 import com.catlogging.model.LogSourceProvider;
 import com.catlogging.model.support.BaseLogsSource;
 import com.catlogging.util.ReferenceIntegrityException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.stereotype.Component;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * H2 based source provider.
@@ -50,9 +48,9 @@ import com.catlogging.util.ReferenceIntegrityException;
  * @author Tester
  * 
  */
+@Slf4j
 @Component
 public class H2LogSourceProvider implements LogSourceProvider {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private BeanConfigFactoryManager configManager;
@@ -111,7 +109,7 @@ public class H2LogSourceProvider implements LogSourceProvider {
 						wrapped.setId(id);
 						return wrapped;
 					} catch (final ConfigException e) {
-						logger.error("Failed to deserialize log source: " + id, e);
+						log.error("Failed to deserialize log source: " + id, e);
 						return LogSource.NULL_SOURCE;
 					}
 				}
@@ -163,9 +161,9 @@ public class H2LogSourceProvider implements LogSourceProvider {
 			throws ReferenceIntegrityException {
 		try {
 			jdbcTemplate.update("DELETE FROM LOG_SOURCES WHERE ID=?", source.getId());
-			logger.info("Deleted source with id: {}", source.getId());
+			log.info("Deleted source with id: {}", source.getId());
 		} catch (final DataIntegrityViolationException e) {
-			logger.info("Deleting source with id {} failed due to references", source.getId());
+			log.info("Deleting source with id {} failed due to references", source.getId());
 			throw new ReferenceIntegrityException(LogSource.class, e);
 		}
 	}

@@ -18,24 +18,18 @@
  *******************************************************************************/
 package com.catlogging.event.support;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.catlogging.event.Event;
 import com.catlogging.event.IncrementData;
 import com.catlogging.event.LogEntryReaderStrategy;
 import com.catlogging.event.Scanner;
-import com.catlogging.model.Log;
-import com.catlogging.model.LogEntry;
-import com.catlogging.model.LogInputStream;
-import com.catlogging.model.LogPointerFactory;
-import com.catlogging.model.LogRawAccess;
+import com.catlogging.model.*;
 import com.catlogging.reader.FormatException;
 import com.catlogging.reader.LogEntryReader;
 import com.catlogging.reader.LogEntryReader.LogEntryConsumer;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Matcher based on a single entry analysis. It supports natively the
@@ -44,17 +38,17 @@ import com.catlogging.reader.LogEntryReader.LogEntryConsumer;
  * @author Tester
  * 
  */
+@Slf4j
 public abstract class SingleEntryIncrementalMatcher implements Scanner {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Override
 	public <R extends LogRawAccess<? extends LogInputStream>> void find(final LogEntryReader<R> reader,
-			final LogEntryReaderStrategy readerStrategy, final Log log, final R logAccess,
+			final LogEntryReaderStrategy readerStrategy, final Log logg, final R logAccess,
 			final IncrementData incrementData, final EventConsumer eventConsumer) throws IOException, FormatException {
 		try {
-			reader.readEntries(log, logAccess, incrementData.getNextOffset(logAccess), new LogEntryConsumer() {
+			reader.readEntries(logg, logAccess, incrementData.getNextOffset(logAccess), new LogEntryConsumer() {
 				@Override
-				public boolean consume(final Log log, final LogPointerFactory pointerFactory, final LogEntry entry)
+				public boolean consume(final Log logg, final LogPointerFactory pointerFactory, final LogEntry entry)
 						throws IOException {
 					incrementData.setNextOffset(entry.getEndOffset());
 					Event event;
@@ -64,13 +58,13 @@ public abstract class SingleEntryIncrementalMatcher implements Scanner {
 						throw new IOException(e);
 					}
 					if (event != null) {
-						logger.debug("Entry matches the interest: {}", entry);
+						log.debug("Entry matches the interest: {}", entry);
 						final ArrayList<LogEntry> entries = new ArrayList<LogEntry>();
 						entries.add(entry);
 						event.setEntries(entries);
 						eventConsumer.consume(event);
 					}
-					return readerStrategy.continueReading(log, pointerFactory, entry);
+					return readerStrategy.continueReading(logg, pointerFactory, entry);
 				}
 			});
 		} catch (final IOException e) {

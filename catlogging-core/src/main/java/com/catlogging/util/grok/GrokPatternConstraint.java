@@ -18,22 +18,16 @@
  *******************************************************************************/
 package com.catlogging.util.grok;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.catlogging.app.ContextProvider;
+import com.catlogging.util.grok.GrokPatternConstraint.GrokPatternValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.catlogging.app.ContextProvider;
-import com.catlogging.util.grok.GrokPatternConstraint.GrokPatternValidator;
+import java.lang.annotation.*;
 
 /**
  * Validates the string input for a valid {@link Grok} syntax.

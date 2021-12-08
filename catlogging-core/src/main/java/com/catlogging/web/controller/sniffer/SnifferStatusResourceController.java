@@ -1,39 +1,25 @@
 package com.catlogging.web.controller.sniffer;
 
+import com.catlogging.event.IncrementData;
+import com.catlogging.event.Sniffer;
+import com.catlogging.event.SnifferPersistence;
+import com.catlogging.event.SnifferScheduler;
+import com.catlogging.model.*;
+import com.catlogging.model.support.JsonLogPointer;
+import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import com.catlogging.web.controller.sniffer.SnifferStatusController.LogSniffingStatus;
+import lombok.extern.slf4j.Slf4j;
+import org.quartz.SchedulerException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.quartz.SchedulerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.catlogging.event.IncrementData;
-import com.catlogging.event.Sniffer;
-import com.catlogging.event.SnifferPersistence;
-import com.catlogging.event.SnifferScheduler;
-import com.catlogging.model.Log;
-import com.catlogging.model.LogInputStream;
-import com.catlogging.model.LogPointer;
-import com.catlogging.model.LogRawAccess;
-import com.catlogging.model.LogSource;
-import com.catlogging.model.LogSourceProvider;
-import com.catlogging.model.support.JsonLogPointer;
-import com.catlogging.web.controller.exception.ResourceNotFoundException;
-import com.catlogging.web.controller.sniffer.SnifferStatusController.LogSniffingStatus;
 
 /**
  * REST controller for sniffer status methods.
@@ -41,9 +27,9 @@ import com.catlogging.web.controller.sniffer.SnifferStatusController.LogSniffing
  * @author Tester
  *
  */
+@Slf4j
 @RestController
 public class SnifferStatusResourceController {
-	private static Logger logger = LoggerFactory.getLogger(SnifferStatusResourceController.class);
 
 	@Autowired
 	private SnifferPersistence snifferPersistence;
@@ -120,43 +106,43 @@ public class SnifferStatusResourceController {
 	@ResponseStatus(HttpStatus.OK)
 	void startFrom(@PathVariable("snifferId") final long snifferId, @RequestBody final StartFromBean[] startFromList)
 			throws ResourceNotFoundException, IOException, SchedulerException {
-		logger.info("Starting sniffer {} from: {}", snifferId, startFromList);
+		log.info("Starting sniffer {} from: {}", snifferId, startFromList);
 		final Sniffer activeSniffer = getSniffer(snifferId);
 		final LogSource<?> source = getSource(activeSniffer);
-		for (final Log log : source.getLogs()) {
+		for (final Log logg : source.getLogs()) {
 			StartFromBean startFrom = null;
 			for (final StartFromBean s : startFromList) {
-				if (log.getPath().equals(s.logPath)) {
+				if (logg.getPath().equals(s.logPath)) {
 					startFrom = s;
 					break;
 				}
 			}
 			if (startFrom != null) {
-				final IncrementData incData = snifferPersistence.getIncrementData(activeSniffer, source, log);
+				final IncrementData incData = snifferPersistence.getIncrementData(activeSniffer, source, logg);
 				if (startFrom.startFromHead) {
 					incData.setNextOffset(null);
-					logger.debug("Setup sniffing {} from head", log);
+					log.debug("Setup sniffing {} from head", log);
 				} else if (startFrom.startFromTail) {
-					final LogRawAccess<?> logAccess = source.getLogAccess(log);
+					final LogRawAccess<?> logAccess = source.getLogAccess(logg);
 					final LogPointer end = logAccess.end();
 					incData.setNextOffset(end);
-					logger.debug("Setup sniffing {} from tail: {}", log, end);
+					log.debug("Setup sniffing {} from tail: {}", log, end);
 				} else if (startFrom.startFromPointer != null && startFrom.startFromPointer.getJson() != null) {
-					final LogRawAccess<?> logAccess = source.getLogAccess(log);
+					final LogRawAccess<?> logAccess = source.getLogAccess(logg);
 					final LogPointer refreshedPointer = logAccess.getFromJSON(startFrom.startFromPointer.getJson());
 					incData.setNextOffset(refreshedPointer);
-					logger.debug("Setup sniffing {} from pointer: {}", log, refreshedPointer);
+					log.debug("Setup sniffing {} from pointer: {}", logg, refreshedPointer);
 				} else {
-					logger.warn("Invalid request to setup sniffing {}: {}", log, startFrom);
+					log.warn("Invalid request to setup sniffing {}: {}", logg, startFrom);
 					continue;
 				}
-				snifferPersistence.storeIncrementalData(activeSniffer, source, log, incData);
+				snifferPersistence.storeIncrementalData(activeSniffer, source, logg, incData);
 			} else {
-				logger.debug("No start-from information received for log, sniffing will be started from head: {}", log);
+				log.debug("No start-from information received for log, sniffing will be started from head: {}", logg);
 			}
 		}
 		snifferScheduler.startSniffing(activeSniffer.getId());
-		logger.info("Started sniffer: {}", snifferId);
+		log.info("Started sniffer: {}", snifferId);
 	}
 
 	/**

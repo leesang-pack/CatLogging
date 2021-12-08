@@ -1,15 +1,11 @@
 package com.catlogging.system.notification.h2;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.catlogging.system.notification.Notification;
+import com.catlogging.system.notification.Notification.Level;
+import com.catlogging.system.notification.Notification.Type;
+import com.catlogging.system.notification.NotificationProvider;
+import com.catlogging.util.PageableResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -17,11 +13,9 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.catlogging.system.notification.Notification;
-import com.catlogging.system.notification.Notification.Level;
-import com.catlogging.system.notification.Notification.Type;
-import com.catlogging.system.notification.NotificationProvider;
-import com.catlogging.util.PageableResult;
+import java.sql.*;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * H2 implementation of {@link NotificationProvider}.
@@ -29,11 +23,11 @@ import com.catlogging.util.PageableResult;
  * @author Tester
  *
  */
+@Slf4j
 @Component
 public class H2NotificationProvider implements NotificationProvider {
 	private static final String TABLE_NAME = "SYSTEM_NOTIFICATIONS";
 	private static final String TABLE_NAME_ACK = "SYSTEM_NOTIFICATIONS_ACKS";
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
@@ -83,7 +77,7 @@ public class H2NotificationProvider implements NotificationProvider {
 			if (ord >= 0 && ord < Type.values().length) {
 				return Type.values()[ord];
 			}
-			logger.error("Failed to map type with index: {}", ord);
+			log.error("Failed to map type with index: {}", ord);
 			return Type.MESSAGE;
 		}
 
@@ -91,7 +85,7 @@ public class H2NotificationProvider implements NotificationProvider {
 			if (ord >= 0 && ord < Level.values().length) {
 				return Level.values()[ord];
 			}
-			logger.error("Failed to map level with index: {}", ord);
+			log.error("Failed to map level with index: {}", ord);
 			return Level.INFO;
 		}
 	}
@@ -102,19 +96,19 @@ public class H2NotificationProvider implements NotificationProvider {
 		if (jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE ID=?", Integer.class, n.getId())
 				.intValue() == 0) {
 			jdbcTemplate.update(new NotificationCreator(n));
-			logger.debug("Stored notification: {}", n);
+			log.debug("Stored notification: {}", n);
 			return true;
 		} else if (override) {
 			delete(n.getId());
 			jdbcTemplate.update(new NotificationCreator(n));
-			logger.debug("Overridden notification: {}", n);
+			log.debug("Overridden notification: {}", n);
 			return true;
 		} else if (n.getExpirationDate() != null
 				&& jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE ID=? AND EXPIRATION = ?",
 						Integer.class, n.getId(), n.getExpirationDate()).intValue() == 0) {
 			jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET EXPIRATION = ? WHERE ID=?", n.getExpirationDate(),
 					n.getId());
-			logger.debug("Updated expiration date of notification: {}", n);
+			log.debug("Updated expiration date of notification: {}", n);
 			return true;
 		} else {
 			return false;
@@ -147,14 +141,14 @@ public class H2NotificationProvider implements NotificationProvider {
 			if (worstOrd >= 0 && worstOrd < Level.values().length) {
 				worst = Level.values()[worstOrd];
 			} else {
-				logger.error("Failed to read worst level from database, ordinal number is invalid: {}", worstOrd);
+				log.error("Failed to read worst level from database, ordinal number is invalid: {}", worstOrd);
 			}
 		}
 		int c = 0;
 		if (r.get("c") != null) {
 			c = ((Number) r.get("c")).intValue();
 		}
-		logger.debug("Took {}ms for calculating notification summary", System.currentTimeMillis() - start);
+		log.debug("Took {}ms for calculating notification summary", System.currentTimeMillis() - start);
 		return new NotificationSummary(c, worst);
 	}
 
@@ -166,7 +160,7 @@ public class H2NotificationProvider implements NotificationProvider {
 	@Override
 	@Transactional
 	public void delete(final String notificationId) {
-		logger.debug("Deleting notification: {}", notificationId);
+		log.debug("Deleting notification: {}", notificationId);
 		jdbcTemplate.update("DELETE FROM " + TABLE_NAME_ACK + " WHERE ID = ?", notificationId);
 		jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE ID = ?", notificationId);
 	}

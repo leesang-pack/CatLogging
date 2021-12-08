@@ -144,8 +144,7 @@ public interface EventPersistence {
 			super();
 		}
 
-		public EventsResult(final long totalCount, final List<AspectEvent> items,
-				final EventsCountHistogram histogram) {
+		public EventsResult(final long totalCount, final List<AspectEvent> items, final EventsCountHistogram histogram) {
 			super(totalCount, items);
 			this.eventsCountHistogram = histogram;
 		}
@@ -184,6 +183,7 @@ public interface EventPersistence {
 		NativeQueryBuilder withNativeQuery(final String nativeQuery);
 	}
 
+	public void refreshIndex();
 	public String persist(Event event);
 
 	public void delete(long snifferId, String[] eventIds);

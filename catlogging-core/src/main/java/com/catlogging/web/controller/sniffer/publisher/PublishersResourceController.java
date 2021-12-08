@@ -18,29 +18,19 @@
  *******************************************************************************/
 package com.catlogging.web.controller.sniffer.publisher;
 
-import java.io.IOException;
-import java.util.Date;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.catlogging.event.Event;
 import com.catlogging.event.Publisher;
 import com.catlogging.event.Publisher.PublishException;
-import com.catlogging.web.controller.sniffer.SniffersResourceController;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Date;
 
 /**
  * {@link Publisher} related REST controller.
@@ -48,9 +38,9 @@ import com.catlogging.web.controller.sniffer.SniffersResourceController;
  * @author Tester
  * 
  */
+@Slf4j
 @RestController
 public class PublishersResourceController {
-	private static Logger logger = LoggerFactory.getLogger(SniffersResourceController.class);
 
 	/**
 	 * Request bean for publisher test.
@@ -151,14 +141,14 @@ public class PublishersResourceController {
 		event.setSnifferId(request.getSnifferId());
 		event.setLogPath(request.getLogPath());
 		event.setLogSourceId(request.getLogSourceId());
-		logger.info("Test publishing by {} of : {}", request.getPublisher(), event);
+		log.info("Test publishing by {} of : {}", request.getPublisher(), event);
 		request.getPublisher().publish(event);
 	}
 
 	@ExceptionHandler(value = Throwable.class)
 	@ResponseBody
 	public void handleAllExceptions(final Throwable ex, final HttpServletResponse response) throws IOException {
-		logger.info("Failed to test event publishing", ex);
+		log.info("Failed to test event publishing", ex);
 		response.setStatus(HttpStatus.CONFLICT.value());
 		response.setContentType(MediaType.TEXT_PLAIN_VALUE);
 		final String stackTrace = ExceptionUtils.getStackTrace(ex);

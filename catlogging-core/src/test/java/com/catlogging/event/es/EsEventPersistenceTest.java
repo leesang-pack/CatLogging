@@ -21,13 +21,11 @@ package com.catlogging.event.es;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.elasticsearch.client.Client;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,9 +36,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.catlogging.app.CoreAppConfig;
-import com.catlogging.app.ElasticSearchAppConfig;
-import com.catlogging.app.ElasticSearchAppConfig.ClientCallback;
-import com.catlogging.app.ElasticSearchAppConfig.ElasticClientTemplate;
+import com.catlogging.app.ElasticSearchConnect;
 import com.catlogging.app.QaDataSourceAppConfig;
 import com.catlogging.event.Event;
 import com.catlogging.event.Sniffer;
@@ -58,12 +54,11 @@ import com.catlogging.model.support.DefaultPointer;
  * @author Tester
  * 
  */
+@Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { HelperAppConfig.class, CoreAppConfig.class, QaDataSourceAppConfig.class,
-		ElasticSearchAppConfig.class })
+		ElasticSearchConnect.class })
 public class EsEventPersistenceTest {
-
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Configuration
 	public static class HelperAppConfig {
@@ -103,9 +98,6 @@ public class EsEventPersistenceTest {
 			};
 		}
 	}
-
-	@Autowired
-	private ElasticClientTemplate clientTpl;
 
 	@Autowired
 	private EsEventPersistence persister;
@@ -150,19 +142,17 @@ public class EsEventPersistenceTest {
 		e.put("my", "value");
 		final String eventId = persister.persist(e);
 
-		logger.info("Serialized event as: {}", objectMapper.writeValueAsString(e));
+		log.info("Serialized event as: {}", objectMapper.writeValueAsString(e));
 
-		clientTpl.executeWithClient(new ClientCallback<Object>() {
-			@Override
-			public Object execute(final Client client) {
-				client.admin().indices().prepareRefresh().get();
-				return null;
-			}
-		});
+		persister.refreshIndex();
+
+		log.info("refreshed... id:{}, eventId:{}", sniffer1.getId(), eventId);
+
 		// Check
 		Assert.assertEquals(1, persister.getEventsQueryBuilder(sniffer1.getId(), 0, 10).list().getItems().size());
 		Assert.assertEquals(1, persister.getEventsQueryBuilder(sniffer1.getId(), 0, 10).list().getTotalCount());
 		final Event checkEvent = persister.getEvent(sniffer1.getId(), eventId);
+		log.info("checkEvent... {}", checkEvent);
 		Assert.assertEquals(sniffer1.getId(), checkEvent.getSnifferId());
 		Assert.assertEquals(source1.getId(), checkEvent.getLogSourceId());
 		Assert.assertEquals("log", checkEvent.getLogPath());
@@ -170,8 +160,7 @@ public class EsEventPersistenceTest {
 		Assert.assertEquals(2, checkEvent.getEntries().size());
 		Assert.assertEquals("1", checkEvent.getEntries().get(0).getRawContent());
 		Assert.assertEquals(new Date(0), checkEvent.getEntries().get(0).get("f1"));
-		Assert.assertEquals(entry1.getStartOffset().getJson(),
-				checkEvent.getEntries().get(0).getStartOffset().getJson());
+		Assert.assertEquals(entry1.getStartOffset().getJson(), checkEvent.getEntries().get(0).getStartOffset().getJson());
 		Assert.assertEquals("2", checkEvent.getEntries().get(1).getRawContent());
 		Assert.assertEquals("value", checkEvent.get("my"));
 
@@ -187,6 +176,7 @@ public class EsEventPersistenceTest {
 		// Delete all events
 		Mockito.when(snifferPersistence.getSniffer(sniffer1.getId())).thenReturn(sniffer1);
 		Mockito.when(sourceProvider.getSourceById(sniffer1.getLogSourceId())).thenReturn((LogSource) source1);
+		log.debug("------------------------>> delete check..");
 		persister.deleteAll(sniffer1.getId());
 		persister.deleteAll(sniffer1.getId());
 	}

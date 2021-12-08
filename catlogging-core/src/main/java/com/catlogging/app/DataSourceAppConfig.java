@@ -18,16 +18,10 @@
  *******************************************************************************/
 package com.catlogging.app;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
+import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.MigrationVersion;
 import org.h2.jdbcx.JdbcConnectionPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -38,6 +32,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 /**
  * Configured the live datasource.
  * 
@@ -45,10 +43,10 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
  * 
  */
 @Configuration
+@Slf4j
 public class DataSourceAppConfig {
 	private static final String DB_SETUP_VERSION = "0.5.5";
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Value(value = "${catlogging.h2.user}")
 	private String user;
@@ -99,7 +97,7 @@ public class DataSourceAppConfig {
 		final JdbcTemplate tpl = new JdbcTemplate(pool);
 		if (tpl.queryForObject("select count(*) from information_schema.tables where table_name = 'LOG_SOURCES'",
 				int.class) == 0) {
-			logger.info("H2 database not found, creating new schema and populate with default data");
+			log.info("H2 database not found, creating new schema and populate with default data");
 			flyway.setBaselineVersion(MigrationVersion.fromVersion(DB_SETUP_VERSION));
 			flyway.setBaselineOnMigrate(true);
 			try {
@@ -109,14 +107,14 @@ public class DataSourceAppConfig {
 				dbPopulator.addScript(new ClassPathResource("/sql/model/schema_h2_data.sql"));
 				dbPopulator.populate(con);
 				newSchema = true;
-				logger.info("Established H2 connection pool with new database");
+				log.info("Established H2 connection pool with new database");
 			} finally {
 				if (con != null) {
 					con.close();
 				}
 			}
 		} else {
-			logger.info("Established H2 connection pool with existing database");
+			log.info("Established H2 connection pool with existing database");
 			try {
 				final ResourceDatabasePopulator dbPopulator = new ResourceDatabasePopulator();
 				dbPopulator.addScript(new ClassPathResource("/sql/model/schema_h2_data.sql"));
@@ -128,15 +126,15 @@ public class DataSourceAppConfig {
 			}
 			if (tpl.queryForObject("select count(*) from information_schema.tables where table_name = 'schema_version'",
 					int.class) == 0) {
-				logger.info("Flyway's DB migration not setup in this version, set baseline version to 0.5.0");
+				log.info("Flyway's DB migration not setup in this version, set baseline version to 0.5.0");
 				flyway.setBaselineVersion(MigrationVersion.fromVersion("0.5.0"));
 				flyway.setBaselineOnMigrate(true);
 			}
 		}
 
-		logger.debug("Migrating database, base version is: {}", flyway.getBaselineVersion());
+		log.debug("Migrating database, base version is: {}", flyway.getBaselineVersion());
 		flyway.migrate();
-		logger.debug("Database migrated from base version: {}", flyway.getBaselineVersion());
+		log.debug("Database migrated from base version: {}", flyway.getBaselineVersion());
 
 		return pool;
 	}

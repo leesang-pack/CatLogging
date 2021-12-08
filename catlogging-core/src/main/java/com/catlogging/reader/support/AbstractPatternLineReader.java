@@ -18,17 +18,6 @@
  *******************************************************************************/
 package com.catlogging.reader.support;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.LinkedHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.Semaphore;
-
-import org.hibernate.validator.constraints.NotEmpty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.catlogging.fields.FieldBaseTypes;
 import com.catlogging.model.Log;
 import com.catlogging.model.LogEntry;
@@ -39,6 +28,15 @@ import com.catlogging.reader.FormatException;
 import com.catlogging.reader.LogEntryReader;
 import com.catlogging.util.value.ConfigValue;
 import com.catlogging.util.value.Configured;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.LinkedHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Semaphore;
 
 /**
  * Abstract line text reader based on pattern matching.
@@ -46,14 +44,13 @@ import com.catlogging.util.value.Configured;
  * @author Tester
  * 
  */
+@Slf4j
 public abstract class AbstractPatternLineReader<MatcherContext> implements LogEntryReader<ByteLogAccess> {
 	private static final int STRING_BUILDER_CAPACITY = 4096;
 
 	public static final String PROP_catlogging_READER_MAX_MULTIPLE_LINES = "catlogging.reader.pattern.maxUnformattedLines";
 
 	public static final int DEFAULT_MAX_UNFORMATTED_LINES = 500;
-
-	private static final Logger logger = LoggerFactory.getLogger(AbstractPatternLineReader.class);
 
 	@Configured(value = PROP_catlogging_READER_MAX_MULTIPLE_LINES, defaultValue = DEFAULT_MAX_UNFORMATTED_LINES + "")
 	private ConfigValue<Integer> maxUnformattedLinesConfigValue;
@@ -63,7 +60,7 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 	private boolean initialized = false;
 
 	@JsonProperty
-	@NotEmpty
+	@NotNull
 	private String charset = "UTF-8";
 
 	/**
@@ -92,7 +89,7 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 			if (maxUnformattedLinesConfigValue != null) {
 				maxUnfomattedLines = maxUnformattedLinesConfigValue.get();
 			}
-			logger.debug("Init {} with max multiple lines without matching pattern: {}", getClass(),
+			log.debug("Init {} with max multiple lines without matching pattern: {}", getClass(),
 					maxUnfomattedLines);
 			initialized = true;
 		}
@@ -239,7 +236,7 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 				threadSemaphore.acquire(parallelCount);
 			} catch (final InterruptedException e) {
 				synchronized (processingSemaphore) {
-					logger.error("Failed to wait for parallel threads", e);
+					log.error("Failed to wait for parallel threads", e);
 					finished = true;
 					if (terminationException == null) {
 						terminationException = e;
@@ -314,7 +311,7 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 					}
 				}
 			} finally {
-				logger.debug("Thread {} processed {} lines", this, count);
+				log.debug("Thread {} processed {} lines", this, count);
 				// Free another threads if they are blocked
 				executor.processParsingResults(null);
 				executor.threadSemaphore.release(1);
@@ -333,7 +330,7 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 	}
 
 	@Override
-	public final void readEntries(final Log log, final ByteLogAccess logAccess, final LogPointer startOffset,
+	public final void readEntries(final Log logg, final ByteLogAccess logAccess, final LogPointer startOffset,
 			final LogEntryConsumer consumer) throws IOException {
 		init();
 		LineInputStream lis = null;
@@ -347,7 +344,7 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 			}
 
 			final int coreSize = Math.max(2, Runtime.getRuntime().availableProcessors() / 2);
-			logger.debug("Start reading log '{}' accoridng the pattern '{}' in parallel with {} threads", log.getPath(),
+			log.debug("Start reading log '{}' accoridng the pattern '{}' in parallel with {} threads", logg.getPath(),
 					getPatternInfo(), coreSize);
 			new ParallelReadingExecutor(lis, coreSize) {
 				@Override
@@ -359,7 +356,7 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 						if (sCtx.entry != null) {
 							sCtx.entry.setRawContent(sCtx.text.toString());
 							sCtx.entry.setEndOffset(sCtx.lastOffset);
-							if (!consumer.consume(log, logAccess, sCtx.entry)) {
+							if (!consumer.consume(logg, logAccess, sCtx.entry)) {
 								sCtx.consumptionCancelled = true;
 								return false;
 							}
@@ -383,12 +380,12 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 						sCtx.text.append(line);
 						attachOverflowLine(sCtx.entry, line);
 						if (sCtx.linesWithoutPattern >= maxUnfomattedLines) {
-							logger.warn(
+							log.warn(
 									"Pattern {} for log '{}' didn't matched any of read {} lines, adding unmatching data to previous log entry",
-									getPatternInfo(), log.getPath(), sCtx.linesWithoutPattern);
+									getPatternInfo(), logg.getPath(), sCtx.linesWithoutPattern);
 							sCtx.entry.setRawContent(sCtx.text.toString());
 							sCtx.entry.setEndOffset(sCtx.lastOffset);
-							if (!consumer.consume(log, logAccess, sCtx.entry)) {
+							if (!consumer.consume(logg, logAccess, sCtx.entry)) {
 								sCtx.consumptionCancelled = true;
 								return false;
 							}
@@ -406,7 +403,7 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 			if (sCtx.entry != null && !sCtx.consumptionCancelled) {
 				sCtx.entry.setRawContent(sCtx.text.toString());
 				sCtx.entry.setEndOffset(sCtx.lastOffset);
-				consumer.consume(log, logAccess, sCtx.entry);
+				consumer.consume(logg, logAccess, sCtx.entry);
 			}
 		} finally {
 			lis.close();
@@ -414,12 +411,12 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 	}
 
 	@Override
-	public void readEntriesReverse(final Log log, final ByteLogAccess logAccess, final LogPointer startOffset,
+	public void readEntriesReverse(final Log logg, final ByteLogAccess logAccess, final LogPointer startOffset,
 			final LogEntryConsumer consumer) throws IOException {
-		new FluentReverseReader<>(this).readEntries(log, logAccess, startOffset, consumer);
+		new FluentReverseReader<>(this).readEntries(logg, logAccess, startOffset, consumer);
 	}
 
-	public final void readEntriesOld(final Log log, final ByteLogAccess logAccess, final LogPointer startOffset,
+	public final void readEntriesOld(final Log logg, final ByteLogAccess logAccess, final LogPointer startOffset,
 			final LogEntryConsumer consumer) throws IOException, FormatException {
 		init();
 		final ReadingContext<MatcherContext> readingContext = getReadingContext();
@@ -442,7 +439,7 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 					if (entry != null) {
 						entry.setRawContent(text.toString());
 						entry.setEndOffset(lastOffset);
-						if (!consumer.consume(log, logAccess, entry)) {
+						if (!consumer.consume(logg, logAccess, entry)) {
 							return;
 						}
 					}
@@ -465,12 +462,12 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 					text.append(line);
 					attachOverflowLine(entry, line);
 					if (linesWithoutPattern >= maxUnfomattedLines) {
-						logger.warn(
+						log.warn(
 								"Pattern {} for log '{}' didn't matched any of read {} lines, adding unmatching data to previous log entry",
-								getPatternInfo(), log.getPath(), linesWithoutPattern);
+								getPatternInfo(), logg.getPath(), linesWithoutPattern);
 						entry.setRawContent(text.toString());
 						entry.setEndOffset(lastOffset);
-						if (!consumer.consume(log, logAccess, entry)) {
+						if (!consumer.consume(logg, logAccess, entry)) {
 							return;
 						}
 						entry = null;
@@ -484,7 +481,7 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 			if (entry != null) {
 				entry.setRawContent(text.toString());
 				entry.setEndOffset(lastOffset);
-				consumer.consume(log, logAccess, entry);
+				consumer.consume(logg, logAccess, entry);
 			}
 		} finally {
 			lis.close();

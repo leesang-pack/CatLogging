@@ -18,6 +18,26 @@
  *******************************************************************************/
 package com.catlogging.reader.log4j;
 
+import com.catlogging.fields.FieldBaseTypes;
+import com.catlogging.model.Log;
+import com.catlogging.model.LogEntry;
+import com.catlogging.model.LogPointer;
+import com.catlogging.model.LogPointerFactory;
+import com.catlogging.model.SeverityLevel.SeverityClassification;
+import com.catlogging.model.support.*;
+import com.catlogging.reader.FormatException;
+import com.catlogging.reader.LogEntryReader;
+import com.catlogging.reader.LogEntryReader.LogEntryConsumer;
+import com.catlogging.reader.support.BufferedConsumer;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -28,40 +48,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.junit.Assert;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.catlogging.fields.FieldBaseTypes;
-import com.catlogging.model.Log;
-import com.catlogging.model.LogEntry;
-import com.catlogging.model.LogPointer;
-import com.catlogging.model.LogPointerFactory;
-import com.catlogging.model.SeverityLevel.SeverityClassification;
-import com.catlogging.model.support.ByteArrayLog;
-import com.catlogging.model.support.ByteLogAccess;
-import com.catlogging.model.support.ByteLogInputStream;
-import com.catlogging.model.support.DefaultPointer;
-import com.catlogging.model.support.LineInputStream;
-import com.catlogging.reader.FormatException;
-import com.catlogging.reader.LogEntryReader;
-import com.catlogging.reader.LogEntryReader.LogEntryConsumer;
-import com.catlogging.reader.support.BufferedConsumer;
-
 /**
  * Test for {@link Log4jParser}.
  * 
  * @author Tester
  * 
  */
+@Slf4j
 public class Log4jTextReaderTest {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Test
 	public void testParsingConversionPattern() throws FormatException {
@@ -285,7 +279,7 @@ public class Log4jTextReaderTest {
 		});
 		final long size = logLine.length * (count.get() - 1);
 		final long time = System.currentTimeMillis() - start;
-		logger.info("Read {} lines {} total bytes in {}ms: {} bytes/s", count.get() - 1, size, time,
+		log.info("Read {} lines {} total bytes in {}ms: {} bytes/s", count.get() - 1, size, time,
 				size / time * 1000);
 		Assert.assertEquals(linesToRead, count.get());
 	}

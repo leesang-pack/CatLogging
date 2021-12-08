@@ -79,10 +79,10 @@ public interface ConfiguredBean {
 							.getRawClass());
 		}
 
-		@Override
-		public JavaType typeFromId(final String id) {
-			return null;
-		}
+//		@Override
+//		public JavaType typeFromId(final String id) {
+//			return null;
+//		}
 
 		@SuppressWarnings("unchecked")
 		@Override
@@ -90,6 +90,11 @@ public interface ConfiguredBean {
 				final String id) {
 			return context.constructType(beanTypeResolver.resolveTypeClass(id,
 					(Class<ConfiguredBean>) baseType.getRawClass()));
+		}
+
+		@Override
+		public String getDescForKnownTypeIds() {
+			return null;
 		}
 
 		@Override

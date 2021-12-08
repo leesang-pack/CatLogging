@@ -1,21 +1,17 @@
 package com.catlogging.source.compound;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.catlogging.model.LogPointer;
-
+import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
-public class CompoundLogPointer implements LogPointer {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CompoundLogPointer.class);
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
 
+@Slf4j
+public class CompoundLogPointer implements LogPointer {
 	public static interface LogInstanceResolver {
 		LogInstance resolveForPathHash(long sourceId, int pathHash);
 	}
@@ -212,10 +208,10 @@ public class CompoundLogPointer implements LogPointer {
 				parts = new PointerPart[0];
 			}
 			final CompoundLogPointer cp = new CompoundLogPointer(parts, tmst);
-			LOGGER.debug("Transfered JSON '{}' into pointer: {}", jsonStr, cp);
+			log.debug("Transfered JSON '{}' into pointer: {}", jsonStr, cp);
 			return cp;
 		} catch (final JSONException e) {
-			LOGGER.warn("Failed to read pointer from invalid JSON: " + jsonStr, e);
+			log.warn("Failed to read pointer from invalid JSON: " + jsonStr, e);
 			return new CompoundLogPointer(new PointerPart[0], new Date(0));
 		}
 	}

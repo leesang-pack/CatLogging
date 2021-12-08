@@ -167,7 +167,7 @@
 								<id>main-class-placement</id>
 								<phase>prepare-package</phase>
 								<configuration>
-									<tasks>
+									<target>
 										<move todir="${project.build.directory}/${project.artifactId}-${project.version}/">
 											<fileset dir="${project.build.directory}/classes/">
 												<include name="**/Starter.class" />
@@ -181,7 +181,7 @@
 											<map from="${project.build.directory}/generated-resources/WEB-INF/exec/" to="" />
 										</pathconvert>
 										<echo file="${project.build.directory}/generated-resources/WEB-INF/exec/libs.txt">${jettyLibs}</echo>
-									</tasks>
+									</target>
 								</configuration>
 								<goals>
 									<goal>run</goal>
@@ -262,7 +262,10 @@
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
-			<version>4.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 		</dependency>
 	</dependencies>
 </project>

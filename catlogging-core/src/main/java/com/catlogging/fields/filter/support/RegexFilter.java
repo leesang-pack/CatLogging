@@ -38,7 +38,7 @@ public class RegexFilter implements FieldsFilter, GrokConsumer {
 	private GrokPatternBean grokBean = new GrokPatternBean();
 
 	@JsonProperty
-	@NotEmpty
+	@NotNull
 	private String sourceField;
 
 	/**

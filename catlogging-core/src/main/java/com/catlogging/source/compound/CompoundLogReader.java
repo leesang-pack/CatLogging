@@ -1,32 +1,17 @@
 package com.catlogging.source.compound;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.Semaphore;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.catlogging.event.Event;
 import com.catlogging.fields.FieldBaseTypes;
-import com.catlogging.model.Log;
-import com.catlogging.model.LogEntry;
-import com.catlogging.model.LogInputStream;
-import com.catlogging.model.LogPointer;
-import com.catlogging.model.LogPointerFactory;
-import com.catlogging.model.LogRawAccess;
-import com.catlogging.model.SeverityLevel;
+import com.catlogging.model.*;
 import com.catlogging.reader.FormatException;
 import com.catlogging.reader.LogEntryReader;
 import com.catlogging.source.compound.CompoundLogPointer.PointerPart;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.Semaphore;
 
 /**
  * Composed reader accessing multiple logs in parallel and delegating to a
@@ -35,10 +20,10 @@ import com.catlogging.source.compound.CompoundLogPointer.PointerPart;
  * @author Tester
  *
  */
+@Slf4j
 @JsonIgnoreType
 public class CompoundLogReader implements LogEntryReader<CompoundLogAccess> {
 	protected static final int BUFFER_SIZE_PER_THREAD = 20;
-	private static final Logger logger = LoggerFactory.getLogger(CompoundLogReader.class);
 
 	private final List<LogInstance> composedLogs;
 
@@ -216,7 +201,7 @@ public class CompoundLogReader implements LogEntryReader<CompoundLogAccess> {
 					if (terminationException == null) {
 						terminationException = e;
 					} else {
-						logger.warn("Consequential error", e);
+						log.warn("Consequential error", e);
 					}
 					running = false;
 				}
@@ -278,7 +263,7 @@ public class CompoundLogReader implements LogEntryReader<CompoundLogAccess> {
 			try {
 				threadSemaphore.acquire(composedLogs.size());
 			} catch (final InterruptedException e) {
-				logger.error("Failed to wait for parallel threads", e);
+				log.error("Failed to wait for parallel threads", e);
 			}
 			// System.out.println((double) sumFreeZycles / countConsumptions);
 			// Complete buffered if consumer is still listening
@@ -337,7 +322,7 @@ public class CompoundLogReader implements LogEntryReader<CompoundLogAccess> {
 					reader.readEntries(logInstance.getLog(), logInstance.getLogAccess(), startOffset, consumer);
 				}
 			} catch (final Exception e) {
-				logger.error("Failed to read from log instance " + logInstanceIndex + ": " + logInstance, e);
+				log.error("Failed to read from log instance " + logInstanceIndex + ": " + logInstance, e);
 				exception = e;
 			} finally {
 				executor.finished(this);

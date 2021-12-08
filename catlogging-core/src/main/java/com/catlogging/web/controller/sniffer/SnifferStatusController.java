@@ -18,21 +18,6 @@
  *******************************************************************************/
 package com.catlogging.web.controller.sniffer;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
-import org.quartz.SchedulerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import com.catlogging.event.IncrementData;
 import com.catlogging.event.Sniffer;
 import com.catlogging.model.Log;
@@ -41,6 +26,19 @@ import com.catlogging.model.LogRawAccess;
 import com.catlogging.model.LogSource;
 import com.catlogging.web.ViewController;
 import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import org.quartz.SchedulerException;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Controller for sniffer state and scheduling issues.
@@ -48,9 +46,9 @@ import com.catlogging.web.controller.exception.ResourceNotFoundException;
  * @author Tester
  * 
  */
+@Slf4j
 @ViewController
 public class SnifferStatusController extends SniffersBaseController {
-	private static Logger logger = LoggerFactory.getLogger(SnifferStatusController.class);
 
 	public static class LogSniffingStatus {
 		private final long currentOffset;
@@ -127,10 +125,10 @@ public class SnifferStatusController extends SniffersBaseController {
 	@RequestMapping(value = "/sniffers/{snifferId}/stopForm", method = RequestMethod.POST)
 	String stop(@PathVariable("snifferId") final long snifferId, final Model model,
 			final RedirectAttributes redirectAttrs) throws ResourceNotFoundException, SchedulerException {
-		logger.info("Stopping sniffer: {}", snifferId);
+		log.info("Stopping sniffer: {}", snifferId);
 		final Sniffer activeSniffer = getAndBindActiveSniffer(model, snifferId);
 		snifferScheduler.stopSniffing(activeSniffer.getId());
-		logger.info("Stopped sniffer: {}", snifferId);
+		log.info("Stopped sniffer: {}", snifferId);
 		redirectAttrs.addFlashAttribute("stopped", true);
 		return "redirect:status";
 	}

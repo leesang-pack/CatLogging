@@ -18,32 +18,24 @@
  *******************************************************************************/
 package com.catlogging.event.processing;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.List;
-
-import org.quartz.CronScheduleBuilder;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.TriggerKey;
-import org.quartz.impl.matchers.GroupMatcher;
-import org.quartz.spi.MutableTrigger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.catlogging.aspect.sql.QueryAdaptor;
 import com.catlogging.event.Sniffer;
 import com.catlogging.event.SnifferPersistence;
 import com.catlogging.event.SnifferPersistence.AspectSniffer;
 import com.catlogging.event.SnifferScheduler;
+import lombok.extern.slf4j.Slf4j;
+import org.quartz.*;
+import org.quartz.impl.matchers.GroupMatcher;
+import org.quartz.spi.MutableTrigger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.List;
 
 /**
  * Manages sniffer jobs.
@@ -52,8 +44,8 @@ import com.catlogging.event.SnifferScheduler;
  * 
  */
 @Component
+@Slf4j
 public class SnifferJobManager implements SnifferScheduler {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private Scheduler scheduler;
@@ -67,7 +59,7 @@ public class SnifferJobManager implements SnifferScheduler {
 	@Override
 	@Transactional(rollbackFor = { SchedulerException.class, ParseException.class })
 	public void startSniffing(final long snifferId) throws SchedulerException {
-		logger.debug("Starting cron job for sniffer: {}", snifferId);
+		log.debug("Starting cron job for sniffer: {}", snifferId);
 		final Sniffer sniffer = snifferPersistence.getSniffer(snifferId);
 		if (sniffer == null) {
 			throw new SchedulerException("Sniffer not found: " + snifferId);
@@ -87,7 +79,7 @@ public class SnifferJobManager implements SnifferScheduler {
 		final ScheduleInfo scheduleInfo = scheduleInfoAccess.getScheduleInfo(snifferId);
 		scheduleInfo.setScheduled(true);
 		scheduleInfoAccess.updateScheduleInfo(snifferId, scheduleInfo);
-		logger.info("Scheduled cron job for sniffer {} and log source {} with trigger {}", sniffer,
+		log.info("Scheduled cron job for sniffer {} and log source {} with trigger {}", sniffer,
 				sniffer.getLogSourceId(), trigger);
 	}
 
@@ -113,9 +105,9 @@ public class SnifferJobManager implements SnifferScheduler {
 
 	protected void stopAndDeleteAllSnifferJobs(final long snifferId) throws SchedulerException {
 		for (final JobKey job : scheduler.getJobKeys(GroupMatcher.jobGroupEquals("SNIFFER:" + snifferId))) {
-			logger.info("Deleting scheduled job for sniffer={} and log source={}", snifferId, getLogSourceId(job));
+			log.info("Deleting scheduled job for sniffer={} and log source={}", snifferId, getLogSourceId(job));
 			scheduler.deleteJob(job);
-			logger.info("Interrupting job for sniffer={} and log source={}", snifferId, getLogSourceId(job));
+			log.info("Interrupting job for sniffer={} and log source={}", snifferId, getLogSourceId(job));
 			scheduler.interrupt(job);
 		}
 	}
@@ -123,7 +115,7 @@ public class SnifferJobManager implements SnifferScheduler {
 	@Transactional(rollbackFor = { SchedulerException.class })
 	@Override
 	public void stopSniffing(final long snifferId) throws SchedulerException {
-		logger.debug("Stopping scheduled cron jobs for sniffer: {}", snifferId);
+		log.debug("Stopping scheduled cron jobs for sniffer: {}", snifferId);
 		stopAndDeleteAllSnifferJobs(snifferId);
 		final ScheduleInfo scheduleInfo = scheduleInfoAccess.getScheduleInfo(snifferId);
 		scheduleInfo.setScheduled(false);

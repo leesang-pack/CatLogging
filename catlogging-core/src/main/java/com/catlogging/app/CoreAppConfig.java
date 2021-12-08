@@ -18,13 +18,19 @@
  *******************************************************************************/
 package com.catlogging.app;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
-
+import com.catlogging.config.BeanConfigFactoryManager;
+import com.catlogging.config.ConfiguredBean;
+import com.catlogging.fields.FieldJsonMapper;
+import com.catlogging.fields.FieldsMap;
+import com.catlogging.fields.FieldsMap.FieldsMapMixInLikeSerializer;
+import com.fasterxml.jackson.core.JsonParser.Feature;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
+import com.fasterxml.jackson.databind.type.MapType;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -39,23 +45,9 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import com.fasterxml.jackson.core.JsonParser.Feature;
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationConfig;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
-import com.fasterxml.jackson.databind.type.MapType;
-import com.catlogging.config.BeanConfigFactoryManager;
-import com.catlogging.config.ConfiguredBean;
-import com.catlogging.fields.FieldJsonMapper;
-import com.catlogging.fields.FieldsMap;
-import com.catlogging.fields.FieldsMap.FieldsMapMixInLikeSerializer;
+import java.io.File;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Core app config.
@@ -64,11 +56,11 @@ import com.catlogging.fields.FieldsMap.FieldsMapMixInLikeSerializer;
  * 
  */
 @Configuration
+@Slf4j
 @Import({ StartupAppConfig.class, ConfigValueAppConfig.class })
 public class CoreAppConfig {
 	public static final String BEAN_catlogging_PROPS = "catloggingProps";
 	public static final String catlogging_PROPERTIES_FILE = "config.properties";
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private ApplicationContext context;
@@ -91,19 +83,17 @@ public class CoreAppConfig {
 			final File qaFile = File.createTempFile("catlogging", "qa");
 			qaFile.delete();
 			final String qaHomeDir = qaFile.getPath();
-			logger.info("QA mode active, setting random home directory: {}", qaHomeDir);
+			log.info("QA mode active, setting random home directory: {}", qaHomeDir);
 			System.setProperty("catlogging.home", qaHomeDir);
 		}
 		final PathMatchingResourcePatternResolver pathMatcher = new PathMatchingResourcePatternResolver();
 		Resource[] classPathProperties = pathMatcher.getResources("classpath*:/config/**/catlogging-*.properties");
-		final Resource[] metainfProperties = pathMatcher
-				.getResources("classpath*:/META-INF/**/catlogging-*.properties");
+		final Resource[] metainfProperties = pathMatcher.getResources("classpath*:/META-INF/**/catlogging-*.properties");
 		final PropertiesFactoryBean p = new PropertiesFactoryBean();
 		for (final Resource r : metainfProperties) {
 			classPathProperties = (Resource[]) ArrayUtils.add(classPathProperties, r);
 		}
-		classPathProperties = (Resource[]) ArrayUtils.add(classPathProperties,
-				new FileSystemResource(System.getProperty("catlogging.home") + "/" + catlogging_PROPERTIES_FILE));
+		classPathProperties = (Resource[]) ArrayUtils.add(classPathProperties, new FileSystemResource(System.getProperty("catlogging.home") + "/" + catlogging_PROPERTIES_FILE));
 		p.setLocations(classPathProperties);
 		p.setProperties(System.getProperties());
 		p.setLocalOverride(true);

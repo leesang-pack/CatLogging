@@ -18,18 +18,16 @@
  *******************************************************************************/
 package com.catlogging.event.support;
 
-import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.catlogging.event.LogEntryReaderStrategy;
 import com.catlogging.model.Log;
 import com.catlogging.model.LogEntry;
 import com.catlogging.model.LogPointer;
 import com.catlogging.model.LogPointerFactory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
 
 /**
  * Continue reading log within a specified timeout.
@@ -37,9 +35,8 @@ import com.catlogging.model.LogPointerFactory;
  * @author Tester
  * 
  */
+@Slf4j
 public class TimeoutReaderStrategy implements LogEntryReaderStrategy {
-	private static Logger logger = LoggerFactory
-			.getLogger(TimeoutReaderStrategy.class);
 	@JsonIgnore
 	private long startedAt = -1;
 
@@ -62,7 +59,7 @@ public class TimeoutReaderStrategy implements LogEntryReaderStrategy {
 	}
 
 	@Override
-	public boolean continueReading(final Log log,
+	public boolean continueReading(final Log logg,
 			final LogPointerFactory pointerFactory,
 			final LogEntry currentReadEntry) throws IOException {
 		if (startedAt < 0) {
@@ -70,9 +67,9 @@ public class TimeoutReaderStrategy implements LogEntryReaderStrategy {
 		}
 		long taken = System.currentTimeMillis() - startedAt;
 		if (taken >= timeout) {
-			logger.debug(
+			log.debug(
 					"Stop reading {} after {}ms because reached timeout of {}ms",
-					log, taken, timeout);
+					logg, taken, timeout);
 			return false;
 		} else {
 			return true;

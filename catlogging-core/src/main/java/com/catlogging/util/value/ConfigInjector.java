@@ -18,11 +18,7 @@
  *******************************************************************************/
 package com.catlogging.util.value;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -32,8 +28,11 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.FieldCallback;
 import org.springframework.util.ReflectionUtils.FieldFilter;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+
+@Slf4j
 public class ConfigInjector implements BeanPostProcessor {
-	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 	@Autowired
 	private ConversionService conversionService;
 
@@ -59,7 +58,7 @@ public class ConfigInjector implements BeanPostProcessor {
 		ReflectionUtils.doWithFields(bean.getClass(), new FieldCallback() {
 			@Override
 			public void doWith(final Field field) throws IllegalArgumentException, IllegalAccessException {
-				LOGGER.debug("Injecting value={} for bean={}", field.getName(), beanName);
+				log.debug("Injecting value={} for bean={}", field.getName(), beanName);
 				field.setAccessible(true);
 				final String key = field.getAnnotation(Configured.class).value();
 				final String defaultValue = field.getAnnotation(Configured.class).defaultValue();

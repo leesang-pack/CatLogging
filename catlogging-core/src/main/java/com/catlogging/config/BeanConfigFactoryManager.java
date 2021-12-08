@@ -18,29 +18,26 @@
  *******************************************************************************/
 package com.catlogging.config;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.type.filter.AssignableTypeFilter;
-
+import com.catlogging.config.ConfiguredBean.ConfiguredBeanDeserializer;
+import com.catlogging.util.value.ConfigInjector;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.catlogging.config.ConfiguredBean.ConfiguredBeanDeserializer;
-import com.catlogging.util.value.ConfigInjector;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.type.filter.AssignableTypeFilter;
+
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Manages creating, serialization and deserialization of bean configs.
@@ -48,8 +45,8 @@ import com.catlogging.util.value.ConfigInjector;
  * @author Tester
  * 
  */
+@Slf4j
 public class BeanConfigFactoryManager implements ConfigBeanTypeResolver {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired(required = false)
 	private BeanPostConstructor<?>[] postConstructors;
@@ -107,9 +104,9 @@ public class BeanConfigFactoryManager implements ConfigBeanTypeResolver {
 					}
 				}
 				names.add(clazz.getSimpleName());
-				logger.debug("Registered JSON type {} for following names: {}", clazz, names);
+				log.debug("Registered JSON type {} for following names: {}", clazz, names);
 			} catch (final ClassNotFoundException e) {
-				logger.warn("Failed to register JSON type name for " + bd.getBeanClassName(), e);
+				log.warn("Failed to register JSON type name for " + bd.getBeanClassName(), e);
 			}
 		}
 	}
@@ -148,7 +145,7 @@ public class BeanConfigFactoryManager implements ConfigBeanTypeResolver {
 			if (bpc != null) {
 				bpc.postConstruct(bean, this);
 			} else {
-				logger.error("Unsatisfied bean construction of '{}' due to missing post constructor of type: {}", bean,
+				log.error("Unsatisfied bean construction of '{}' due to missing post constructor of type: {}", bean,
 						pc.getClass());
 			}
 		}

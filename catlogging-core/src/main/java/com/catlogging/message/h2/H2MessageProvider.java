@@ -18,27 +18,12 @@
  *******************************************************************************/
 package com.catlogging.message.h2;
 
-import com.catlogging.config.BeanConfigFactoryManager;
-import com.catlogging.config.ConfigException;
-import com.catlogging.model.LogInputStream;
-import com.catlogging.model.LogRawAccess;
-import com.catlogging.model.LogSource;
-import com.catlogging.model.LogSource.LogSourceWrapper;
-import com.catlogging.model.LogSourceProvider;
-import com.catlogging.model.support.BaseLogsSource;
-import com.catlogging.util.ReferenceIntegrityException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -49,12 +34,9 @@ import java.util.List;
  * @author Tester
  * 
  */
+@Slf4j
 @Component
 public class H2MessageProvider{
-	private final Logger logger = LoggerFactory.getLogger(getClass());
-
-	@Autowired
-	private BeanConfigFactoryManager configManager;
 
 	private class SourceRowMapper implements RowMapper<LanguageEntity> {
 		private static final String SQL_PROJECTION = "SELECT ID, LOCALE, MESSAGEKEY, MESSAGECONTENT FROM LANGUAGES";

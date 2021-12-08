@@ -18,27 +18,6 @@
  *******************************************************************************/
 package com.catlogging.web.controller.sniffer;
 
-import java.io.IOException;
-import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 import com.catlogging.event.Event;
 import com.catlogging.event.EventPersistence;
 import com.catlogging.event.EventPersistence.AspectEvent;
@@ -46,6 +25,19 @@ import com.catlogging.event.EventPersistence.EventQueryBuilder;
 import com.catlogging.event.EventPersistence.NativeQueryBuilder;
 import com.catlogging.util.PageableResult;
 import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Date;
 
 /**
  * REST controller for events.
@@ -53,9 +45,9 @@ import com.catlogging.web.controller.exception.ResourceNotFoundException;
  * @author Tester
  * 
  */
+@Slf4j
 @Controller
 public class SnifferEventsResourceController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(SnifferEventsResourceController.class);
 
 	@Autowired
 	private EventPersistence eventPersistence;
@@ -116,7 +108,7 @@ public class SnifferEventsResourceController {
 	@ResponseStatus(HttpStatus.OK)
 	void deleteEvent(@PathVariable("snifferId") final long snifferId, @PathVariable("eventId") final String eventId)
 			throws ResourceNotFoundException {
-		LOGGER.debug("Deleting event {} for sniffer {}", eventId, snifferId);
+		log.debug("Deleting event {} for sniffer {}", eventId, snifferId);
 		// Load event first to check existence
 		showEvent(snifferId, eventId);
 		// Delete now
@@ -126,7 +118,7 @@ public class SnifferEventsResourceController {
 	@RequestMapping(value = "/sniffers/{snifferId}/events", method = RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.OK)
 	void deleteAllEvents(@PathVariable("snifferId") final long snifferId) throws ResourceNotFoundException {
-		LOGGER.info("Deleting all events of sniffer {}", snifferId);
+		log.info("Deleting all events of sniffer {}", snifferId);
 		eventPersistence.deleteAll(snifferId);
 	}
 }

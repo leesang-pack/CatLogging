@@ -1,19 +1,16 @@
 package com.catlogging.util;
 
-import java.io.IOException;
-
-import javax.annotation.PostConstruct;
-
+import com.catlogging.system.notification.Notification;
+import com.catlogging.system.notification.Notification.Level;
+import com.catlogging.system.notification.Notification.Type;
+import com.catlogging.system.notification.NotificationProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.catlogging.system.notification.Notification;
-import com.catlogging.system.notification.NotificationProvider;
-import com.catlogging.system.notification.Notification.Level;
-import com.catlogging.system.notification.Notification.Type;
+import javax.annotation.PostConstruct;
+import java.io.IOException;
 
 /**
  * Produces a {@link Notification} for liking catlogging.
@@ -21,9 +18,9 @@ import com.catlogging.system.notification.Notification.Type;
  * @author Tester
  *
  */
+@Slf4j
 @Component
 public class WelcomeNotificationProducer {
-	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private NotificationProvider provider;
@@ -40,7 +37,7 @@ public class WelcomeNotificationProducer {
 			likeMe.setType(Type.TOPIC);
 			provider.store(likeMe, false);
 		} catch (IOException e) {
-			logger.info("Failed to store welcome notification", e);
+			log.info("Failed to store welcome notification", e);
 		}
 	}
 

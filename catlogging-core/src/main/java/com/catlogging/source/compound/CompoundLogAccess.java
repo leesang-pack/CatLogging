@@ -1,25 +1,19 @@
 package com.catlogging.source.compound;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.catlogging.model.Log;
-import com.catlogging.model.LogInputStream;
-import com.catlogging.model.LogPointer;
-import com.catlogging.model.LogRawAccess;
-import com.catlogging.model.Navigation;
+import com.catlogging.model.*;
 import com.catlogging.model.Navigation.DateOffsetNavigation;
 import com.catlogging.model.support.ByteLogAccess;
 import com.catlogging.model.support.TimestampNavigation;
 import com.catlogging.reader.LogEntryReader;
 import com.catlogging.source.compound.CompoundLogPointer.LogInstanceResolver;
 import com.catlogging.source.compound.CompoundLogPointer.PointerPart;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Access to composed logs.
@@ -27,9 +21,9 @@ import com.catlogging.source.compound.CompoundLogPointer.PointerPart;
  * @author Tester
  *
  */
+@Slf4j
 public class CompoundLogAccess
 		implements LogRawAccess<LogInputStream>, LogInputStream, DateOffsetNavigation, LogInstanceResolver {
-	private static final Logger logger = LoggerFactory.getLogger(CompoundLogAccess.class);
 	private final PointerPartBuilder POINTER_BUILDER_START = new PointerPartBuilder() {
 		@Override
 		public LogPointer build(final LogInstance logInstance) throws IOException {
@@ -100,7 +94,7 @@ public class CompoundLogAccess
 				}
 			}
 			if (partPointer == null) {
-				logger.warn("No pointer information found for composed log {} in part {} for pointer: {}", thisLog, sl,
+				log.warn("No pointer information found for composed log {} in part {} for pointer: {}", thisLog, sl,
 						cp);
 			}
 			mapped[i++] = Pair.of(sl, partPointer);
@@ -177,7 +171,7 @@ public class CompoundLogAccess
 							refreshedPointer);
 				}
 				final CompoundLogPointer cpr = new CompoundLogPointer(refreshedParts, cp.getCurrentTimestamp());
-				logger.debug("Refreshed pointer in {}ms {} => {}", System.currentTimeMillis() - start, cp, cpr);
+				log.debug("Refreshed pointer in {}ms {} => {}", System.currentTimeMillis() - start, cp, cpr);
 				return cpr;
 			}
 		};
@@ -211,7 +205,7 @@ public class CompoundLogAccess
 
 	@Override
 	public NavigationFuture absolute(final Date offset) throws IOException {
-		logger.debug("Navigating to date offset: {}", offset);
+		log.debug("Navigating to date offset: {}", offset);
 		return refresh(new CompoundLogPointer(new PointerPart[0], offset));
 	}
 
