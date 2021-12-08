@@ -18,28 +18,20 @@
  *******************************************************************************/
 package com.catlogging.web.tags;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-//import org.elasticsearch.common.Base64;
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.catlogging.app.ContextProvider;
 import com.catlogging.aspect.AspectHost;
 import com.catlogging.model.RollingLog;
 import com.catlogging.web.wizard2.WizardInfo;
 import com.catlogging.web.wizard2.WizardInfoController;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.BeansException;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * JSP functions library.
@@ -47,8 +39,8 @@ import net.sf.json.JSONObject;
  * @author Tester
  * 
  */
+@Slf4j
 public class JstlFunctionsLibrary {
-	private static Logger logger = LoggerFactory.getLogger(JstlFunctionsLibrary.class);
 	private static ObjectMapper jsonMapper = new ObjectMapper();
 
 	public static boolean isRollingLog(final Object log) {
@@ -129,7 +121,7 @@ public class JstlFunctionsLibrary {
 		try {
 			return jsonMapper.writeValueAsString(object);
 		} catch (final Exception e) {
-			logger.error("JSON mapper error", e);
+			log.error("JSON mapper error", e);
 			return null;
 		}
 	}
@@ -158,7 +150,7 @@ public class JstlFunctionsLibrary {
 		try {
 			return JSONObject.fromObject(jsonStr);
 		} catch (final RuntimeException e) {
-			logger.error("Failed to parse JSON: " + jsonStr, e);
+			log.error("Failed to parse JSON: " + jsonStr, e);
 			return new JSONObject();
 		}
 	}

@@ -18,27 +18,19 @@
  *******************************************************************************/
 package com.catlogging.event.publisher.http;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
+import com.catlogging.config.PostConstructed;
+import com.catlogging.event.Event;
+import com.catlogging.event.Publisher;
+import com.catlogging.event.publisher.VelocityEventRenderer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpOptions;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -46,23 +38,17 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.message.AbstractHttpMessage;
 import org.apache.http.protocol.HttpContext;
 import org.apache.velocity.VelocityContext;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.catlogging.config.PostConstructed;
-import com.catlogging.event.Event;
-import com.catlogging.event.Publisher;
-import com.catlogging.event.publisher.VelocityEventRenderer;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Map;
 
+@Slf4j
 @PostConstructed(constructor = HttpPublisherConfigurer.class)
 public class HttpPublisher implements Publisher {
-	private static final Logger logger = LoggerFactory
-			.getLogger(HttpPublisher.class);
 	@JsonIgnore
 	private VelocityEventRenderer velocityRenderer;
 
@@ -76,7 +62,7 @@ public class HttpPublisher implements Publisher {
 	@JsonProperty
 	private HttpMethod method = HttpMethod.GET;
 
-	@NotEmpty
+	@NotNull
 	@URL
 	@JsonProperty
 	private String url;
@@ -88,7 +74,7 @@ public class HttpPublisher implements Publisher {
 	private Map<String, String> headers = new HashMap<String, String>();
 
 	@JsonProperty
-	@NotEmpty
+	@NotNull
 	private String bodyMimeType = ContentType.TEXT_PLAIN.getMimeType();
 
 	@JsonProperty
@@ -130,18 +116,18 @@ public class HttpPublisher implements Publisher {
 		}
 		httpAddons(request, event);
 		try {
-			logger.debug("Publishing event {} via HTTP '{}'", event.getId(),
+			log.debug("Publishing event {} via HTTP '{}'", event.getId(),
 					request);
 			HttpResponse response = httpClient.execute(request, httpContext);
 			if (response.getStatusLine().getStatusCode() >= 200
 					&& response.getStatusLine().getStatusCode() < 300) {
-				logger.debug(
+				log.debug(
 						"Published event {} successfuly via HTTP '{}' with status: {}",
 						event.getId(), request, response.getStatusLine()
 								.getStatusCode());
 
 			} else {
-				logger.warn(
+				log.warn(
 						"Failed to publish event {} via HTTP '{}' due to status: {} - {}",
 						event.getId(), request, response.getStatusLine()
 								.getStatusCode(), response.getStatusLine()

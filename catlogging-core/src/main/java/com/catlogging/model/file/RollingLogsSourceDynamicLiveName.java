@@ -18,17 +18,15 @@
  *******************************************************************************/
 package com.catlogging.model.file;
 
+import com.catlogging.model.Log;
+import com.catlogging.model.support.DailyRollingLog;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import com.catlogging.model.Log;
-import com.catlogging.model.support.DailyRollingLog;
 
 /**
  * Source for timestamp rolled log files with a live file where the name is
@@ -38,9 +36,9 @@ import com.catlogging.model.support.DailyRollingLog;
  * @author Tester
  * 
  */
+@Slf4j
 @Component
 public class RollingLogsSourceDynamicLiveName extends AbstractTimestampRollingLogsSource {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Override
 	public List<Log> getLogs() throws IOException {
@@ -49,7 +47,7 @@ public class RollingLogsSourceDynamicLiveName extends AbstractTimestampRollingLo
 			Collections.sort(logs, getPastLogsType().getPastComparatorForLogs());
 			final Log liveLog = logs.get(0);
 			final List<Log> pastLogs = logs.subList(1, logs.size());
-			logger.debug("Exposing rolling log with dynamic live file {} and rolled over files: {}", liveLog, pastLogs);
+			log.debug("Exposing rolling log with dynamic live file {} and rolled over files: {}", liveLog, pastLogs);
 			final List<Log> rolledLog = new ArrayList<>();
 			rolledLog.add(new DailyRollingLog(liveLog.getName(), getName(), liveLog, pastLogs));
 			return rolledLog;

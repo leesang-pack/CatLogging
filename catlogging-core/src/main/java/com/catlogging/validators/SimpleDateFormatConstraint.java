@@ -18,23 +18,17 @@
  *******************************************************************************/
 package com.catlogging.validators;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.text.SimpleDateFormat;
+import com.catlogging.validators.RegexPatternConstraint.RegexPatternValidator;
+import com.catlogging.validators.SimpleDateFormatConstraint.SimpleDateFormatValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.catlogging.validators.RegexPatternConstraint.RegexPatternValidator;
-import com.catlogging.validators.SimpleDateFormatConstraint.SimpleDateFormatValidator;
+import java.lang.annotation.*;
+import java.text.SimpleDateFormat;
 
 /**
  * Validates a String input for the proper format regarding

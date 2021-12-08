@@ -1,20 +1,17 @@
 package com.catlogging.model;
 
+import com.catlogging.app.CoreAppConfig;
+import com.catlogging.model.support.DefaultPointer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.catlogging.app.CoreAppConfig;
-import com.catlogging.model.support.DefaultPointer;
-
-import net.sf.json.JSONObject;
 
 /**
  * Test for serializing / deserializing {@link LogEntry}s.
@@ -22,12 +19,11 @@ import net.sf.json.JSONObject;
  * @author Tester
  *
  */
+@Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { CoreAppConfig.class })
 @Configuration
 public class LogEntryJsonTest {
-	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
 	@Autowired
 	private ObjectMapper mapper;
 
@@ -35,7 +31,7 @@ public class LogEntryJsonTest {
 	public void testEmptySerialization() throws Exception {
 		final LogEntry entry = new LogEntry();
 		final String entryStr = mapper.writeValueAsString(entry);
-		LOGGER.debug("JSON: {}", entryStr);
+		log.debug("JSON: {}", entryStr);
 
 		final LogEntry check = mapper.readValue(entryStr, LogEntry.class);
 		Assert.assertTrue(check.isEmpty());
@@ -48,7 +44,7 @@ public class LogEntryJsonTest {
 		entry.setEndOffset(new DefaultPointer(499, 500));
 		Assert.assertEquals(2, entry.size());
 		final String entryStr = mapper.writeValueAsString(entry);
-		LOGGER.debug("JSON with pointers: {}", entryStr);
+		log.debug("JSON with pointers: {}", entryStr);
 
 		final LogEntry check = mapper.readValue(entryStr, LogEntry.class);
 		Assert.assertEquals(2, check.size());

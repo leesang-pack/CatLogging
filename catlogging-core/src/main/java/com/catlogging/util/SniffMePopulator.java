@@ -18,25 +18,23 @@
  *******************************************************************************/
 package com.catlogging.util;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.catlogging.app.CatLoggingHome;
+import com.catlogging.app.ContextProvider;
+import com.catlogging.app.DataSourceAppConfig.DBInitIndicator;
+import com.catlogging.model.LogSourceProvider;
+import com.catlogging.model.file.RollingLogsSource;
+import com.catlogging.reader.filter.FilteredLogEntryReader;
+import com.catlogging.reader.log4j.Log4jTextReader;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
-import com.catlogging.app.ContextProvider;
-import com.catlogging.app.DataSourceAppConfig.DBInitIndicator;
-import com.catlogging.app.CatLoggingHome;
-import com.catlogging.model.LogSourceProvider;
-import com.catlogging.model.file.RollingLogsSource;
-import com.catlogging.reader.filter.FilteredLogEntryReader;
-import com.catlogging.reader.log4j.Log4jTextReader;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Registers catloggings own logs as source.
@@ -44,9 +42,9 @@ import com.catlogging.reader.log4j.Log4jTextReader;
  * @author Tester
  * 
  */
+@Slf4j
 @Component
 public class SniffMePopulator implements ApplicationContextAware {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private CatLoggingHome home;
@@ -75,7 +73,7 @@ public class SniffMePopulator implements ApplicationContextAware {
 		reader.setSpecifiersFieldMapping(specifiersFieldMapping);
 		myLogSource.setReader(new FilteredLogEntryReader(reader, null));
 		sourceProvider.createSource(myLogSource);
-		logger.info("Created source for catlogging's server log: {}", myLogSource);
+		log.info("Created source for catlogging's server log: {}", myLogSource);
 	}
 
 	@Override
@@ -84,7 +82,7 @@ public class SniffMePopulator implements ApplicationContextAware {
 			try {
 				populate();
 			} catch (final Exception e) {
-				logger.error("Failed to create catlogging's server log", e);
+				log.error("Failed to create catlogging's server log", e);
 			}
 		}
 	}

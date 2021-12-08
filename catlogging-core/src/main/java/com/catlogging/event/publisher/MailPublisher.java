@@ -18,22 +18,6 @@
  *******************************************************************************/
 package com.catlogging.event.publisher;
 
-import javax.validation.constraints.NotNull;
-
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.app.VelocityEngine;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailException;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.catlogging.config.BeanConfigFactoryManager;
 import com.catlogging.config.BeanPostConstructor;
 import com.catlogging.config.ConfigException;
@@ -42,6 +26,19 @@ import com.catlogging.event.Event;
 import com.catlogging.event.Publisher;
 import com.catlogging.model.LogEntry;
 import com.catlogging.validators.MailListConstraint;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Publishes an event by sending a mail. The fields subject and text will be
@@ -50,10 +47,10 @@ import com.catlogging.validators.MailListConstraint;
  * @author Tester
  * 
  */
+@Slf4j
 @Component
 @PostConstructed(constructor = MailPublisher.class)
 public class MailPublisher implements Publisher, BeanPostConstructor<MailPublisher> {
-	private static Logger logger = LoggerFactory.getLogger(MailPublisher.class);
 
 	@Autowired
 	@JsonIgnore
@@ -67,16 +64,16 @@ public class MailPublisher implements Publisher, BeanPostConstructor<MailPublish
 	@JsonIgnore
 	private VelocityEventRenderer velocityRenderer;
 
-	@NotEmpty
+	@NotNull
 	@MailListConstraint
 	@JsonProperty
 	private String to;
 
-	@NotEmpty
+	@NotNull
 	@JsonProperty
 	private String subject;
 
-	@NotEmpty
+	@NotNull
 	@org.hibernate.validator.constraints.Email
 	@JsonProperty
 	private String from;
@@ -97,7 +94,7 @@ public class MailPublisher implements Publisher, BeanPostConstructor<MailPublish
 			final String to2 = getTo();
 			email.setTo(to2.split(",|\\s"));
 			mailSender.send(email);
-			logger.info("Sent event notification to: {}", to2);
+			log.info("Sent event notification to: {}", to2);
 		} catch (final MailException e) {
 			throw new PublishException("Failed to send event notification to mail: " + getTo(), e);
 		}

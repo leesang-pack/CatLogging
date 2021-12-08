@@ -18,20 +18,18 @@
  *******************************************************************************/
 package com.catlogging.util.value.support;
 
+import com.catlogging.app.CatLoggingHome;
+import com.catlogging.app.CoreAppConfig;
+import com.catlogging.util.value.ConfigValueStore;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
-import com.catlogging.app.CoreAppConfig;
-import com.catlogging.app.CatLoggingHome;
-import com.catlogging.util.value.ConfigValueStore;
 
 /**
  * Retrieves properties from
@@ -45,9 +43,8 @@ import com.catlogging.util.value.ConfigValueStore;
  * @author Tester
  * 
  */
+@Slf4j
 public class PropertiesBasedSource implements ConfigValueStore {
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(PropertiesBasedSource.class);
 	@Autowired
 	private CatLoggingHome homeDir;
 
@@ -67,17 +64,13 @@ public class PropertiesBasedSource implements ConfigValueStore {
 		} else {
 			catloggingProperties.remove(key);
 		}
-		File file = new File(homeDir.getHomeDir(),
-				CoreAppConfig.catlogging_PROPERTIES_FILE);
-		LOGGER.info("Saving config value for key '{}' to file: {}", key,
-				file.getAbsolutePath());
+		File file = new File(homeDir.getHomeDir(), CoreAppConfig.catlogging_PROPERTIES_FILE);
+		log.info("Saving config value for key '{}' to file: {}", key, file.getAbsolutePath());
 		Properties properties = new Properties();
 		try {
 			properties.load(new FileInputStream(file));
 		} catch (IOException e) {
-			LOGGER.warn(
-					"Failed to load current properties from file, continue with empty properties: "
-							+ file.getAbsolutePath(), e);
+			log.warn("Failed to load current properties from file, continue with empty properties: " + file.getAbsolutePath(), e);
 		}
 		if (value != null) {
 			properties.setProperty(key, value);

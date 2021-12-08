@@ -18,19 +18,17 @@
  *******************************************************************************/
 package com.catlogging.fields.filter.support;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import org.hibernate.validator.constraints.NotEmpty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.catlogging.fields.FieldBaseTypes;
 import com.catlogging.fields.FieldsMap;
 import com.catlogging.fields.filter.FieldsFilter;
 import com.catlogging.model.SeverityLevel;
 import com.catlogging.reader.filter.LogEntryFilter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.validation.constraints.NotNull;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Abstract filter class concerning transformation of a source field value into
@@ -40,14 +38,14 @@ import com.catlogging.reader.filter.LogEntryFilter;
  * @author Tester
  *
  */
+@Slf4j
 public abstract class AbstractTransformationFilter<T> implements FieldsFilter, LogEntryFilter {
-	private static final Logger logger = LoggerFactory.getLogger(AbstractTransformationFilter.class);
 	@JsonProperty
-	@NotEmpty
+	@NotNull
 	private String targetField;
 
 	@JsonProperty
-	@NotEmpty
+	@NotNull
 	private String sourceField;
 
 	@JsonProperty
@@ -135,7 +133,7 @@ public abstract class AbstractTransformationFilter<T> implements FieldsFilter, L
 						return;
 					}
 				} catch (final Exception e) {
-					logger.debug("Failed to transform value", e);
+					log.debug("Failed to transform value", e);
 					// Fallback
 				}
 			}

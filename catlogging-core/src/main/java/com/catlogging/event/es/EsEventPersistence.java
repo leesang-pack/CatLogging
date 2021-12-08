@@ -18,16 +18,27 @@
  *******************************************************************************/
 package com.catlogging.event.es;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.*;
 
 import javax.annotation.PostConstruct;
 
+import com.catlogging.app.ElasticSearchConnect;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
+import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.*;
 import org.elasticsearch.action.support.IndicesOptions;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
@@ -39,10 +50,9 @@ import org.elasticsearch.search.aggregations.BucketOrder;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram.Bucket;
-//import org.elasticsearch.search.aggregations.bucket.histogram.Histogram.Order;
-//import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
+import org.elasticsearch.search.aggregations.bucket.terms.IncludeExclude;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.stats.Stats;
-//import org.elasticsearch.search.aggregations.metrics.stats.StatsBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -59,8 +69,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-//import com.catlogging.app.ElasticSearchAppConfig.ClientCallback;
-//import com.catlogging.app.ElasticSearchAppConfig.ElasticClientTemplate;
 import com.catlogging.aspect.AspectProvider;
 import com.catlogging.aspect.PostAspectProvider;
 import com.catlogging.event.Event;
@@ -81,7 +89,6 @@ import com.catlogging.reader.FormatException;
 import com.catlogging.util.DataAccessException;
 
 import net.sf.json.util.JSONBuilder;
-import pl.allegro.tech.embeddedelasticsearch.EmbeddedElastic;
 
 /**
  * Elastic search event persistence.
@@ -101,20 +108,11 @@ public class EsEventPersistence implements EventPersistence {
 	@Autowired
 	private SnifferPersistence snifferPersistence;
 
-//	@Autowired
-//	private ElasticClientTemplate clientTpl;
-
 	@Autowired
-	private EmbeddedElastic embeddedElastic;
-
-	@Autowired
-	private RestHighLevelClient restHighLevelClient;
+	private ElasticSearchConnect elasticSearchConnect;
 
 	@Autowired
 	private IndexNamingStrategy indexNamingStrategy;
-
-//	@Autowired
-//	private ElasticSearchAppConfig.EsSettingsHolder esSettingsHolder;
 
 	private ObjectMapper jsonMapper;
 
@@ -146,7 +144,13 @@ public class EsEventPersistence implements EventPersistence {
 
 	@Override
 	public void refreshIndex() {
-		embeddedElastic.refreshIndices();
+		try {
+			RefreshRequest refreshRequest =  new RefreshRequest();
+			RefreshResponse refreshResponse = elasticSearchConnect.getClientConnection().indices().refresh(refreshRequest);
+			log.debug("refresh response: {}", refreshResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -155,22 +159,15 @@ public class EsEventPersistence implements EventPersistence {
 		try {
 			evStr = jsonMapper.writeValueAsString(event);
 
-			Map<CharSequence, CharSequence> idJsonMap = new HashMap<>();
-			idJsonMap.put(String.valueOf(event.getSnifferId()), evStr);
+			IndexRequest indexRequest = new IndexRequest()
+					.index(indexNamingStrategy.buildActiveName(event.getSnifferId()))
+					.type(getType(event.getSnifferId()))
+					.source(evStr, XContentType.JSON);
 
-			embeddedElastic.index(
-					indexNamingStrategy.buildActiveName(event.getSnifferId()),
-					getType(event.getSnifferId()),
-					idJsonMap);
-			GetRequest getRequest = new GetRequest(indexNamingStrategy.buildActiveName(event.getSnifferId())
-					, getType(event.getSnifferId())
-					, String.valueOf(event.getSnifferId()));
+			IndexResponse indexResponse =elasticSearchConnect.getClientConnection().index(indexRequest);
+			String eventId = indexResponse.getId();
+			log.debug("Persisted event with id: {} eventBody:{}", eventId, indexResponse.toString());
 
-			GetResponse getResponse = restHighLevelClient.get(getRequest);
-			String eventBody = getResponse.getSourceAsString();
-			String eventId = getResponse.getId();
-
-			log.debug("Persisted event with id: {} eventBody:{}", eventId, eventBody);
 			return eventId;
 		} catch (final Exception e) {
 			throw new DataAccessException("Failed to persiste event: " + evStr, e);
@@ -179,40 +176,45 @@ public class EsEventPersistence implements EventPersistence {
 
 	@Override
 	public void delete(final long snifferId, final String[] eventIds) {
-//		clientTpl.executeWithClient(new ClientCallback<Object>() {
-//			@Override
-//			public Object execute(final RestHighLevelClient client) {
-////				final BulkRequest deletes = new BulkRequest().refresh(true);
-////				for (final String id : eventIds) {
-////					for (final String index : indexNamingStrategy.getRetrievalNames(snifferId)) {
-////						deletes.add(new DeleteRequest(index, getType(snifferId), id));
-////					}
-////				}
-////				client.bulk(deletes).actionGet();
-////				log.info("Deleted events: {}", (Object[]) eventIds);
-//				return null;
-//			}
-//		});
+		try {
+			BulkRequest deletes = new BulkRequest().setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
+			for (final String id : eventIds) {
+				for (final String index : indexNamingStrategy.getRetrievalNames(snifferId)) {
+					deletes.add(new DeleteRequest(index, getType(snifferId), id));
+				}
+			}
+			elasticSearchConnect.getClientConnection().bulk(deletes);
+			log.info("Deleted events: {}", (Object[]) eventIds);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void deleteAll(final long snifferId) {
-//		clientTpl.executeWithClient(new ClientCallback<Object>() {
-//			@Override
-//			public Object execute(final RestHighLevelClient client) {
-//				final String[] indexNames = indexNamingStrategy.getRetrievalNames(snifferId);
-//				log.debug("Going to delete all events for sniffer {} by deleting the index(es): {}", snifferId,
-//						indexNames);
-//				try {
-////					client.admin().indices().prepareDelete(indexNames)
-////							.setIndicesOptions(IndicesOptions.lenientExpandOpen()).execute().actionGet();
-//				} catch (final IndexNotFoundException e) {
-//					log.info("Catched IndexNotFoundException when deleting all events of sniffer: {}", snifferId);
-//				}
-//				log.info("Deleted all events for sniffer: {}", snifferId);
-//				return null;
-//			}
-//		});
+		for (final String index : indexNamingStrategy.getRetrievalNames(snifferId)) {
+			log.debug("Going to delete all events for sniffer {} by deleting the index(es): {}", snifferId, index);
+
+			//////////////////////////////
+			// 인덱스 삭제
+			try {
+				DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest()
+						.indices(index)
+						.indicesOptions(IndicesOptions.lenientExpandOpen());
+
+				DeleteIndexResponse deleteIndexResponse = elasticSearchConnect.getClientConnection().indices().delete(deleteIndexRequest);
+
+				log.info("index delete all:{}",deleteIndexResponse.isAcknowledged());
+			} catch (Exception e) {
+				log.error("Catched IndexNotFoundException when deleting all events of sniffer: {} ", snifferId);
+				e.printStackTrace();
+			}
+
+			log.info("Deleted all events for sniffer: {}", snifferId);
+		}
+
+		///////////////////////////////////
+		// index 재생성
 		prepareMapping(snifferId);
 	}
 
@@ -285,7 +287,7 @@ public class EsEventPersistence implements EventPersistence {
 								.indicesOptions(IndicesOptions.lenientExpandOpen())
 								.types(getType(snifferId))
 								.source(timeRangeQuery);
-						SearchResponse searchResponse = restHighLevelClient.search(timeRangeQuerySearchRequest);
+						SearchResponse searchResponse = elasticSearchConnect.getClientConnection().search(timeRangeQuerySearchRequest);
 
 						final Aggregations aggregations = searchResponse.getAggregations();
 						if (aggregations != null) {
@@ -309,7 +311,7 @@ public class EsEventPersistence implements EventPersistence {
 
 				final List<EventPersistence.AspectEvent> events = new ArrayList<>();
 				SearchHit[] searchHits = new SearchHit[0];
-				SearchResponse searchResponse = restHighLevelClient.search(searchRequest);
+				SearchResponse searchResponse = elasticSearchConnect.getClientConnection().search(searchRequest);
 				searchHits = searchResponse.getHits().getHits();
 				for (SearchHit searchHit : searchHits) {
 					log.debug("==========>>> Search: " + searchHit.getId());
@@ -328,7 +330,7 @@ public class EsEventPersistence implements EventPersistence {
 				}
 
 				log.debug("Retrieved events for sniffer={} in {}ms with query: {}", snifferId, System.currentTimeMillis() - start, searchSourceBuilder);
-				return new EventsResult(searchHits.length, events, histogram);
+				return new EventsResult(searchResponse.getHits().getTotalHits(), events, histogram);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -456,7 +458,7 @@ public class EsEventPersistence implements EventPersistence {
 					.types(getType(snifferId))
 					.source(searchSourceBuilder);
 
-			SearchHit[] searchHits = restHighLevelClient.search(searchRequest).getHits().getHits();
+			SearchHit[] searchHits = elasticSearchConnect.getClientConnection().search(searchRequest).getHits().getHits();
 			if (searchHits != null && searchHits.length > 0) {
 				final SearchHit hit = searchHits[0];
 				final Event event = jsonMapper.readValue(hit.getSourceAsString(), Event.class);
@@ -514,38 +516,49 @@ public class EsEventPersistence implements EventPersistence {
 
 			@Override
 			public void injectAspect(final List<AspectSniffer> hosts) {
-				final long start = System.currentTimeMillis();
-				final HashMap<Long, AspectSniffer> mapHosts = new HashMap<>();
-				final long[] hostIds = new long[hosts.size()];
-				int i = 0;
-				for (final AspectSniffer s : hosts) {
-					hostIds[i++] = s.getId();
-					mapHosts.put(s.getId(), s);
-					s.setAspect(EVENTS_COUNT, 0);
+				try {
+					final long start = System.currentTimeMillis();
+					final HashMap<Long, AspectSniffer> mapHosts = new HashMap<>();
+					final long[] hostIds = new long[hosts.size()];
+					int i = 0;
+					for (final AspectSniffer s : hosts) {
+						hostIds[i++] = s.getId();
+						mapHosts.put(s.getId(), s);
+						s.setAspect(EVENTS_COUNT, 0);
+					}
+
+					AggregationBuilder terms = null;
+
+					terms = AggregationBuilders.terms("eventsCounter")
+							.field(Event.FIELD_SNIFFER_ID)
+							.includeExclude(new IncludeExclude(hostIds, null));
+					if(hostIds.length > 0) {
+						terms = AggregationBuilders.terms("eventsCounter")
+								.field(Event.FIELD_SNIFFER_ID)
+								.includeExclude(new IncludeExclude(hostIds, null))
+								.size(hostIds.length);
+					}
+
+					SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+							.size(0)
+							.aggregation(terms);
+					SearchRequest searchRequest = new SearchRequest()
+							.source(searchSourceBuilder);
+					SearchResponse searchResponse = elasticSearchConnect.getClientConnection().search(searchRequest);
+					log.debug("Performed events counting search {} in {}ms", searchSourceBuilder, System.currentTimeMillis() - start);
+					final Terms eventsCounterAgg = searchResponse.getAggregations() != null ? (Terms) searchResponse.getAggregations().get("eventsCounter") : null;
+					if (eventsCounterAgg != null) {
+						for (final Terms.Bucket entry : eventsCounterAgg.getBuckets()) {
+							final long snifferId = entry.getKeyAsNumber().longValue();
+							if (mapHosts.containsKey(snifferId)) {
+								mapHosts.get(snifferId).setAspect(EVENTS_COUNT, entry.getDocCount());
+							}
+						}
+					}
+
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-//				clientTpl.executeWithClient(new ClientCallback<Object>() {
-//					@Override
-//					public Object execute(final RestHighLevelClient client) {
-////						final TermsBuilder terms = AggregationBuilders.terms("eventsCounter")
-////								.field(Event.FIELD_SNIFFER_ID).include(hostIds).size(hostIds.length);
-////						final SearchRequestBuilder requestBuilder = client.prepareSearch().setSize(0)
-////								.addAggregation(terms);
-////						final SearchResponse response = requestBuilder.execute().actionGet();
-////						log.debug("Performed events counting search {} in {}ms", requestBuilder,
-////								System.currentTimeMillis() - start);
-////						final Terms aventsCounterAgg = response.getAggregations() != null
-////								? (Terms) response.getAggregations().get("eventsCounter") : null;
-////						if (aventsCounterAgg != null) {
-////							for (final Terms.Bucket entry : aventsCounterAgg.getBuckets()) {
-////								final long snifferId = entry.getKeyAsNumber().longValue();
-////								if (mapHosts.containsKey(snifferId)) {
-////									mapHosts.get(snifferId).setAspect(EVENTS_COUNT, entry.getDocCount());
-////								}
-////							}
-////						}
-//						return null;
-//					}
-//				});
 			}
 		};
 	}
@@ -567,43 +580,45 @@ public class EsEventPersistence implements EventPersistence {
 		final LogSource<?> source = logSourceProvider.getSourceById(sniffer.getLogSourceId());
 		final LinkedHashMap<String, FieldBaseTypes> entriesTypes = new LinkedHashMap<>();
 		try {
+
 			entriesTypes.putAll(source.getReader().getFieldTypes());
+
 		} catch (final FormatException e) {
 			log.warn("Failed to access entries fields, these won't be considered", e);
 		}
 
 		try {
-//			clientTpl.executeWithClient(new ClientCallback<Object>() {
-//				@Override
-//				public Object execute(final RestHighLevelClient client) {
-//					final StringWriter jsonMapping = new StringWriter();
-//					final JSONBuilder mappingBuilder = new JSONBuilder(jsonMapping).object();
-//					final JSONBuilder props = mappingBuilder.key(getType(snifferId)).object().key("properties")
-//							.object();
-//
-//					// TODO: Map sniffer fields dynamically
-//					props.key(Event.FIELD_TIMESTAMP).object().key("type").value("date").endObject();
-//					props.key(Event.FIELD_PUBLISHED).object().key("type").value("date").endObject();
-//
-//					for (final String key : entriesTypes.keySet()) {
-//						mapField(props, Event.FIELD_ENTRIES + "." + key, entriesTypes.get(key));
-//					}
-//
-//					mappingBuilder.endObject().endObject().endObject();
-//					log.info("Creating mapping for sniffer {}: {}", snifferId, jsonMapping);
-////					client.admin().indices().preparePutMapping(indexNamingStrategy.buildActiveName(snifferId))
-////							.setType(getType(snifferId)).setSource(jsonMapping.toString()).get();
-//					return null;
-//				}
-//			});
-		} catch (final Exception e) {
+
+			final StringWriter jsonMapping = new StringWriter();
+			final JSONBuilder mappingBuilder = new JSONBuilder(jsonMapping).object();
+			final JSONBuilder props = mappingBuilder.key(getType(snifferId)).object().key("properties").object();
+
+			// TODO: Map sniffer fields dynamically
+			props.key(Event.FIELD_TIMESTAMP).object().key("type").value("long").endObject();
+			props.key(Event.FIELD_PUBLISHED).object().key("type").value("long").endObject();
+
+			for (final String key : entriesTypes.keySet()) {
+				mapField(props, Event.FIELD_ENTRIES + "." + key, entriesTypes.get(key));
+			}
+			mappingBuilder.endObject().endObject().endObject();
+
+			log.info("Creating mapping for sniffer {}: {}", snifferId, jsonMapping);
+			PutMappingRequest request = new PutMappingRequest()
+					.source(jsonMapping.toString(),XContentType.JSON)
+					.type(getType(snifferId))
+					.indices(indexNamingStrategy.buildActiveName(snifferId));
+
+			elasticSearchConnect.getClientConnection().indices().putMapping(request);
+		} catch (Exception e) {
 			log.warn("Failed to update mapping for sniffer " + snifferId + ", try to delete all events", e);
 		}
+
+		return;
 	}
 
 	private void mapField(final JSONBuilder props, final String path, final FieldBaseTypes type) {
 		if (type == FieldBaseTypes.DATE) {
-			props.key(path).object().key("type").value("date").endObject();
+			props.key(path).object().key("type").value("long").endObject();
 		}
 	}
 }

@@ -1,21 +1,5 @@
 package com.catlogging.system.version;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.util.Date;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import com.catlogging.system.notification.Notification;
 import com.catlogging.system.notification.Notification.Level;
 import com.catlogging.system.notification.Notification.Type;
@@ -23,6 +7,19 @@ import com.catlogging.system.notification.NotificationProvider;
 import com.catlogging.system.version.UpdatesInfoProvider.UpdatesInfoContext;
 import com.catlogging.util.value.ConfigValue;
 import com.catlogging.util.value.Configured;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.util.Date;
 
 /**
  * Checks for updates and creates a notification periodically.
@@ -30,13 +27,12 @@ import com.catlogging.util.value.Configured;
  * @author Tester
  *
  */
+@Slf4j
 @Component
 public class SystemUpdatesCheckTask {
 	private static final int FREQUENCY = 1000 * 60 * 60 * 24;
 
 	public static final String PROP_catlogging_UPDATES_CHECK_ENABLED = "catlogging.system.updatesCheckEnabled";
-
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Configured(value = PROP_catlogging_UPDATES_CHECK_ENABLED, defaultValue = "true")
 	private ConfigValue<Boolean> updatesCheckEnabled;
@@ -58,14 +54,14 @@ public class SystemUpdatesCheckTask {
 		try {
 			notificationProvider.delete("/system/updateAvailable/" + currentVersion);
 		} catch (final Exception e) {
-			logger.warn("Failed to delete obsolete notification for current version", e);
+			log.warn("Failed to delete obsolete notification for current version", e);
 		}
 	}
 
 	@Scheduled(fixedDelay = FREQUENCY, initialDelay = 60000)
 	public void checkForUpdates() {
 		if (!updatesCheckEnabled.get()) {
-			logger.debug("Updates check disabled by configuration");
+			log.debug("Updates check disabled by configuration");
 			return;
 		}
 		try {
@@ -75,10 +71,10 @@ public class SystemUpdatesCheckTask {
 					return currentVersion;
 				}
 			};
-			logger.debug("Checking for system updates, current version: {}", context.getCurrentVersion());
+			log.debug("Checking for system updates, current version: {}", context.getCurrentVersion());
 			final VersionInfo latestStableVersion = updatesProvider.getLatestStableVersion(context);
 			if (latestStableVersion.compareTo(new VersionInfo(context.getCurrentVersion())) > 0) {
-				logger.debug("System update available: {}", latestStableVersion);
+				log.debug("System update available: {}", latestStableVersion);
 				final VelocityContext vcontext = new VelocityContext();
 				vcontext.put("version", latestStableVersion);
 				vcontext.put("context", context);
@@ -101,10 +97,10 @@ public class SystemUpdatesCheckTask {
 				n.setExpirationDate(new Date(new Date().getTime() + FREQUENCY));
 				notificationProvider.store(n, false);
 			} else {
-				logger.debug("System is up to date, got latest stable version: {}", latestStableVersion);
+				log.debug("System is up to date, got latest stable version: {}", latestStableVersion);
 			}
 		} catch (final IOException e) {
-			logger.info("Failed to check for system updates", e);
+			log.info("Failed to check for system updates", e);
 		}
 	}
 

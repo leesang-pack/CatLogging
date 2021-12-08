@@ -18,27 +18,25 @@
  *******************************************************************************/
 package com.catlogging.model.file;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.catlogging.model.Log;
+import com.catlogging.model.LogRawAccessor;
+import com.catlogging.model.Navigation.NavigationType;
+import com.catlogging.model.support.BaseLogsSource;
+import com.catlogging.model.support.ByteLogAccess;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.catlogging.model.Log;
-import com.catlogging.model.LogRawAccessor;
-import com.catlogging.model.Navigation.NavigationType;
-import com.catlogging.model.support.BaseLogsSource;
-import com.catlogging.model.support.ByteLogAccess;
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Combines log files matching an Ant-like path pattern to one source. Source
@@ -48,9 +46,9 @@ import com.catlogging.model.support.ByteLogAccess;
  * @author Tester
  * 
  */
+@Slf4j
 @Component
 public class WildcardLogsSource extends BaseLogsSource<ByteLogAccess> {
-	private static Logger logger = LoggerFactory.getLogger(WildcardLogsSource.class);
 
 	private LogRawAccessor<ByteLogAccess, FileLog> logAccessAdapter;
 
@@ -77,7 +75,7 @@ public class WildcardLogsSource extends BaseLogsSource<ByteLogAccess> {
 	 * @return the pattern
 	 */
 	@JsonProperty
-	@NotEmpty
+	@NotNull
 	public String getPattern() {
 		return pattern;
 	}
@@ -103,7 +101,7 @@ public class WildcardLogsSource extends BaseLogsSource<ByteLogAccess> {
 					logs.add(new FileLog(resources[i].getFile()));
 				}
 			} else {
-				logger.info("Ignore not existent file: {}", resources[i].getFile());
+				log.info("Ignore not existent file: {}", resources[i].getFile());
 			}
 		}
 		return logs;

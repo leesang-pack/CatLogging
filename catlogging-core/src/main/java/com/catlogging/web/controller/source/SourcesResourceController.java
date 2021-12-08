@@ -18,40 +18,26 @@
  *******************************************************************************/
 package com.catlogging.web.controller.source;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import javax.validation.Valid;
-
+import com.catlogging.fields.FieldBaseTypes;
+import com.catlogging.model.*;
+import com.catlogging.model.support.BaseLogsSource;
+import com.catlogging.util.json.Views;
+import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.catlogging.fields.FieldBaseTypes;
-import com.catlogging.model.Log;
-import com.catlogging.model.LogInputStream;
-import com.catlogging.model.LogRawAccess;
-import com.catlogging.model.LogSource;
-import com.catlogging.model.LogSourceProvider;
-import com.catlogging.model.SeverityLevel;
-import com.catlogging.model.support.BaseLogsSource;
-import com.catlogging.util.json.Views;
-import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * REST resource for sources.
@@ -59,9 +45,9 @@ import com.catlogging.web.controller.exception.ResourceNotFoundException;
  * @author Tester
  * 
  */
+@Slf4j
 @RestController
 public class SourcesResourceController {
-	private static Logger logger = LoggerFactory.getLogger(SourcesManageController.class);
 
 	@Autowired
 	private LogSourceProvider logsSourceProvider;
@@ -92,7 +78,7 @@ public class SourcesResourceController {
 	long createSource(@Valid @RequestBody final LogSource<?> newSource, final RedirectAttributes redirectAttrs)
 			throws ResourceNotFoundException, SchedulerException, ParseException {
 		final long id = logsSourceProvider.createSource(newSource);
-		logger.info("Created new log source: {}", newSource);
+		log.info("Created new log source: {}", newSource);
 		return id;
 	}
 

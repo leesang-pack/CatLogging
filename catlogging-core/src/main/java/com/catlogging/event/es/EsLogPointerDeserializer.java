@@ -1,17 +1,15 @@
 package com.catlogging.event.es;
 
-import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.catlogging.model.support.JsonLogPointer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.catlogging.model.support.JsonLogPointer;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
 
 /**
  * Deserializes log pointers from ES representation as simple string. This
@@ -21,8 +19,8 @@ import com.catlogging.model.support.JsonLogPointer;
  * @author Tester
  *
  */
+@Slf4j
 public class EsLogPointerDeserializer extends JsonDeserializer<JsonLogPointer> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(EsLogPointerDeserializer.class);
 
 	@Override
 	public JsonLogPointer deserialize(final JsonParser p, final DeserializationContext ctxt)
@@ -53,7 +51,7 @@ public class EsLogPointerDeserializer extends JsonDeserializer<JsonLogPointer> {
 				}
 			}
 		}
-		LOGGER.warn("Unable to deserialize log pointer from: {}", ctxt);
+		log.warn("Unable to deserialize log pointer from: {}", ctxt);
 		return null;
 	}
 

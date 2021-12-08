@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Locale;
 
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.util.IO;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
@@ -30,6 +31,7 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
+import org.springframework.stereotype.Service;
 
 /**
  * Override the {@link #unpack(WebAppContext)} method to unpack the WAR to a
@@ -40,8 +42,8 @@ import org.eclipse.jetty.webapp.WebInfConfiguration;
  * @author Tester
  *
  */
+@Slf4j
 public class WebInfConfigurationUnpackOverridable extends WebInfConfiguration {
-	private static final Logger LOG = Log.getLogger(WebInfConfigurationUnpackOverridable.class);
 
 	@Override
 	public void unpack(final WebAppContext context) throws IOException {
@@ -60,12 +62,12 @@ public class WebInfConfigurationUnpackOverridable extends WebInfConfiguration {
 
 			// Accept aliases for WAR files
 			if (web_app.getAlias() != null) {
-				LOG.debug(web_app + " anti-aliased to " + web_app.getAlias());
+				log.debug(web_app + " anti-aliased to " + web_app.getAlias());
 				web_app = context.newResource(web_app.getAlias());
 			}
 
-			if (LOG.isDebugEnabled())
-				LOG.debug("Try webapp=" + web_app + ", exists=" + web_app.exists() + ", directory="
+			if (log.isDebugEnabled())
+				log.debug("Try webapp=" + web_app + ", exists=" + web_app.exists() + ", directory="
 						+ web_app.isDirectory() + " file=" + (web_app.getFile()));
 			// Is the WAR usable directly?
 			if (web_app.exists() && !web_app.isDirectory() && !web_app.toString().startsWith("jar:")) {
@@ -85,7 +87,7 @@ public class WebInfConfigurationUnpackOverridable extends WebInfConfiguration {
 
 				if (web_app.getFile() != null && web_app.getFile().isDirectory()) {
 					// Copy directory
-					LOG.debug("Copy " + web_app + " to " + extractedWebAppDir);
+					log.debug("Copy " + web_app + " to " + extractedWebAppDir);
 					web_app.copyTo(extractedWebAppDir);
 				} else {
 					// Use a sentinel file that will exist only whilst the
@@ -97,7 +99,7 @@ public class WebInfConfigurationUnpackOverridable extends WebInfConfiguration {
 						// it hasn't been extracted before so extract it
 						extractionLock.createNewFile();
 						extractedWebAppDir.mkdir();
-						LOG.info("Extract " + web_app + " to " + extractedWebAppDir);
+						log.info("Extract " + web_app + " to " + extractedWebAppDir);
 						Resource jar_web_app = JarResource.newJarResource(web_app);
 						jar_web_app.copyTo(extractedWebAppDir);
 						extractionLock.delete();
@@ -109,7 +111,7 @@ public class WebInfConfigurationUnpackOverridable extends WebInfConfiguration {
 							extractionLock.createNewFile();
 							IO.delete(extractedWebAppDir);
 							extractedWebAppDir.mkdir();
-							LOG.info("Extract " + web_app + " to " + extractedWebAppDir);
+							log.info("Extract " + web_app + " to " + extractedWebAppDir);
 							Resource jar_web_app = JarResource.newJarResource(web_app);
 							jar_web_app.copyTo(extractedWebAppDir);
 							extractionLock.delete();
@@ -121,14 +123,14 @@ public class WebInfConfigurationUnpackOverridable extends WebInfConfiguration {
 
 			// Now do we have something usable?
 			if (!web_app.exists() || !web_app.isDirectory()) {
-				LOG.warn("Web application not found " + war);
+				log.warn("Web application not found " + war);
 				throw new java.io.FileNotFoundException(war);
 			}
 
 			context.setBaseResource(web_app);
 
-			if (LOG.isDebugEnabled())
-				LOG.debug("webapp=" + web_app);
+			if (log.isDebugEnabled())
+				log.debug("webapp=" + web_app);
 		}
 
 		// Do we need to extract WEB-INF/lib?
@@ -149,7 +151,7 @@ public class WebInfConfigurationUnpackOverridable extends WebInfConfiguration {
 					IO.delete(webInfLibDir);
 				webInfLibDir.mkdir();
 
-				LOG.debug("Copying WEB-INF/lib " + web_inf_lib + " to " + webInfLibDir);
+				log.debug("Copying WEB-INF/lib " + web_inf_lib + " to " + webInfLibDir);
 				web_inf_lib.copyTo(webInfLibDir);
 			}
 
@@ -159,7 +161,7 @@ public class WebInfConfigurationUnpackOverridable extends WebInfConfiguration {
 				if (webInfClassesDir.exists())
 					IO.delete(webInfClassesDir);
 				webInfClassesDir.mkdir();
-				LOG.debug("Copying WEB-INF/classes from " + web_inf_classes + " to "
+				log.debug("Copying WEB-INF/classes from " + web_inf_classes + " to "
 						+ webInfClassesDir.getAbsolutePath());
 				web_inf_classes.copyTo(webInfClassesDir);
 			}
@@ -168,8 +170,8 @@ public class WebInfConfigurationUnpackOverridable extends WebInfConfiguration {
 
 			ResourceCollection rc = new ResourceCollection(web_inf, web_app);
 
-			if (LOG.isDebugEnabled())
-				LOG.debug("context.resourcebase = " + rc);
+			if (log.isDebugEnabled())
+				log.debug("context.resourcebase = " + rc);
 
 			context.setBaseResource(rc);
 		}

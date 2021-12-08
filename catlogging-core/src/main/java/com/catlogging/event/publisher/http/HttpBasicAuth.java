@@ -18,7 +18,7 @@
  *******************************************************************************/
 package com.catlogging.event.publisher.http;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 /**
  * Bean for HTTP basic authentication.
@@ -27,9 +27,9 @@ import org.hibernate.validator.constraints.NotEmpty;
  * 
  */
 public class HttpBasicAuth {
-	@NotEmpty
+	@NotNull
 	private String username;
-	@NotEmpty
+	@NotNull
 	private String password;
 
 	/**

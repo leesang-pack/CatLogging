@@ -18,16 +18,7 @@
  *******************************************************************************/
 package com.catlogging.web.controller.exception;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -37,11 +28,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Error handler for REST validation.
@@ -49,12 +43,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Tester
  * 
  */
+@Slf4j
 @ControllerAdvice(annotations = RestController.class)
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RestErrorHandler {
 	static final String REST_SPECIFIC_ERROR_HANDLER = "restSpecificErrorHandler";
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(RestErrorHandler.class);
 
 	@Autowired
 	private MessageSource messageSource;
@@ -96,7 +89,7 @@ public class RestErrorHandler {
 
 	private static ErrorResponse processExceptionResponse(final Throwable ex, final HttpServletResponse response,
 			final int status) throws IOException {
-		LOGGER.info("Catched exception", ex);
+		log.info("Catched exception", ex);
 		final ErrorResponse er = new ErrorResponse();
 		er.setException(ex);
 		response.setStatus(status, er.getExceptionMessage());

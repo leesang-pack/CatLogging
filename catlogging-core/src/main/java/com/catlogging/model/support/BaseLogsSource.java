@@ -19,6 +19,7 @@
 package com.catlogging.model.support;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -48,7 +49,7 @@ public abstract class BaseLogsSource<ACCESSTYPE extends LogRawAccess<? extends L
 
 	@JsonProperty
 	@JsonView(Views.Info.class)
-	@NotEmpty
+	@NotNull
 	private String name;
 
 	@JsonProperty

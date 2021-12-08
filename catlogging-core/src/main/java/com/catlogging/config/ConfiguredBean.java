@@ -79,6 +79,11 @@ public interface ConfiguredBean {
 							.getRawClass());
 		}
 
+//		@Override
+//		public JavaType typeFromId(final String id) {
+//			return null;
+//		}
+
 		@SuppressWarnings("unchecked")
 		@Override
 		public JavaType typeFromId(final DatabindContext context,

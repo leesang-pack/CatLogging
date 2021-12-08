@@ -18,31 +18,24 @@
  *******************************************************************************/
 package com.catlogging.fields;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import com.catlogging.app.CoreAppConfig;
+import com.catlogging.model.SeverityLevel;
+import com.catlogging.model.SeverityLevel.SeverityClassification;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.catlogging.app.CoreAppConfig;
-import com.catlogging.model.SeverityLevel;
-import com.catlogging.model.SeverityLevel.SeverityClassification;
-
-import net.sf.json.JSONObject;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Test public serialization of {@link FieldsMap}.
@@ -50,12 +43,11 @@ import net.sf.json.JSONObject;
  * @author Tester
  * 
  */
+@Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { CoreAppConfig.class })
 @Configuration
 public class FieldsMapJsonTest {
-	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
 	@Autowired
 	private ObjectMapper mapper;
 
@@ -64,7 +56,7 @@ public class FieldsMapJsonTest {
 		final FieldsMap map = new FieldsMap();
 		map.put("fa", new Date(0));
 		final String jsonStr = mapper.writeValueAsString(map);
-		LOGGER.info("Serialized {} to: {}", map, jsonStr);
+		log.info("Serialized {} to: {}", map, jsonStr);
 		final JSONObject parsedJson = JSONObject.fromObject(jsonStr);
 		Assert.assertNotNull(parsedJson.get("@types"));
 		Assert.assertEquals(FieldBaseTypes.DATE.name(), parsedJson.getJSONObject("@types").getString("fa"));
@@ -75,7 +67,7 @@ public class FieldsMapJsonTest {
 	public void testSerializationEmpty() throws JsonProcessingException {
 		final FieldsMap map = new FieldsMap();
 		final String jsonStr = mapper.writeValueAsString(map);
-		LOGGER.info("Serialized {} to: {}", map, jsonStr);
+		log.info("Serialized {} to: {}", map, jsonStr);
 		final JSONObject parsedJson = JSONObject.fromObject(jsonStr);
 		Assert.assertTrue(parsedJson.isEmpty());
 	}
@@ -93,7 +85,7 @@ public class FieldsMapJsonTest {
 		final FieldsMap map = new FieldsMap();
 		map.put("fa", new Date(120));
 		final String jsonStr = mapper.writeValueAsString(map);
-		LOGGER.info("Serialized {} to: {}", map, jsonStr);
+		log.info("Serialized {} to: {}", map, jsonStr);
 
 		final FieldsMap dMap = mapper.readValue(jsonStr, FieldsMap.class);
 		Assert.assertNull(dMap.get("@types"));
@@ -108,7 +100,7 @@ public class FieldsMapJsonTest {
 		final JSONObject parsedJson = JSONObject.fromObject(mapper.writeValueAsString(map));
 		parsedJson.element("unknown", Collections.singletonMap("int", 134));
 		final String jsonStr = parsedJson.toString();
-		LOGGER.info("Serialized in extended form to: {}", jsonStr);
+		log.info("Serialized in extended form to: {}", jsonStr);
 
 		final FieldsMap dMap = mapper.readValue(jsonStr, FieldsMap.class);
 		Assert.assertNull(dMap.get("@types"));
@@ -135,14 +127,14 @@ public class FieldsMapJsonTest {
 			map.put("somedoublefield" + i, (Math.random() * 1000000));
 		}
 		final String jsonStr = mapper.writeValueAsString(map);
-		LOGGER.info("Serialized to: {}", jsonStr);
+		log.info("Serialized to: {}", jsonStr);
 		final long start = System.currentTimeMillis();
 		int i = 0;
 		FieldsMap desrerializedMap = null;
 		for (; i < 1000; i++) {
 			desrerializedMap = mapper.readValue(jsonStr, FieldsMap.class);
 		}
-		LOGGER.info("Deserialized fields {} times in {}ms", i, System.currentTimeMillis() - start);
+		log.info("Deserialized fields {} times in {}ms", i, System.currentTimeMillis() - start);
 		Assert.assertEquals(map, desrerializedMap);
 	}
 
@@ -158,7 +150,7 @@ public class FieldsMapJsonTest {
 		subMaps.get(1).put("m2", new Date(20000));
 		map.put("nested", subMaps);
 		final String jsonStr = mapper.writeValueAsString(map);
-		LOGGER.info("Serialized nested maps {} to: {}", map, jsonStr);
+		log.info("Serialized nested maps {} to: {}", map, jsonStr);
 
 		final FieldsMap desrerializedMap = mapper.readValue(jsonStr, FieldsMap.class);
 		Assert.assertEquals(2, desrerializedMap.size());

@@ -18,21 +18,19 @@
  *******************************************************************************/
 package com.catlogging.app;
 
-import java.util.Properties;
-import java.util.UUID;
-
-import javax.sql.DataSource;
-
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.quartz.simpl.SimpleInstanceIdGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+
+import javax.sql.DataSource;
+import java.util.Properties;
+import java.util.UUID;
 
 /**
  * Initiates the Quartz scheduler and Spring's Scheduled tasks.
@@ -41,9 +39,9 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
  * 
  */
 @Configuration
+@Slf4j
 @EnableScheduling
 public class SchedulerAppConfig {
-	private static Logger logger = LoggerFactory.getLogger(SchedulerAppConfig.class);
 
 	@Autowired
 	private DataSource dataSource;
@@ -85,11 +83,11 @@ public class SchedulerAppConfig {
 		public String generateInstanceId() throws SchedulerException {
 			try {
 				String name = super.generateInstanceId();
-				logger.info("Using host based schedule instance id: {}", name);
+				log.info("Using host based schedule instance id: {}", name);
 				return name;
 			} catch (Exception e) {
 				String name = UUID.randomUUID().toString();
-				logger.info(
+				log.info(
 						"Using generated UUID '{}' for scheduler instance id, because of errors getting the host name: {}",
 						name, (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
 				return name;

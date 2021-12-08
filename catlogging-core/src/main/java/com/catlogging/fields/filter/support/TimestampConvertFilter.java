@@ -18,21 +18,19 @@
  *******************************************************************************/
 package com.catlogging.fields.filter.support;
 
+import com.catlogging.fields.FieldBaseTypes;
+import com.catlogging.model.LogEntry;
+import com.catlogging.validators.SimpleDateFormatConstraint;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.catlogging.fields.FieldBaseTypes;
-import com.catlogging.model.LogEntry;
-import com.catlogging.validators.SimpleDateFormatConstraint;
 
 /**
  * Converts a value in {@link #getSourceField()} into a {@link Date} value
@@ -42,10 +40,10 @@ import com.catlogging.validators.SimpleDateFormatConstraint;
  * @author Tester
  *
  */
+@Slf4j
 public class TimestampConvertFilter extends AbstractTransformationFilter<Date> {
-	private static final Logger logger = LoggerFactory.getLogger(TimestampConvertFilter.class);
 	@JsonProperty
-	@NotEmpty
+	@NotNull
 	@SimpleDateFormatConstraint
 	private String pattern;
 
@@ -81,8 +79,8 @@ public class TimestampConvertFilter extends AbstractTransformationFilter<Date> {
 			}
 			return parsedPattern.parse(sourceValue);
 		} catch (ParseException | IllegalArgumentException e) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Failed to parse date in format '" + pattern + "' from string: " + sourceValue, e);
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to parse date in format '" + pattern + "' from string: " + sourceValue, e);
 			}
 		}
 		return null;

@@ -18,45 +18,13 @@
  *******************************************************************************/
 package com.catlogging.web.controller.source;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import javax.validation.Valid;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.catlogging.event.Event;
 import com.catlogging.event.IncrementData;
 import com.catlogging.event.Scanner;
 import com.catlogging.event.Scanner.EventConsumer;
 import com.catlogging.event.support.TimeoutReaderStrategy;
-import com.catlogging.model.Log;
-import com.catlogging.model.LogEntry;
-import com.catlogging.model.LogInputStream;
-import com.catlogging.model.LogPointer;
-import com.catlogging.model.LogPointerFactory;
+import com.catlogging.model.*;
 import com.catlogging.model.LogPointerFactory.NavigationFuture;
-import com.catlogging.model.LogRawAccess;
-import com.catlogging.model.LogSource;
-import com.catlogging.model.LogSourceProvider;
-import com.catlogging.model.Navigation;
 import com.catlogging.model.Navigation.DateOffsetNavigation;
 import com.catlogging.model.Navigation.NavigationType;
 import com.catlogging.model.support.ByteLogAccess;
@@ -67,6 +35,21 @@ import com.catlogging.reader.support.BufferedConsumer;
 import com.catlogging.reader.support.InverseReader;
 import com.catlogging.web.controller.LogEntriesResult;
 import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  * REST controller for several log entries purposes.
@@ -74,9 +57,9 @@ import com.catlogging.web.controller.exception.ResourceNotFoundException;
  * @author Tester
  * 
  */
+@Slf4j
 @RestController
 public class LogEntriesRestController {
-	private static Logger logger = LoggerFactory.getLogger(LogEntriesRestController.class);
 	@Autowired
 	private LogSourceProvider logsSourceProvider;
 
@@ -130,7 +113,7 @@ public class LogEntriesRestController {
 			@RequestParam(value = "mark", required = false) final String mark,
 			@RequestParam(value = "count") final int count)
 			throws IOException, FormatException, ResourceNotFoundException {
-		logger.debug("Start load entries log={} from source={}, mark={}, count={}", logPath, activeLogSource, mark,
+		log.debug("Start load entries log={} from source={}, mark={}, count={}", logPath, activeLogSource, mark,
 				count);
 		try {
 			final Log log = getLog(activeLogSource, logPath);
@@ -159,7 +142,7 @@ public class LogEntriesRestController {
 			}
 
 		} finally {
-			logger.debug("Finished log entries from log={} and source={}", logPath, activeLogSource);
+			log.debug("Finished log entries from log={} and source={}", logPath, activeLogSource);
 		}
 	}
 
@@ -170,12 +153,12 @@ public class LogEntriesRestController {
 			@RequestParam(value = "mark", required = false) final String mark,
 			@RequestParam(value = "count") final int count)
 			throws IOException, FormatException, ResourceNotFoundException {
-		logger.debug("Start load entries log={} from source={}, mark={}, count={}", logPath, logSource, mark, count);
+		log.debug("Start load entries log={} from source={}, mark={}, count={}", logPath, logSource, mark, count);
 		try {
 			final LogSource<LogRawAccess<? extends LogInputStream>> activeLogSource = getActiveLogSource(logSource);
 			return getEntries(activeLogSource, logPath, mark, count);
 		} finally {
-			logger.debug("Finished log entries from log={} and source={}", logPath, logSource);
+			log.debug("Finished log entries from log={} and source={}", logPath, logSource);
 		}
 	}
 
@@ -195,7 +178,7 @@ public class LogEntriesRestController {
 			@RequestParam(value = "navType", defaultValue = "BYTE") final NavigationType navType,
 			@RequestParam(value = "mark") final String position, @RequestParam(value = "count") final int count)
 			throws IOException, FormatException, ResourceNotFoundException {
-		logger.debug("Start loading random access entries log={} from source={}, navType={}, position={}, count={}",
+		log.debug("Start loading random access entries log={} from source={}, navType={}, position={}, count={}",
 				logPath, activeLogSource, navType, position, count);
 		try {
 			final Log log = getLog(activeLogSource, logPath);
@@ -241,7 +224,7 @@ public class LogEntriesRestController {
 				return new LogEntriesResult(activeLogSource.getReader().getFieldTypes(), entries, -1);
 			}
 		} finally {
-			logger.debug("Finished loading random access entries from log={} and source={}", logPath, activeLogSource);
+			log.debug("Finished loading random access entries from log={} and source={}", logPath, activeLogSource);
 		}
 	}
 
@@ -252,13 +235,13 @@ public class LogEntriesRestController {
 			@RequestParam(value = "navType", defaultValue = "BYTE") final NavigationType navType,
 			@RequestParam(value = "mark") final String position, @RequestParam(value = "count") final int count)
 			throws IOException, FormatException, ResourceNotFoundException {
-		logger.debug("Start loading random access entries log={} from source={}, navType={}, position={}, count={}",
+		log.debug("Start loading random access entries log={} from source={}, navType={}, position={}, count={}",
 				logPath, logSource, navType, position, count);
 		try {
 			final LogSource<LogRawAccess<? extends LogInputStream>> activeLogSource = getActiveLogSource(logSource);
 			return getRandomAccessEntries(activeLogSource, logPath, navType, position, count);
 		} finally {
-			logger.debug("Finished loading random access entries from log={} and source={}", logPath, logSource);
+			log.debug("Finished loading random access entries from log={} and source={}", logPath, logSource);
 		}
 	}
 
@@ -315,11 +298,11 @@ public class LogEntriesRestController {
 			@RequestParam(value = "count") final int count, final BindingResult bResult)
 			throws IOException, FormatException, ResourceNotFoundException {
 		final long start = System.currentTimeMillis();
-		logger.debug("Start searching entries log={} from source={}, mark={}, count={}", logPath, logSource, mark,
+		log.debug("Start searching entries log={} from source={}, mark={}, count={}", logPath, logSource, mark,
 				count);
 		final LogSource<LogRawAccess<? extends LogInputStream>> source = getActiveLogSource(logSource);
-		final Log log = getLog(source, logPath);
-		final LogRawAccess<? extends LogInputStream> logAccess = source.getLogAccess(log);
+		final Log logg = getLog(source, logPath);
+		final LogRawAccess<? extends LogInputStream> logAccess = source.getLogAccess(logg);
 		final IncrementData incData = new IncrementData();
 		LogPointer searchPointer = null;
 		if (StringUtils.isNotEmpty(mark)) {
@@ -335,7 +318,7 @@ public class LogEntriesRestController {
 		}
 		scanner.find(reader, new TimeoutReaderStrategy(3 * 1000) {
 			@Override
-			public boolean continueReading(final Log log, final LogPointerFactory pointerFactory,
+			public boolean continueReading(final Log logg, final LogPointerFactory pointerFactory,
 					final LogEntry currentReadEntry) throws IOException {
 				searchResult.lastEntry = currentReadEntry;
 				if (count < 0 && currentReadEntry.getStartOffset().isSOF()) {
@@ -343,9 +326,9 @@ public class LogEntriesRestController {
 					searchResult.sofReached = true;
 				}
 				return !searchResult.sofReached && searchResult.event == null
-						&& super.continueReading(log, pointerFactory, currentReadEntry);
+						&& super.continueReading(logg, pointerFactory, currentReadEntry);
 			}
-		}, log, logAccess, incData, new EventConsumer() {
+		}, logg, logAccess, incData, new EventConsumer() {
 			@Override
 			public void consume(final Event eventData) throws IOException {
 				searchResult.event = eventData;
@@ -359,9 +342,9 @@ public class LogEntriesRestController {
 		LogPointer pointerForResult = searchResult.lastEntry != null ? searchResult.lastEntry.getStartOffset() : null;
 		if (searchResult.event != null) {
 			// Found
-			logger.debug("Found next entry of interest in {}: {}", log, searchResult.event);
+			log.debug("Found next entry of interest in {}: {}", logg, searchResult.event);
 			final BufferedConsumer bc = new BufferedConsumer(Math.abs(count));
-			source.getReader().readEntries(log, logAccess, pointerForResult, bc);
+			source.getReader().readEntries(logg, logAccess, pointerForResult, bc);
 			searchResult.entries = new LogEntriesResult(source.getReader().getFieldTypes(), bc.getBuffer(), 0);
 		} else if (searchResult.sofReached) {
 			// Return start pointer

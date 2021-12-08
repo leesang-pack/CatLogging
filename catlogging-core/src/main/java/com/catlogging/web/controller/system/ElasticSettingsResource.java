@@ -1,11 +1,41 @@
+/*******************************************************************************
+ * catlogging, open source tool for viewing, monitoring and analysing log data.
+ * Copyright (c) 2021 xzpluszone, www.catlogging.com
+ *
+ * catlogging is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * catlogging is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
 package com.catlogging.web.controller.system;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.elasticsearch.client.Client;
+import com.catlogging.app.ElasticSearchConnect;
+import com.catlogging.app.EsSettingsHolder;
+import com.catlogging.model.es.EsSettings;
+import com.catlogging.model.es.EsStatus;
+import com.catlogging.model.es.EsStatusAndSettings;
+import com.catlogging.web.controller.report.ElasticEventsController;
+import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.cluster.health.ClusterHealthStatus;
+import org.elasticsearch.common.xcontent.XContentHelper;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,14 +44,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-//import com.catlogging.app.ElasticSearchAppConfig.ClientCallback;
-//import com.catlogging.app.ElasticSearchAppConfig.ElasticClientTemplate;
-import com.catlogging.app.ElasticSearchAppConfig.EsSettings;
-//import com.catlogging.app.ElasticSearchAppConfig.EsSettingsHolder;
-import com.catlogging.web.controller.system.ElasticSettingsResource.EsStatusAndSettings.EsStatus;
-
-import static com.catlogging.web.controller.system.ElasticSettingsResource.EsStatusAndSettings.EsStatus.*;
-
 /**
  * Settings REST source for elasticsearch.
  * 
@@ -29,90 +51,57 @@ import static com.catlogging.web.controller.system.ElasticSettingsResource.EsSta
  *
  */
 @RestController
+@Slf4j
 public class ElasticSettingsResource {
-//	@Autowired
-//	private EsSettingsHolder settingsHolder;
-//
-//	@Autowired
-//	private ElasticClientTemplate esClientTpl;
+	@Autowired
+	private EsSettingsHolder settingsHolder;
+	@Autowired
+	private ElasticSearchConnect elasticSearchConnect;
 
 	@RequestMapping(value = "/system/settings/elastic", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public EsStatusAndSettings EsStatusAndSettings() {
-//		return getStatus(settingsHolder.getSettings());
-		return null;
+		return getStatus(settingsHolder.getSettings());
 	}
 
 	@RequestMapping(value = "/system/settings/elastic", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public EsStatusAndSettings saveElasticSettings(@RequestBody @Valid final EsSettings settings) throws IOException {
-//		settingsHolder.storeSettings(settings);
+		settingsHolder.storeSettings(settings);
+		elasticSearchConnect.initElastic(true);
 		return getStatus(settings);
 
 	}
 
 	private EsStatusAndSettings getStatus(final EsSettings settings) {
 		final EsStatusAndSettings esas = new EsStatusAndSettings();
-		esas.settings = settings;
+		esas.setSettings(settings);
 		try {
-//			esClientTpl.executeWithClient(new ClientCallback<Object>() {
-//				@Override
-//				public Boolean execute(final RestHighLevelClient client) {
-////					switch (client.admin().cluster().prepareHealth().get().getStatus()) {
-////					case GREEN:
-////					case YELLOW:
-////						esas.status = GREEN;
-////						break;
-////					case RED:
-////						esas.status = RED;
-////						break;
-////					}
-//					return null;
-//				}
-//			});
-		} catch (final Exception e) {
-			esas.status = RED;
-			esas.statusMessage = e.getMessage();
+			RestClient restClient = elasticSearchConnect.getClientConnection().getLowLevelClient();
+			Response response = restClient.performRequest("GET", "/_cluster/health");
+
+			ClusterHealthStatus healthStatus;
+			try (InputStream is = response.getEntity().getContent()) {
+				Map<String, Object> map = XContentHelper.convertToMap(XContentType.JSON.xContent(), is, true);
+				healthStatus = ClusterHealthStatus.fromString((String) map.get("status"));
+			}
+
+			log.debug("STATUS!!!!!!! " + healthStatus);
+			switch (healthStatus) {
+				case GREEN:
+				case YELLOW:
+					esas.setStatus(EsStatus.GREEN);
+					break;
+				case RED:
+					esas.setStatus(EsStatus.RED);
+					break;
+			}
+
+		} catch (Exception e) {
+			esas.setStatus(EsStatus.RED);
+			esas.setStatusMessage(e.getMessage());
 		}
 		return esas;
 	}
 
-	/**
-	 * Composition of status and settings.
-	 * 
-	 * @author Tester
-	 *
-	 */
-	public static final class EsStatusAndSettings {
-		public enum EsStatus {
-			GREEN, RED, YELLOW
-		}
-
-		private EsSettings settings;
-
-		private EsStatus status;
-		private String statusMessage;
-
-		/**
-		 * @return the settings
-		 */
-		public EsSettings getSettings() {
-			return settings;
-		}
-
-		/**
-		 * @return the status
-		 */
-		public EsStatus getStatus() {
-			return status;
-		}
-
-		/**
-		 * @return the statusMessage
-		 */
-		public String getStatusMessage() {
-			return statusMessage;
-		}
-
-	}
 }

@@ -19,6 +19,7 @@
 package com.catlogging.settings.http;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -29,9 +30,9 @@ import org.hibernate.validator.constraints.NotEmpty;
  * 
  */
 public final class HttpProxy {
-	@NotEmpty
+	@NotNull
 	private String schema = "http";
-	@NotEmpty
+	@NotNull
 	private String host;
 	@Min(1)
 	private int port;

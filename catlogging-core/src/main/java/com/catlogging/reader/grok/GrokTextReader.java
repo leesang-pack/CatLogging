@@ -18,19 +18,6 @@
  *******************************************************************************/
 package com.catlogging.reader.grok;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.catlogging.config.PostConstructed;
 import com.catlogging.fields.FieldBaseTypes;
 import com.catlogging.model.LogEntry;
@@ -38,12 +25,18 @@ import com.catlogging.model.SeverityLevel;
 import com.catlogging.reader.FormatException;
 import com.catlogging.reader.support.AbstractPatternLineReader;
 import com.catlogging.reader.support.AbstractPatternLineReader.ReadingContext;
-import com.catlogging.util.grok.GrokConsumerConstructor;
+import com.catlogging.util.grok.*;
 import com.catlogging.util.grok.GrokConsumerConstructor.GrokConsumer;
-import com.catlogging.util.grok.GrokMatcher;
-import com.catlogging.util.grok.GrokPatternBean;
-import com.catlogging.util.grok.GrokPatternBeanJsonModel;
-import com.catlogging.util.grok.GroksRegistry;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Grok text reader.
@@ -51,11 +44,11 @@ import com.catlogging.util.grok.GroksRegistry;
  * @author Tester
  * 
  */
+@Slf4j
 @PostConstructed(constructor = GrokConsumerConstructor.class)
 public class GrokTextReader extends AbstractPatternLineReader<GrokMatcher>
 		implements GrokConsumer, GrokPatternBeanJsonModel, ReadingContext<GrokMatcher> {
 
-	private static final Logger logger = LoggerFactory.getLogger(GrokTextReader.class);
 
 	@JsonIgnore
 	private GroksRegistry groksRegistry;
@@ -87,7 +80,7 @@ public class GrokTextReader extends AbstractPatternLineReader<GrokMatcher>
 	@Override
 	protected void init() throws FormatException {
 		super.init();
-		logger.debug("Compiled grok: {}", grokBean.getGrok(groksRegistry));
+		log.debug("Compiled grok: {}", grokBean.getGrok(groksRegistry));
 	}
 
 	@Override

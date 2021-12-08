@@ -18,42 +18,25 @@
  *******************************************************************************/
 package com.catlogging.fields;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.catlogging.app.ContextProvider;
+import com.catlogging.fields.FieldsMap.FieldsMapTypeSafeDeserializer;
+import com.catlogging.fields.FieldsMap.FieldsMapTypeSafeSerializer;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.UntypedObjectDeserializer;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.catlogging.app.ContextProvider;
-import com.catlogging.fields.FieldsMap.FieldsMapTypeSafeDeserializer;
-import com.catlogging.fields.FieldsMap.FieldsMapTypeSafeSerializer;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Fields map of a log entry.
@@ -200,8 +183,8 @@ public class FieldsMap extends LinkedHashMap<String, Object> implements FieldsMa
 	 * @author Tester
 	 * 
 	 */
+	@Slf4j
 	public static class FieldsMapTypeSafeDeserializer extends JsonDeserializer<FieldsMap> {
-		private static final Logger LOGGER = LoggerFactory.getLogger(FieldsMapTypeSafeDeserializer.class);
 		private final UntypedObjectDeserializer primitiveDeserializer = new UntypedObjectDeserializer();
 		private final Map<Class<?>, JsonDeserializer<?>> cachedDeserializer = new HashMap<Class<?>, JsonDeserializer<?>>();
 		private FieldJsonMapper fieldTypeMapper;
@@ -253,7 +236,7 @@ public class FieldsMap extends LinkedHashMap<String, Object> implements FieldsMa
 					}
 				}
 			} else {
-				LOGGER.debug("Missing field type information, type-safe deserialization will not be supported for: {}",
+				log.debug("Missing field type information, type-safe deserialization will not be supported for: {}",
 						readTree);
 			}
 

@@ -18,22 +18,20 @@
  *******************************************************************************/
 package com.catlogging.config;
 
-import java.io.IOException;
-
+import com.catlogging.app.CoreAppConfig;
+import com.catlogging.model.LogSource;
+import com.catlogging.model.file.WildcardLogsSource;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.catlogging.app.CoreAppConfig;
-import com.catlogging.model.LogSource;
-import com.catlogging.model.file.WildcardLogsSource;
+import java.io.IOException;
 
 /**
  * Test for serializing / deserializing {@link ConfiguredBean}s.
@@ -41,12 +39,11 @@ import com.catlogging.model.file.WildcardLogsSource;
  * @author Tester
  * 
  */
+@Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { CoreAppConfig.class })
 @Configuration
 public class ConfigBeanJsonTest {
-	private static final Logger logger = LoggerFactory
-			.getLogger(ConfigBeanJsonTest.class);
 	@Autowired
 	private ObjectMapper mapper;
 
@@ -55,7 +52,7 @@ public class ConfigBeanJsonTest {
 		WildcardLogsSource source = new WildcardLogsSource();
 		source.setName("Test");
 		String json = mapper.writeValueAsString(source);
-		logger.info("Serialized bean: {}", json);
+		log.info("Serialized bean: {}", json);
 
 		// Deserialize
 		LogSource source2 = mapper.readValue(json, LogSource.class);

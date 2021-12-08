@@ -18,34 +18,26 @@
  *******************************************************************************/
 package com.catlogging.util.grok;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import com.catlogging.fields.FieldBaseTypes;
+import com.catlogging.fields.FieldsHost;
+import com.catlogging.reader.FormatException;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.catlogging.fields.FieldBaseTypes;
-import com.catlogging.fields.FieldsHost;
-import com.catlogging.reader.FormatException;
-
 /**
  * GROK https://code.google.com/p/semicomplete/wiki/Grok pattern implementation.
  */
+@Slf4j
 @JsonAutoDetect(creatorVisibility = Visibility.NONE, fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
 public final class Grok implements FieldsHost {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Grok.class);
 	protected static final Pattern PATTERN_SUBGROK = Pattern.compile(
 			"%\\{([A-Z0-9_-]+)(?::([A-Z0-9_-]+)(?::(int|long|float|double|boolean))?)?\\}", Pattern.CASE_INSENSITIVE);
 
@@ -444,7 +436,7 @@ public final class Grok implements FieldsHost {
 				if (supportedTypeConverters.containsKey(subGrokType)) {
 					g.typeConverters.put(groupsCount, (TypeConverter<Object>) supportedTypeConverters.get(subGrokType));
 				} else {
-					LOGGER.warn("Conversion type {} not support in grok pattern: {}", subGrokType, m.group(0));
+					log.warn("Conversion type {} not support in grok pattern: {}", subGrokType, m.group(0));
 				}
 			}
 			compiledPattern.append(subGrok.regexPattern.pattern());
@@ -479,7 +471,7 @@ public final class Grok implements FieldsHost {
 		for (final Entry<String, Integer> entry : groups) {
 			g.groupNames.put(entry.getKey(), entry.getValue());
 		}
-		LOGGER.debug("Compiled grok: {}", g);
+		log.debug("Compiled grok: {}", g);
 		return g;
 	}
 

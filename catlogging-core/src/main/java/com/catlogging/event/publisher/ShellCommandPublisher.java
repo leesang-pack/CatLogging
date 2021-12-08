@@ -18,13 +18,6 @@
  *******************************************************************************/
 package com.catlogging.event.publisher;
 
-import org.apache.velocity.VelocityContext;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.catlogging.config.BeanConfigFactoryManager;
 import com.catlogging.config.BeanPostConstructor;
 import com.catlogging.config.ConfigException;
@@ -32,13 +25,20 @@ import com.catlogging.config.PostConstructed;
 import com.catlogging.event.Event;
 import com.catlogging.event.Publisher;
 import com.catlogging.event.publisher.ShellCommandPublisher.ShellPublisherConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.velocity.VelocityContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.NotNull;
 
 @PostConstructed(constructor = ShellPublisherConstructor.class)
 public class ShellCommandPublisher implements Publisher {
 	@JsonIgnore
 	private VelocityEventRenderer velocityRenderer;
 
-	@NotEmpty
+	@NotNull
 	@JsonProperty
 	private String shellScript;
 

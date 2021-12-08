@@ -21,6 +21,7 @@ package com.catlogging.event;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -46,9 +47,9 @@ public class Sniffer {
 
 	@Valid
 	private List<Publisher> publishers;
-	@NotEmpty
+	@NotNull
 	private String name;
-	@NotEmpty
+	@NotNull
 	@CronExprConstraint
 	private String scheduleCronExpression;
 	private long id;

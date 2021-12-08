@@ -18,24 +18,6 @@
  *******************************************************************************/
 package com.catlogging.reader.log4j;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.catlogging.fields.FieldBaseTypes;
 import com.catlogging.fields.FieldsMap;
 import com.catlogging.model.LogEntry;
@@ -44,6 +26,16 @@ import com.catlogging.model.SeverityLevel.SeverityClassification;
 import com.catlogging.reader.FormatException;
 import com.catlogging.reader.support.DateFormatUtils;
 import com.catlogging.reader.support.FormattedTextReader;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.stereotype.Component;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Reads log4j entries from text log files. The default charset is UTF-8.
@@ -53,9 +45,9 @@ import com.catlogging.reader.support.FormattedTextReader;
  * @author Tester
  * 
  */
+@Slf4j
 @Component
 public class Log4jTextReader extends FormattedTextReader {
-	private static final Logger logger = LoggerFactory.getLogger(Log4jTextReader.class);
 
 	private static List<SeverityLevel> levelList;
 	private static final HashMap<String, SeverityLevel> LEVEL_MAP = new HashMap<String, SeverityLevel>();
@@ -126,7 +118,7 @@ public class Log4jTextReader extends FormattedTextReader {
 				if (level != null) {
 					entry.setSeverity(level);
 				} else {
-					logger.debug("No matching level found {}", match);
+					log.debug("No matching level found {}", match);
 				}
 			}
 		}

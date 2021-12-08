@@ -18,6 +18,12 @@
  *******************************************************************************/
 package com.catlogging.model.support;
 
+import com.catlogging.model.*;
+import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+import net.sf.json.util.JSONUtils;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,24 +31,11 @@ import java.io.SequenceInputStream;
 import java.util.Arrays;
 import java.util.Enumeration;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.catlogging.model.Log;
-import com.catlogging.model.LogPointer;
-import com.catlogging.model.LogRawAccess;
-import com.catlogging.model.LogRawAccessor;
-import com.catlogging.model.Navigation;
-
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
-import net.sf.json.util.JSONUtils;
-
+@Slf4j
 public class DailyRollingLogAccess implements ByteLogAccess {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DailyRollingLogAccess.class);
 	private final static InputStream EMPTY_STREAM = new ByteArrayInputStream(new byte[0]);
 
-	private final DailyRollingLog log;
+	private final DailyRollingLog logg;
 	private final Log[] parts;
 
 	private final String[] allLogPathes;
@@ -51,11 +44,11 @@ public class DailyRollingLogAccess implements ByteLogAccess {
 
 	@SuppressWarnings("unchecked")
 	public DailyRollingLogAccess(final LogRawAccessor<? extends ByteLogAccess, ? extends Log> rawAccessor,
-			final DailyRollingLog log) {
+			final DailyRollingLog logg) {
 		super();
 		this.rawAccessor = (LogRawAccessor<ByteLogAccess, Log>) rawAccessor;
-		this.log = log;
-		this.parts = log.getParts();
+		this.logg = logg;
+		this.parts = logg.getParts();
 		this.allLogPathes = new String[this.parts.length];
 		int i = 0;
 		for (final Log part : parts) {
@@ -208,12 +201,12 @@ public class DailyRollingLogAccess implements ByteLogAccess {
 							// Empty
 							return EMPTY_STREAM;
 						}
-						LOGGER.debug("Openning input stream from log #{}:{} at {}", currentLogIndex,
+						log.debug("Openning input stream from log #{}:{} at {}", currentLogIndex,
 								parts[currentLogIndex], from != null ? from.filePointer : null);
 						final LogRawAccess<ByteLogInputStream> newLogRawAccess = getPartLogAccess(
 								parts[currentLogIndex]);
 						if (newLogRawAccess == null) {
-							LOGGER.warn("Failed to open access to log #{}:{} at {}", currentLogIndex,
+							log.warn("Failed to open access to log #{}:{} at {}", currentLogIndex,
 									parts[currentLogIndex], from != null ? from.filePointer : null);
 							return nextElement();
 						}
@@ -312,7 +305,7 @@ public class DailyRollingLogAccess implements ByteLogAccess {
 		// Search for the proper log
 		final int index = getLogIndex(source.path);
 		if (index < 0) {
-			LOGGER.info("Using start pointer for log '{}' due to '{}' is no more listed in: ", log.getPath(),
+			log.info("Using start pointer for log '{}' due to '{}' is no more listed in: ", logg.getPath(),
 					source.path, Arrays.toString(parts));
 			return new PointerData(parts.length - 1, null);
 		} else {
@@ -326,16 +319,16 @@ public class DailyRollingLogAccess implements ByteLogAccess {
 					if (source.liveNext != null) {
 						final int next = getLogIndex(source.liveNext) - 1;
 						if (next > 0 && next < parts.length) {
-							LOGGER.info("Using for rolled live log '{}' the next listed '{}'", log.getPath(),
+							log.info("Using for rolled live log '{}' the next listed '{}'", logg.getPath(),
 									parts[next].getPath());
 							return new PointerData(next, source);
 						} else {
-							LOGGER.info("Using start pointer for log '{}', because the next rolled wasn't found in: {}",
-									log.getPath(), Arrays.toString(parts));
+							log.info("Using start pointer for log '{}', because the next rolled wasn't found in: {}",
+									logg.getPath(), Arrays.toString(parts));
 							return new PointerData(parts.length - 1, null);
 						}
 					}
-					LOGGER.info("Using start pointer for log '{}', because the live one was rolled", log.getPath());
+					log.info("Using start pointer for log '{}', because the live one was rolled", logg.getPath());
 					return new PointerData(parts.length - 1, null);
 				} else {
 					return new PointerData(index, source);
@@ -449,7 +442,7 @@ public class DailyRollingLogAccess implements ByteLogAccess {
 				return createRelative(null, 0);
 			}
 		} catch (final JSONException e) {
-			LOGGER.warn("Invalid JSON pointer: " + data, e);
+			log.warn("Invalid JSON pointer: " + data, e);
 			return createRelative(null, 0);
 		}
 	}
@@ -465,7 +458,7 @@ public class DailyRollingLogAccess implements ByteLogAccess {
 
 	@Override
 	public LogPointer end() throws IOException {
-		return createRelative(null, this.log.getSize());
+		return createRelative(null, this.logg.getSize());
 	}
 
 	@Override

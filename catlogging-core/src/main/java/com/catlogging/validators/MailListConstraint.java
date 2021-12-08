@@ -18,22 +18,16 @@
  *******************************************************************************/
 package com.catlogging.validators;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.regex.Pattern;
+import com.catlogging.validators.MailListConstraint.MailListValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.catlogging.validators.MailListConstraint.MailListValidator;
+import java.lang.annotation.*;
+import java.util.regex.Pattern;
 
 /**
  * Validates strings to be a list of mail adresses separated by comma or space.

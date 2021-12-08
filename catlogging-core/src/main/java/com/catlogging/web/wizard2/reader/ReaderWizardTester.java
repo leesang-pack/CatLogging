@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.stereotype.Controller;
@@ -58,7 +59,7 @@ public class ReaderWizardTester {
 	public static class TestContext {
 		@Valid
 		private LogEntryReader<ByteLogAccess> reader;
-		@NotEmpty
+		@NotNull
 		private String testLogData;
 
 		/**

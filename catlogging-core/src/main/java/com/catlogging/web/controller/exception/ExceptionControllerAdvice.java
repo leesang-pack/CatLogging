@@ -18,16 +18,14 @@
  *******************************************************************************/
 package com.catlogging.web.controller.exception;
 
-import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.catlogging.util.ReferenceIntegrityException;
+import com.catlogging.web.ViewController;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.catlogging.util.ReferenceIntegrityException;
-import com.catlogging.web.ViewController;
+import java.io.IOException;
 
 /**
  * Common controller advice for exception handling.
@@ -35,9 +33,9 @@ import com.catlogging.web.ViewController;
  * @author Tester
  * 
  */
+@Slf4j
 @ControllerAdvice(annotations = ViewController.class)
 public class ExceptionControllerAdvice {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * Handles a {@link ResourceNotFoundException}.
@@ -47,7 +45,7 @@ public class ExceptionControllerAdvice {
 	 */
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ModelAndView handleResourceNotFound(final ResourceNotFoundException ex) {
-		logger.info("Catched resource not found exception", ex);
+		log.info("Catched resource not found exception", ex);
 		final ModelAndView mv = new ModelAndView("errors/404");
 		mv.addObject("ex", ex);
 		return mv;
@@ -55,7 +53,7 @@ public class ExceptionControllerAdvice {
 
 	@ExceptionHandler(ActionViolationException.class)
 	public ModelAndView handleActionViolation(final ActionViolationException ex) {
-		logger.info("Catched action violation exception", ex);
+		log.info("Catched action violation exception", ex);
 		final ModelAndView mv = new ModelAndView("errors/action-violation");
 		mv.addObject("ex", ex);
 		return mv;
@@ -63,7 +61,7 @@ public class ExceptionControllerAdvice {
 
 	@ExceptionHandler(ReferenceIntegrityException.class)
 	public ModelAndView handleActionViolation(final ReferenceIntegrityException ex) {
-		logger.info("Catched reference integrity violation exception", ex);
+		log.info("Catched reference integrity violation exception", ex);
 		final ModelAndView mv = new ModelAndView("errors/ref-intg-violation");
 		mv.addObject("ex", ex);
 		return mv;
@@ -71,7 +69,7 @@ public class ExceptionControllerAdvice {
 
 	@ExceptionHandler(Throwable.class)
 	public ModelAndView processAllExceptions(final Throwable ex) throws IOException {
-		logger.error("Catched untyped exception", ex);
+		log.error("Catched untyped exception", ex);
 		final ModelAndView mv = new ModelAndView("errors/ups");
 		mv.addObject("ex", ex);
 		return mv;

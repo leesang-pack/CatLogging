@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.catlogging.reader.FormatException;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Bean for configuring metadata belonging to a Grok pattern presentation.
  * 
@@ -16,7 +18,7 @@ import com.catlogging.reader.FormatException;
  */
 public final class GrokPatternBean implements GrokPatternBeanJsonModel {
 	@JsonProperty
-	@NotEmpty
+	@NotNull
 	@GrokPatternConstraint
 	private String pattern;
 

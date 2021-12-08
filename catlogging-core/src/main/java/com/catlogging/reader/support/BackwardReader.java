@@ -18,19 +18,17 @@
  *******************************************************************************/
 package com.catlogging.reader.support;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.catlogging.model.Log;
 import com.catlogging.model.LogEntry;
 import com.catlogging.model.LogPointer;
 import com.catlogging.model.support.ByteLogAccess;
 import com.catlogging.reader.FormatException;
 import com.catlogging.reader.LogEntryReader;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implements common backward reader.
@@ -38,9 +36,8 @@ import com.catlogging.reader.LogEntryReader;
  * @author Tester
  * 
  */
+@Slf4j
 class BackwardReader<ACCESSORTYPE extends ByteLogAccess> {
-	private static final Logger logger = LoggerFactory.getLogger(BackwardReader.class);
-
 	private final LogEntryReader<ACCESSORTYPE> forwardReader;
 
 	public BackwardReader(final LogEntryReader<ACCESSORTYPE> forwardReader) {
@@ -48,7 +45,7 @@ class BackwardReader<ACCESSORTYPE extends ByteLogAccess> {
 		this.forwardReader = forwardReader;
 	}
 
-	public List<LogEntry> readEntries(final Log log, final ACCESSORTYPE logAccess, LogPointer startOffset,
+	public List<LogEntry> readEntries(final Log logg, final ACCESSORTYPE logAccess, LogPointer startOffset,
 			int entriesNumber) throws IOException, FormatException {
 		int avgSizePerEntry = 255;
 		entriesNumber = -entriesNumber;
@@ -60,17 +57,17 @@ class BackwardReader<ACCESSORTYPE extends ByteLogAccess> {
 					.absolute(logAccess.getDifference(null, startOffset) - (entriesNumber + 1) * avgSizePerEntry).get();
 			final BufferedConsumer bufferedConsumer = new BufferedConsumer(Integer.MAX_VALUE);
 			final BoundedConsumerProxy boundedConsumer = new BoundedConsumerProxy(bufferedConsumer, startOffset);
-			forwardReader.readEntries(log, logAccess, revPointer, boundedConsumer);
+			forwardReader.readEntries(logg, logAccess, revPointer, boundedConsumer);
 			final List<LogEntry> entries = bufferedConsumer.getBuffer();
-			if (logger.isDebugEnabled()) {
-				logger.debug(
+			if (log.isDebugEnabled()) {
+				log.debug(
 						"Found {} entries by reverse read iteration from={} and to={} to fill remaining {} entries with avg-size/entry {}",
 						entries.size(), revPointer, startOffset, entriesNumber, avgSizePerEntry);
 			}
 			if (entries.size() > 0) {
 				if (entries.get(0).getStartOffset().isSOF()) {
 					// Start reached
-					logger.debug("Start reached, cancel reverse reading with {} found entries and {} wanted",
+					log.debug("Start reached, cancel reverse reading with {} found entries and {} wanted",
 							revEntries.size(), origNumber);
 					final int found = Math.min(entries.size(), entriesNumber);
 					revEntries.addAll(0, entries.subList(entries.size() - found, entries.size()));

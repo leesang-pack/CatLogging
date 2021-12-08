@@ -1,30 +1,27 @@
 package com.catlogging.event.es;
 
-import java.io.IOException;
-import java.util.Date;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.catlogging.app.CoreAppConfig;
 import com.catlogging.event.Event;
 import com.catlogging.model.LogEntry;
 import com.catlogging.model.LogPointer;
 import com.catlogging.model.support.DefaultPointer;
 import com.catlogging.model.support.JsonLogPointer;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.io.IOException;
+import java.util.Date;
 
 /**
  * Test for {@link EsLogPointerDeserializer} and {@link EsLogPointerSerializer}.
@@ -32,11 +29,10 @@ import net.sf.json.JSONObject;
  * @author Tester
  *
  */
+@Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { CoreAppConfig.class })
 public class EsLogPointerJsonTest {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
-
 	private ObjectMapper jsonMapper;
 
 	@Before
@@ -67,7 +63,7 @@ public class EsLogPointerJsonTest {
 
 		// Serialiazion
 		final String json = jsonMapper.writeValueAsString(event);
-		logger.info("Serialized {} to: {}", event, json);
+		log.info("Serialized {} to: {}", event, json);
 
 		// Deserialization
 		final Event test = jsonMapper.readValue(json, Event.class);

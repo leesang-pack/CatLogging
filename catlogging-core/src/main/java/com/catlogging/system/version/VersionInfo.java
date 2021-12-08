@@ -1,14 +1,12 @@
 package com.catlogging.system.version;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.extern.slf4j.Slf4j;
+
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Bean for version info. The version {@link #getName()} is interpreted as a
@@ -18,8 +16,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author Tester
  *
  */
+@Slf4j
 public class VersionInfo implements Comparable<VersionInfo> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(VersionInfo.class);
 	private String name;
 	private String info;
 	@JsonIgnore
@@ -59,7 +57,7 @@ public class VersionInfo implements Comparable<VersionInfo> {
 				try {
 					vps.add(((Number) NumberFormat.getInstance().parse(v)).intValue());
 				} catch (ParseException e) {
-					LOGGER.warn("Failed to parse version part '" + v + "' in '" + name + "', it'll be ignored", e);
+					log.warn("Failed to parse version part '" + v + "' in '" + name + "', it'll be ignored", e);
 				}
 			}
 			versionParts = new int[vps.size()];

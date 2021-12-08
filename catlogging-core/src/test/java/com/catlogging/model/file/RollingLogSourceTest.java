@@ -18,25 +18,6 @@
  *******************************************************************************/
 package com.catlogging.model.file;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.ParseException;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import com.catlogging.app.CoreAppConfig;
 import com.catlogging.config.BeanConfigFactoryManager;
 import com.catlogging.config.ConfigException;
@@ -48,6 +29,23 @@ import com.catlogging.model.support.DailyRollingLog;
 import com.catlogging.model.support.DailyRollingLogAccess;
 import com.catlogging.reader.filter.FilteredLogEntryReader;
 import com.catlogging.reader.log4j.Log4jTextReader;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.ParseException;
 
 /**
  * Test for {@link RollingLogsSource}.
@@ -55,12 +53,11 @@ import com.catlogging.reader.log4j.Log4jTextReader;
  * @author Tester
  * 
  */
+@Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { CoreAppConfig.class, RollingLogSourceTest.class })
 @Configuration
 public class RollingLogSourceTest {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
-
 	@Autowired
 	private BeanConfigFactoryManager configManager;
 
@@ -172,7 +169,7 @@ public class RollingLogSourceTest {
 		source.setReader(new FilteredLogEntryReader<ByteLogAccess>(reader, null));
 
 		final String json = configManager.saveBeanToJSON(source);
-		logger.info("Saved log source config to JSON: {}", json);
+		log.info("Saved log source config to JSON: {}", json);
 
 		final RollingLogsSource checkSource = configManager.createBeanFromJSON(RollingLogsSource.class, json);
 		Assert.assertEquals(source.getPattern(), checkSource.getPattern());

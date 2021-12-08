@@ -18,6 +18,14 @@
  *******************************************************************************/
 package com.catlogging.reader.support;
 
+import com.catlogging.fields.FieldBaseTypes;
+import com.catlogging.model.LogEntry;
+import com.catlogging.reader.FormatException;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -25,25 +33,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.catlogging.fields.FieldBaseTypes;
-import com.catlogging.model.LogEntry;
-import com.catlogging.reader.FormatException;
-
 /**
  * Reader based on patterns.
  * 
  * @author Tester
  * 
  */
+@Slf4j
 public abstract class FormattedTextReader extends AbstractPatternLineReader<Matcher> {
-	private static final Logger logger = LoggerFactory.getLogger(FormattedTextReader.class);
-
 	public abstract static class Specifier implements Cloneable {
 		private int minWidth;
 		private int maxWidth;
@@ -205,7 +202,7 @@ public abstract class FormattedTextReader extends AbstractPatternLineReader<Matc
 			.compile("%(-?(\\d+))?(\\.(\\d+))?([a-zA-Z])(\\{([^\\}]+)\\})?");
 
 	@JsonProperty
-	@NotEmpty
+	@NotNull
 	private String formatPattern;
 
 	@JsonProperty
@@ -259,12 +256,12 @@ public abstract class FormattedTextReader extends AbstractPatternLineReader<Matc
 						}
 					}
 					if (spec == null) {
-						logger.debug(
+						log.debug(
 								"Format specifier {} in pattern '{}' is unknown and will be parsed as simple text pattern",
 								specName, formatPattern);
 						spec = new ArbitraryTextSpecifier(specName, false);
 					} else if (spec instanceof IgnoreSpecifier) {
-						logger.debug("Format specifier '{}' in pattern '{}' is ignored", specName, formatPattern);
+						log.debug("Format specifier '{}' in pattern '{}' is ignored", specName, formatPattern);
 						continue;
 					}
 					spec.setMaxWidth(maxWidth);
@@ -282,7 +279,7 @@ public abstract class FormattedTextReader extends AbstractPatternLineReader<Matc
 				parsingPatternStr.append(Pattern.quote(formatPattern.substring(leftPos)));
 				parsingPattern = Pattern.compile(parsingPatternStr.toString());
 				parsingSpecifiers = specs.toArray(new Specifier[specs.size()]);
-				logger.debug("Prepared parsing pattern '{}' for log4j conversion pattern: {}", parsingPattern,
+				log.debug("Prepared parsing pattern '{}' for log4j conversion pattern: {}", parsingPattern,
 						formatPattern);
 			} else {
 				parsingSpecifiers = null;

@@ -18,28 +18,8 @@
  *******************************************************************************/
 package com.catlogging.web.controller.system;
 
-import java.io.IOException;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.constraints.URL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.catlogging.app.ConfigValueAppConfig;
 import com.catlogging.app.CatLoggingHome;
+import com.catlogging.app.ConfigValueAppConfig;
 import com.catlogging.app.MailAppConfig;
 import com.catlogging.app.MailAppConfig.MailSettings;
 import com.catlogging.settings.http.HttpProxy;
@@ -48,7 +28,20 @@ import com.catlogging.system.version.SystemUpdatesCheckTask;
 import com.catlogging.util.value.ConfigValue;
 import com.catlogging.util.value.ConfigValueStore;
 import com.catlogging.util.value.Configured;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.validator.constraints.URL;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+
+@Slf4j
 @RestController
 public class GeneralSettingsResourceController {
 
@@ -122,6 +115,7 @@ public class GeneralSettingsResourceController {
 		}
 	}
 
+	@Slf4j
 	public static class GeneralSettings {
 		private String homeDir;
 		@NotNull
@@ -222,7 +216,6 @@ public class GeneralSettingsResourceController {
 		}
 	}
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(GeneralSettingsResourceController.class);
 
 	@Autowired
 	private CatLoggingHome home;
@@ -273,17 +266,16 @@ public class GeneralSettingsResourceController {
 	public void saveGeneralSettings(@RequestBody @Valid final GeneralSettings settings) throws IOException {
 		configStore.store(ConfigValueAppConfig.catlogging_BASE_URL, settings.getBaseUrl());
 		configStore.store(ConfigValueAppConfig.catlogging_VALIDATION_PATH, settings.getValidationPath());
-		configStore.store(SystemUpdatesCheckTask.PROP_catlogging_UPDATES_CHECK_ENABLED,
-				Boolean.toString(settings.isSystemUpdateCheckEnabled()));
+		configStore.store(SystemUpdatesCheckTask.PROP_catlogging_UPDATES_CHECK_ENABLED, Boolean.toString(settings.isSystemUpdateCheckEnabled()));
 
-		LOGGER.info("Propagate validationPath {}", settings.getValidationPath());
+		log.info("Propagate validationPath {}", settings.getValidationPath());
 
 		// Propagate changes to mail sender
 		configStore.store(MailSettings.PROP_catlogging_MAIL_HOST, settings.getMailSettings().getHost());
 		configStore.store(MailSettings.PROP_catlogging_MAIL_PORT, settings.getMailSettings().getPort() + "");
 		configStore.store(MailSettings.PROP_catlogging_MAIL_USER, settings.getMailSettings().getUser());
 		configStore.store(MailSettings.PROP_catlogging_MAIL_PASSWORD, settings.getMailSettings().getPassword());
-		LOGGER.info("Propagate mail settings to mail sender");
+		log.info("Propagate mail settings to mail sender");
 		mailAppConfig.refreshMailSenderConfiguration();
 
 		// Propagate http proxy settings
@@ -297,7 +289,7 @@ public class GeneralSettingsResourceController {
 		configStore.store(HttpSettings.PROP_HTTP_PROXY_PASSWORD,
 				settings.getHttpProxy() != null && StringUtils.isNotBlank(settings.getHttpProxy().getPassword())
 						? settings.getHttpProxy().getPassword() : null);
-		LOGGER.info("Propagate HTTP proxy settings");
+		log.info("Propagate HTTP proxy settings");
 		httpSettings.refreshProxySettings();
 	}
 }

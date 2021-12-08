@@ -18,25 +18,19 @@
  *******************************************************************************/
 package com.catlogging.validators;
 
-import java.io.IOException;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.catlogging.app.ContextProvider;
+import com.catlogging.validators.JsonStringConastraint.JsonValidator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.catlogging.app.ContextProvider;
-import com.catlogging.validators.JsonStringConastraint.JsonValidator;
+import java.io.IOException;
+import java.lang.annotation.*;
 
 /**
  * Validates a string value for JSON syntax.

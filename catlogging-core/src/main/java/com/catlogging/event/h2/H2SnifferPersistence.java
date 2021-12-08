@@ -18,46 +18,16 @@
  *******************************************************************************/
 package com.catlogging.event.h2;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.catlogging.aspect.AspectProvider;
 import com.catlogging.aspect.PostAspectProvider;
 import com.catlogging.aspect.sql.QueryAdaptor;
 import com.catlogging.config.BeanConfigFactoryManager;
 import com.catlogging.config.ConfigException;
-import com.catlogging.event.IncrementData;
-import com.catlogging.event.LogEntryReaderStrategy;
-import com.catlogging.event.Publisher;
-import com.catlogging.event.Publisher.PublisherWrapper;
+import com.catlogging.event.*;
 import com.catlogging.event.Scanner;
+import com.catlogging.event.Publisher.PublisherWrapper;
 import com.catlogging.event.Scanner.LogEntryReaderStrategyWrapper;
 import com.catlogging.event.Scanner.ScannerWrapper;
-import com.catlogging.event.Sniffer;
-import com.catlogging.event.SnifferPersistence;
 import com.catlogging.event.SnifferScheduler.ScheduleInfo;
 import com.catlogging.event.filter.FilteredScanner;
 import com.catlogging.event.filter.FilteredScanner.FilteredScannerWrapper;
@@ -69,8 +39,27 @@ import com.catlogging.util.LazyList.ListFactory;
 import com.catlogging.util.PageableResult;
 import com.catlogging.util.messages.Message;
 import com.catlogging.util.messages.Message.MessageType;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * H2 persistence for sniffers.
@@ -78,9 +67,9 @@ import net.sf.json.JSONObject;
  * @author Tester
  * 
  */
+@Slf4j
 @Component
 public class H2SnifferPersistence implements SnifferPersistence {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private ApplicationEventPublisher appEventPublisher;
@@ -118,7 +107,7 @@ public class H2SnifferPersistence implements SnifferPersistence {
 						try {
 							return configManager.createBeanFromJSON(FilteredScanner.class, scannerConfigStr);
 						} catch (final ConfigException e) {
-							logger.warn(
+							log.warn(
 									"Failed to deserilize scanner as filtered scanner, try to map as common scanner: "
 											+ scannerConfigStr,
 									e);
@@ -253,7 +242,7 @@ public class H2SnifferPersistence implements SnifferPersistence {
 						((PostAspectProvider<AspectSniffer, Integer>) eventsCounter).injectAspect(sniffers);
 					}
 				} catch (final Exception e) {
-					logger.error("Failed to access event count", e);
+					log.error("Failed to access event count", e);
 					result.getMessages()
 							.add(new Message(MessageType.ERROR, "Failed to access event counts: " + e.getMessage()));
 				}
@@ -286,10 +275,10 @@ public class H2SnifferPersistence implements SnifferPersistence {
 	}
 
 	@Override
-	public IncrementData getIncrementData(final Sniffer sniffer, final LogSource<?> source, final Log log) {
+	public IncrementData getIncrementData(final Sniffer sniffer, final LogSource<?> source, final Log logg) {
 		final List<IncrementData> idatas = jdbcTemplate.query(
 				"SELECT NEXT_POINTER, DATA FROM SNIFFERS_SCANNER_IDATA WHERE SNIFFER=? AND SOURCE=? AND LOG=?",
-				new Object[] { sniffer.getId(), source.getId(), log.getPath() }, new RowMapper<IncrementData>() {
+				new Object[] { sniffer.getId(), source.getId(), logg.getPath() }, new RowMapper<IncrementData>() {
 					@Override
 					public IncrementData mapRow(final ResultSet rs, final int rowNum) throws SQLException {
 						final IncrementData data = new IncrementData();
@@ -302,8 +291,8 @@ public class H2SnifferPersistence implements SnifferPersistence {
 					}
 				});
 		if (idatas.size() == 0) {
-			logger.debug("No increment data for sniffer={}, source={} and log={} found, create an empty one", sniffer,
-					source, log);
+			log.debug("No increment data for sniffer={}, source={} and log={} found, create an empty one", sniffer,
+					source, logg);
 			return new IncrementData();
 		} else {
 			return idatas.get(0);
@@ -317,8 +306,8 @@ public class H2SnifferPersistence implements SnifferPersistence {
 		if (logs.size() > 0) {
 			final HashMap<Log, IncrementData> incs = new HashMap<Log, IncrementData>();
 			final HashMap<String, Log> logMapping = new HashMap<String, Log>();
-			for (final Log log : logs) {
-				logMapping.put(log.getPath(), log);
+			for (final Log logg : logs) {
+				logMapping.put(logg.getPath(), logg);
 			}
 			jdbcTemplate.query(
 					"SELECT NEXT_POINTER, DATA, LOG FROM SNIFFERS_SCANNER_IDATA WHERE SNIFFER=? AND SOURCE=? AND LOG IN ("
@@ -329,21 +318,21 @@ public class H2SnifferPersistence implements SnifferPersistence {
 						@Override
 						public void processRow(final ResultSet rs) throws SQLException {
 							final String logPath = rs.getString("LOG");
-							final Log log = logMapping.get(logPath);
-							if (log != null) {
+							final Log logg = logMapping.get(logPath);
+							if (logg != null) {
 								final IncrementData data = new IncrementData();
 								data.setData(JSONObject.fromObject(rs.getString("DATA")));
 								try {
 									final String jsonStr = rs.getString("NEXT_POINTER");
 									if (StringUtils.isNotBlank(jsonStr)) {
-										data.setNextOffset(source.getLogAccess(log).getFromJSON(jsonStr));
+										data.setNextOffset(source.getLogAccess(logg).getFromJSON(jsonStr));
 									}
-									incs.put(log, data);
+									incs.put(logg, data);
 								} catch (final IOException e) {
-									throw new SQLException("Failed to construct pointer in log: " + log, e);
+									throw new SQLException("Failed to construct pointer in log: " + logg, e);
 								}
 							} else {
-								logger.error("Didn't find log '{}' for selected incrementdata", logPath);
+								log.error("Didn't find log '{}' for selected incrementdata", logPath);
 							}
 						}
 					});
@@ -360,22 +349,22 @@ public class H2SnifferPersistence implements SnifferPersistence {
 	}
 
 	@Override
-	public void storeIncrementalData(final Sniffer observer, final LogSource<?> source, final Log log,
+	public void storeIncrementalData(final Sniffer observer, final LogSource<?> source, final Log logg,
 			final IncrementData data) {
 		final ArrayList<Object> args = new ArrayList<Object>();
 		args.add(data.getNextOffset() != null ? data.getNextOffset().getJson() : "");
 		args.add(data.getData().toString());
 		args.add(observer.getId());
 		args.add(source.getId());
-		args.add(log.getPath());
+		args.add(logg.getPath());
 		final Object[] a = args.toArray(new Object[args.size()]);
-		logger.debug("Storing inc data for sniffer={}, source={} and log={} with next offset: {}", observer, source,
-				log, data.getNextOffset());
+		log.debug("Storing inc data for sniffer={}, source={} and log={} with next offset: {}", observer, source,
+				logg, data.getNextOffset());
 		if (jdbcTemplate.update(
 				"UPDATE SNIFFERS_SCANNER_IDATA SET NEXT_POINTER=?, DATA=? WHERE SNIFFER=? AND SOURCE=? AND LOG=?",
 				a) == 0) {
-			logger.debug("Inc data for sniffer={}, source={} and log={} doesn't exists, create it", observer, source,
-					log);
+			log.debug("Inc data for sniffer={}, source={} and log={} doesn't exists, create it", observer, source,
+					logg);
 			jdbcTemplate.update(
 					"INSERT INTO SNIFFERS_SCANNER_IDATA SET NEXT_POINTER=?, DATA=?, SNIFFER=?, SOURCE=?, LOG=?", a);
 		}
@@ -387,7 +376,7 @@ public class H2SnifferPersistence implements SnifferPersistence {
 		jdbcTemplate.update(new SnifferCreator(true, sniffer), keyHolder);
 		final long snifferId = keyHolder.getKey().longValue();
 		sniffer.setId(snifferId);
-		logger.debug("Persisted new sniffer with id {}", snifferId);
+		log.debug("Persisted new sniffer with id {}", snifferId);
 		appEventPublisher.publishEvent(new SnifferChangedEvent(sniffer));
 		return snifferId;
 	}
@@ -395,7 +384,7 @@ public class H2SnifferPersistence implements SnifferPersistence {
 	@Override
 	public void updateSniffer(final Sniffer sniffer) {
 		jdbcTemplate.update(new SnifferCreator(false, sniffer));
-		logger.debug("Updated sniffer {}", sniffer.getId());
+		log.debug("Updated sniffer {}", sniffer.getId());
 		appEventPublisher.publishEvent(new SnifferChangedEvent(sniffer));
 	}
 
@@ -406,7 +395,7 @@ public class H2SnifferPersistence implements SnifferPersistence {
 		jdbcTemplate.update("DELETE FROM SNIFFERS_SCANNER_IDATA WHERE SNIFFER=?", sniffer.getId());
 		jdbcTemplate.update("DELETE FROM SNIFFERS_EVENTS WHERE SNIFFER=?", sniffer.getId());
 		jdbcTemplate.update("DELETE FROM SNIFFERS WHERE ID=?", sniffer.getId());
-		logger.info("Deleted sniffer for id: {}", sniffer.getId());
+		log.info("Deleted sniffer for id: {}", sniffer.getId());
 	}
 
 }

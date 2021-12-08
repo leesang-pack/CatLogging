@@ -1,18 +1,15 @@
 package com.catlogging.user.support;
 
-import java.util.UUID;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.catlogging.user.UserTokenProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.web.util.WebUtils;
 
-import com.catlogging.user.UserTokenProvider;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 /**
  * Manages generated token using browser cookies.
@@ -21,15 +18,15 @@ import com.catlogging.user.UserTokenProvider;
  *
  */
 @Component
+@Slf4j
 public class CookieTokenProvider implements UserTokenProvider {
 	private final static String COOKIE_KEY = "profileKey";
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Override
 	public String getToken(final HttpServletRequest request, final HttpServletResponse response) {
 		final Cookie tokenCookie = WebUtils.getCookie(request, COOKIE_KEY);
 		if (tokenCookie != null && tokenCookie.getValue() != null) {
-			logger.debug("Detected profile token from cookie: {}", tokenCookie.getValue());
+			log.debug("Detected profile token from cookie: {}", tokenCookie.getValue());
 			return tokenCookie.getValue();
 		}
 		final String token = UUID.randomUUID().toString();
@@ -38,7 +35,7 @@ public class CookieTokenProvider implements UserTokenProvider {
 		g.setCookiePath("/");
 		g.setCookieName(COOKIE_KEY);
 		g.addCookie(response, token);
-		logger.debug("Generated a new token: {}", token);
+		log.debug("Generated a new token: {}", token);
 		return token;
 	}
 

@@ -18,6 +18,8 @@
  *******************************************************************************/
 package com.catlogging.util.grok;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -25,18 +27,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Registry for known GROK patterns.
  * 
  * @author Tester
  * 
  */
+@Slf4j
 public class GroksRegistry {
-	private static final Logger logger = LoggerFactory
-			.getLogger(GroksRegistry.class);
 	private static final Pattern PATTERN_ENTRY = Pattern
 			.compile("^\\s*([A-Z0-9_-]+) (.*)$");
 
@@ -65,7 +63,7 @@ public class GroksRegistry {
 				compile(name, strPatterns.get(name), strPatterns, groupMapping);
 			}
 		}
-		logger.info("Registered grok patterns: {}", groks.keySet());
+		log.info("Registered grok patterns: {}", groks.keySet());
 	}
 
 	private void compile(final String name, final String pattern,
