@@ -154,7 +154,7 @@
 									<goal>copy-dependencies</goal>
 								</goals>
 								<configuration>
-									<includeGroupIds>org.eclipse.jetty,org.mortbay.jasper,org.apache.taglibs,javax.servlet,javax.annotation,org.ow2.asm</includeGroupIds>
+									<includeGroupIds>log4j,org.apache.logging,org.slf4j,org.eclipse.jetty,org.mortbay.jasper,org.apache.taglibs,javax.servlet,javax.annotation,org.ow2.asm</includeGroupIds>
 									<outputDirectory>${project.build.directory}/generated-resources/WEB-INF/exec</outputDirectory>
 								</configuration>
 							</execution>
@@ -267,5 +267,25 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
+<!--        <dependency>-->
+<!--            <groupId>log4j</groupId>-->
+<!--            <artifactId>log4j</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.logging.log4j</groupId>-->
+<!--            <artifactId>log4j-core</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.slf4j</groupId>-->
+<!--            <artifactId>slf4j-log4j12</artifactId>-->
+<!--        </dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.slf4j</groupId>-->
+<!--			<artifactId>slf4j-api</artifactId>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.slf4j</groupId>-->
+<!--			<artifactId>slf4j-simple</artifactId>-->
+<!--		</dependency>-->
 	</dependencies>
 </project>

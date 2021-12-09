@@ -31,7 +31,7 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
-import org.springframework.stereotype.Service;
+//import org.springframework.stereotype.Service;
 
 /**
  * Override the {@link #unpack(WebAppContext)} method to unpack the WAR to a

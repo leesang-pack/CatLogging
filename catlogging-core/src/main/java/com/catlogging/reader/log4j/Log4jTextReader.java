@@ -29,7 +29,8 @@ import com.catlogging.reader.support.FormattedTextReader;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
+//import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.stereotype.Component;
 
