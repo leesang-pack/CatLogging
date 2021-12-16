@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false" scan="true" scanPeriod="180 seconds">
+
+    <property name="LOGS_ABSOLUTE_PATH" value="${LOG_PATH}/logs/catlogging.log" />
+    <property name="LOGS_REGEX_ABSOLUTE_PATH" value="${LOG_PATH}/logs/catlogging-%d{yyyy-MM-dd}-%i.log" />
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+    <!--    All 로그-->
+    <appender name="dailyRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_ABSOLUTE_PATH}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_REGEX_ABSOLUTE_PATH}</fileNamePattern>
+            <maxHistory>60</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 50MB -->
+                <maxFileSize>50MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d %-5p [%c] %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--spring log-->
+    <logger name="org.springframework" level="INFO" />
+
+    <!--<logger name="org.springframework.web" level="DEBUG" />-->
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="dailyRollingFileAppender" />
+    </root>
+</configuration>

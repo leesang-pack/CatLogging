@@ -6,16 +6,19 @@
 
 2. Option Start
 ```
-    java -Dcatlogging.validationPath=/ -Dcatlogging.home=/home/catlogging -Dlog4j.configuration=log4j-dev.properties -jar catlogging.war
+    java -Dcatlogging.validationPath=/ -Dcatlogging.home=/home/catlogging -jar catlogging.war
 ``` 
 
 ## Documentation
 
+ENV : Linux x86
+
 Add Support i18n(en, kr, ch)
-Add Support validation path
+Add Support Log Validation path
 Change Dark theme UI
+Change SpringBoot 2.2 App
 
 ## Develop Run From InteliJ
 
-Enable external tomcat Run
-Enable ide/JettyIDELauncher Run
+Enable external tomcat Run (default embed tomcat 9.x)
+Enable Intelij IDE Run
