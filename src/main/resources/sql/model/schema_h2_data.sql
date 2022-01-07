@@ -705,6 +705,42 @@ field (e.g. using the timestamp filter).'),
 ('ko', 'catlogging.nav.about', '설명'),
 ('zh', 'catlogging.nav.about', '关于'),
 
+('en', 'catlogging.text.login.username', 'USERNAME'),
+('ko', 'catlogging.text.login.username', '유저이름'),
+('zh', 'catlogging.text.login.username', '用户名'),
+
+('en', 'catlogging.text.login.password', 'PASSWORD'),
+('ko', 'catlogging.text.login.password', '패스워드'),
+('zh', 'catlogging.text.login.password', '密码'),
+
+('en', 'catlogging.text.login.isAdmin', 'Is Admin'),
+('ko', 'catlogging.text.login.isAdmin', '관리자'),
+('zh', 'catlogging.text.login.isAdmin', '经理'),
+
+('en', 'catlogging.bt.login', 'LOGIN'),
+('ko', 'catlogging.bt.login', '로그인'),
+('zh', 'catlogging.bt.login', '登录'),
+
+('en', 'catlogging.bt.login.cancel', 'CANCEL'),
+('ko', 'catlogging.bt.login.cancel', '취소'),
+('zh', 'catlogging.bt.login.cancel', '消除'),
+
+('en', 'catlogging.bt.login.register', 'REGISTER'),
+('ko', 'catlogging.bt.login.register', '등록'),
+('zh', 'catlogging.bt.login.register', '注册'),
+
+('en', 'catlogging.bt.login.signup', 'SIGNUP'),
+('ko', 'catlogging.bt.login.signup', '회원가입'),
+('zh', 'catlogging.bt.login.signup', '报名'),
+
+('en', 'catlogging.form.login', 'CatLogging Log In'),
+('ko', 'catlogging.form.login', 'CatLogging 로그인'),
+('zh', 'catlogging.form.login', 'CatLogging 登录'),
+
+('en', 'catlogging.form.login.add', 'CatLogging Sign Up'),
+('ko', 'catlogging.form.login.add', 'CatLogging 회원가입'),
+('zh', 'catlogging.form.login.add', 'CatLogging 报名'),
+
 -- # Lang
 ('en', 'catlogging.lang.en','English'),
 ('ko', 'catlogging.lang.en','영어'),

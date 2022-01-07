@@ -26,7 +26,14 @@
     <!--spring log-->
     <logger name="org.springframework" level="INFO" />
 
-    <!--<logger name="org.springframework.web" level="DEBUG" />-->
+    <springProfile name="release-Logback">
+        <logger name="com.catlogging" level="INFO"/>
+    </springProfile>
+
+    <springProfile name="develop-Logback">
+        <logger name="com.catlogging" level="DEBUG"/>
+        <logger name="org.springframework.web" level="DEBUG" />
+    </springProfile>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
