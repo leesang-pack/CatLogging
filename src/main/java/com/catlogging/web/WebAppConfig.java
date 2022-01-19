@@ -19,7 +19,6 @@ package com.catlogging.web;
 
 import java.util.List;
 
-import com.catlogging.config.web.interceptor.CustomInterceptor;
 import com.catlogging.fields.FieldsMap;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.Version;
@@ -62,8 +61,6 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 @Configuration
 public class WebAppConfig implements WebMvcConfigurer {
 
-//	@Autowired
-//	private CustomInterceptor interceptor;
 	/**
 	 * static 말고 view 딴에서 추가적인 url이 필요 시에 다음과 같이 설정해야함
 	 * sources/*.jsp

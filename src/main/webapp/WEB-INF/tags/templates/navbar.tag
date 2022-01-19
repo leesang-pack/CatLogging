@@ -4,6 +4,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
+<c:set var="isAuth" value="${catloggingProps['catlogging.enable.auth'] == 'true' ? true : false}" />
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -40,7 +41,9 @@
                     <a href="<c:url value="/c/system?path=notifications" />" title="{{systemNotificationSummary.count}} unread notification{{systemNotificationSummary.count!=1?'s':''}}"><i class="fa fa-bell"></i>
                         <sup ng-if="systemNotificationSummary.count!=0"><span class="label" ng-class="systemNotificationSummary.worstLevel=='ERROR'?'label-danger':(systemNotificationSummary.worstLevel=='WARN'?'label-warning':'label-info')">{{systemNotificationSummary.count}}</span></sup></a>
                 </li>
-                <li><a href="/logout" > <i class="fa fa-sign-out"></i> </a></li>
+                <c:if test="${isAuth}">
+                    <li><a href="/logout" > <i class="fa fa-sign-out"></i> </a></li>
+                </c:if>
             </ul>
         </div><!--/.nav-collapse -->
     </div>

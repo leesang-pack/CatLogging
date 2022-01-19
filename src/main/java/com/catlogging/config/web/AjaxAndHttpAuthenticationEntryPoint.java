@@ -40,7 +40,7 @@ public class AjaxAndHttpAuthenticationEntryPoint extends LoginUrlAuthenticationE
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 
         String ajaxAndHttpHeader = ((HttpServletRequest) request).getHeader("X-Requested-With");
-        log.debug("=============>> IS check Js ajaxAndHttpHeader Request?? {}", ajaxAndHttpHeader);
+        log.debug("=============>> IS check Js ajaxAndHttpHeader Request?? path:{} header:{} Error:{}", request.getRequestURI(), ajaxAndHttpHeader, authException.getMessage());
 
         boolean isAjaxAndHttp = "XMLHttpRequest".equals(ajaxAndHttpHeader);
         if (isAjaxAndHttp) {

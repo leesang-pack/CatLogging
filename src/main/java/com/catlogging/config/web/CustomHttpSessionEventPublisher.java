@@ -30,7 +30,7 @@ import java.util.Map;
 public class CustomHttpSessionEventPublisher extends HttpSessionEventPublisher {
 
 
-    @Value("${server.servlet.session.timeout:30}")
+    @Value("#{'${server.servlet.session.timeout}' < '3600' ? '3600' : '${server.servlet.session.timeout}'}")
     private int sessionTimeSec;
 
     @Override
@@ -53,7 +53,6 @@ public class CustomHttpSessionEventPublisher extends HttpSessionEventPublisher {
          */
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("session_id", session.getId());
-        paramMap.put("update_user_id", "");
 
         log.debug("===================> Session INFO : {}" ,paramMap);
 
@@ -65,11 +64,4 @@ public class CustomHttpSessionEventPublisher extends HttpSessionEventPublisher {
 
         super.sessionDestroyed(event);
     }
-/*
-    @Override
-    public void sessionIdChanged(HttpSessionEvent event, String oldSessionId) {
-        log.debug("================= sessionIdChanged =================");
-        super.sessionIdChanged(event, oldSessionId);
-    }
-    */
 }

@@ -47,8 +47,7 @@ public class SystemBaseController {
 	private NavNode systemNode;
 
 	@RequestMapping(value = "/system", method = RequestMethod.GET)
-	public ModelAndView renderSystem(
-			@RequestParam(value = "path", required = false) final String path) {
+	public ModelAndView renderSystem(@RequestParam(value = "path", required = false) final String path) {
 		List<NavNode> breadcrumbNodes = new ArrayList<NavNode>();
 		breadcrumbNodes.add(systemNode);
 

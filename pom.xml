@@ -26,6 +26,7 @@
 			<properties>
 				<activatedProfile>NONE_QA</activatedProfile>
 				<activatedLog>release-Logback</activatedLog>
+				<activatedAuth>true</activatedAuth>
 			</properties>
 		</profile>
 		<profile>
@@ -37,6 +38,7 @@
 				<activatedProfile>NONE_QA</activatedProfile>
 				<activatedLog>develop-Logback</activatedLog>
 				<activatedRemoteAccess>true</activatedRemoteAccess>
+				<activatedAuth>true</activatedAuth>
 			</properties>
 		</profile>
 	</profiles>

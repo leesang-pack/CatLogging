@@ -232,14 +232,14 @@ ul.bordered-list li {
 .severity.sc-4,.severity.sc-5 {
 	/* WARNING, NOTICE */
 	color: #c09853;
-	background-color: #fcf8e3;
+	background-color: #c4b980;
 	border: 1px solid #fbeed5;
 }
 
 .severity.sc-0,.severity.sc-1,.severity.sc-2,.severity.sc-3 {
 	/* All < WARNING */
 	color: #b94a48;
-	background-color: #f2dede;
+	background-color: #aa4747;
 	border-color: #eed3d7;
 }
 

@@ -4,6 +4,8 @@
 <%@attribute name="ngModules" required="false"  type="java.lang.String" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -66,7 +68,7 @@
 						request: (config)=>{
 							// 일반적인 url 요청에 대해 idle refresh 함.
 							// 사용자의 일반적인 입력이 아닌 주기적인 실행일 수도 있으니 idle 상태에서 벗어나기 위함.
-							if( $templateCache.get(config.url) === undefined ){
+							if( $templateCache.get(config.url) === undefined && ${catloggingProps['catlogging.enable.auth'] == "true" ? true : false} ){
 								// console.log("Interceptor  --> "+ config.url + " -" + $templateCache);
 								$rootScope.Idle.watch();
 							}
@@ -85,27 +87,41 @@
 				});
 				$httpProvider.interceptors.push('notAuthorizedInterceptor');
 
-				// spring timeout 보다는 작아야함.
-				IdleProvider.idle(40);
-				IdleProvider.timeout(5);
-				KeepaliveProvider.interval(10);
+				// IdleProvider.idle(30); // web 아무반응 없는 판단 주기
+				// IdleProvider.timeout(20); // 팝업창 후 버튼 timeout
+				KeepaliveProvider.interval(5); // keepalive 주기
 
 				// 사용자의 일반적인 입력에 대해 idle상태 아님 간주
 				IdleProvider.interrupt('keydown wheel mousedown touchstart touchmove scroll');
+
+				// 사용자의 입력없으면 창활성화 시 Yes,No 클릭을 위해 움직일 시 idle끝나고 resume 되기 때문에 Countdown이 멈춤다.
+				// 자동 resume을 해제
+				IdleProvider.autoResume("notIdle");
 			});
 
 			// 인터셉터에서 접근가능 하도록.. rootScope로 함.
 			catloggingNgApp.run(function($rootScope, Idle) {
-				$rootScope.Idle = Idle;
-				$rootScope.Idle.watch();
+				if(${catloggingProps['catlogging.enable.auth'] == "true" ? true : false}) {
+					$rootScope.Idle = Idle;
+					$rootScope.Idle.watch();
+				}
 			});
 
 			catloggingNgApp.controller("AppIdleCtrl", ['$scope', '$http', 'Idle', 'Keepalive', function ($scope, $http, Idle) {
-				$scope.IsVisible = false;
+				$scope.sessionTime = ${catloggingProps['web.servlet.session.timeout'] < 60 ? 60 : catloggingProps['web.servlet.session.timeout']};
 
-				// spring timeout 보다는 작아야함.
-				$scope.idle = 40;
-				$scope.timeout = 5;
+				// sessiontime의 30초 전에 알려줌
+				$scope.idleTime = $scope.sessionTime - 30;
+
+				// 20초 기다려줌
+				$scope.timeout = 20;
+
+				// spring timeout 보다는 작게 셋팅함.
+				// yes 액션 하기전에 spring session timeout 나면 애매함.
+				// idle + timeout < spring timeout을 하는게 맞는듯
+				$scope.idle = $scope.idleTime;
+				$scope.timeout = $scope.timeout;
+
 				$scope.IsVisible = false;
 				$scope.$on('IdleStart', function () {
 					// the user appears to have gone idle.
@@ -211,8 +227,8 @@
 			<p>catlogging, v${catloggingProps['catlogging.version']} - <a href="http://www.catlogging.com">www.catlogging.com</a><br>&copy; 2021</p>
 		</footer>
 
-		<div ng-show="IsVisible" id="AppIdleCtrlModal" class="modal" ng-controller="AppIdleCtrl">
-			<div idle-countdown="countdown" class="modal-content">
+		<div ng-show="IsVisible" id="AppIdleCtrlModal" class="modal" ng-controller="AppIdleCtrl" style="background-color: rgba(0, 0, 0, 0.7);padding: 5%;">
+			<div class="modal-content">
 				<h4>Your Session is about to expire!</h4>
 				<div style="float: left; height: 50px;">
 					<span class="glyphicon glyphicon-warning-sign text-danger btn-lg"></span>

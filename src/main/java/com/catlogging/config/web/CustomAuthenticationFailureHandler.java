@@ -2,6 +2,8 @@ package com.catlogging.config.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
@@ -22,46 +24,32 @@ import java.util.Map;
 @Component
 public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
+    @Autowired
+    MessageSource messageSource;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         log.debug("============================== AuthenticationFailureHandler ==============================");
 
-//        String errorCode = AdCode.AD.C_AD_STATUS_49.CdStr();
         AuthenticationException authFailException = exception;
 
         if(exception instanceof BadCredentialsException) {                              //비밀번호가 일치하지 않을 때 던지는 예외
-            authFailException = new BadCredentialsException("ID/비밀번호가 일치하지 않습니다.");
+            authFailException = new BadCredentialsException(messageSource.getMessage("catlogging.member.auth.bed", new String[]{}, LocaleContextHolder.getLocale()));
         } else if(exception instanceof InternalAuthenticationServiceException) {        //존재하지 않는 아이디일 때 던지는 예외
-            authFailException = new InternalAuthenticationServiceException("ID/비밀번호가 일치하지 않습니다.");
+            authFailException = new InternalAuthenticationServiceException(messageSource.getMessage("catlogging.member.auth.bed", new String[]{}, LocaleContextHolder.getLocale()));
         } else if(exception instanceof DisabledException) {                             //인증 거부 - 계정 비활성화
-            authFailException = new DisabledException("ID/비밀번호가 일치하지 않습니다.");
+            authFailException = new DisabledException(messageSource.getMessage("catlogging.member.auth.bed", new String[]{}, LocaleContextHolder.getLocale()));
         } else if(exception instanceof CredentialsExpiredException) {                   //인증 거부 - 비밀번호 유효기간 만료
-            authFailException = new CredentialsExpiredException("계정이 만료되었습니다.");
-//            errorCode = AdCode.AD.C_AD_STATUS_775.CdStr();
-        } else if (exception instanceof SessionAuthenticationException) {
-            authFailException = new SessionAuthenticationException("이미 로그인한 사용자가 있습니다.");
+            authFailException = new CredentialsExpiredException(messageSource.getMessage("catlogging.member.auth.expired", new String[]{}, LocaleContextHolder.getLocale()));
+        } else if (exception instanceof SessionAuthenticationException) {               //인증 거부 - 세션중복 거부
+            authFailException = new SessionAuthenticationException(messageSource.getMessage("catlogging.member.auth.sessionDup", new String[]{}, LocaleContextHolder.getLocale()));
         }
 
-
-        try {
-            Map<String, Object> param = new HashMap<>();
-//            String userId = request.getParameter("username");
-//            String tenantId = request.getParameter("tenantId");
-//            param.put("userId", userId);
-//            param.put("tenantId", tenantId);
-//            param.put("adDomain", commonService.selectAdInfo(userId, tenantId).getAdDomain());
-
-//            commonService.updateUserLoginFailCount(param);
-        } catch (Exception ex) {
-            log.error("update user login fail count error : {}", ex);
-        }
-
+        //TODO : 실패 시 DB count
 
         // 로그인 실패후 이동할 url
-//        setDefaultFailureUrl("/login?error=true");
+        setDefaultFailureUrl("/login?error=true");
         super.onAuthenticationFailure(request, response, authFailException);
-
 
     }
 }

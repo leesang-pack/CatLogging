@@ -20,31 +20,22 @@ package com.catlogging.model.auth;
 
 import lombok.*;
 
-import javax.persistence.*;
+import java.io.Serializable;
 
-@Entity
-@Table(
-        name="Member",
-        uniqueConstraints={
-                @UniqueConstraint(
-                        name = "NAME_AGE_UNIQUE",
-                        columnNames={"memberId"}
-                )
-        }
-)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Data
+@Setter
+@Getter
 @ToString
-public class Member {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Result implements Serializable {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+    private static final long serialVersionUID = 1L;
 
-    private String memberId;
+    private String message;
 
-    private String password;
+    private String type;
 
-    private Boolean isAdmin;
+    private Exception ex;
+
 }
