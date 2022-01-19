@@ -87,6 +87,13 @@ public class RestErrorHandler {
 		return processExceptionResponse(ex, response, org.apache.http.HttpStatus.SC_BAD_REQUEST);
 	}
 
+//	@ExceptionHandler(Exception.class)
+//	@ResponseStatus(HttpStatus.BAD_REQUEST)
+//	@ResponseBody
+//	public ErrorResponse processExceptionError(final Exception ex, final HttpServletResponse response) throws IOException {
+//		return processExceptionResponse(ex, response, org.apache.http.HttpStatus.SC_BAD_REQUEST);
+//	}
+
 	private static ErrorResponse processExceptionResponse(final Throwable ex, final HttpServletResponse response,
 			final int status) throws IOException {
 		log.info("Catched exception", ex);

@@ -6,7 +6,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<c:url var="ngBasePath" value="/static/ng" />
+<c:url var="ngBasePath" value="/ng" />
 <tpl:bodyFull title="${report.name} - Dashboard" activeNavbar="reports">
 	<jsp:attribute name="htmlHead">
 	    <script type="text/javascript" src="<c:url value="/static/gridster/jquery.gridster.min.js" />"></script>

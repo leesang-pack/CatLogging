@@ -176,9 +176,17 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 							finished = true;
 							break;
 						}
+
 						try {
-							if (!processParsingResult(peek.line, peek.offset, thread.readingContext,
-									peek.matcherResult)) {
+
+							if(peek.matcherResult == null){
+								log.info("================>> line is {} offset is {} macher {}", peek.line, peek.offset, peek.matcherResult );
+							}
+							if(thread.readingContext == null){
+								log.info("================>> line is {} offset is {} thread {}", peek.line, peek.offset, thread.readingContext );
+							}
+
+							if (!processParsingResult(peek.line, peek.offset, thread.readingContext, peek.matcherResult)) {
 								finished = true;
 							}
 						} catch (final Exception e) {
@@ -201,8 +209,7 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 
 		}
 
-		protected abstract boolean processParsingResult(String line, LogPointer offset,
-				ReadingContext<MatcherContext> readingContext, MatcherContext mCtx) throws IOException;
+		protected abstract boolean processParsingResult(String line, LogPointer offset, ReadingContext<MatcherContext> readingContext, MatcherContext mCtx) throws IOException;
 
 		private ParallelReadingContext readNextLine() {
 			synchronized (readingSemaphore) {
@@ -344,13 +351,10 @@ public abstract class AbstractPatternLineReader<MatcherContext> implements LogEn
 			}
 
 			final int coreSize = Math.max(2, Runtime.getRuntime().availableProcessors() / 2);
-			log.debug("Start reading log '{}' accoridng the pattern '{}' in parallel with {} threads", logg.getPath(),
-					getPatternInfo(), coreSize);
+			log.debug("Start reading log '{}' accoridng the pattern '{}' in parallel with {} threads", logg.getPath(), getPatternInfo(), coreSize);
 			new ParallelReadingExecutor(lis, coreSize) {
 				@Override
-				protected boolean processParsingResult(final String line, final LogPointer currentOffset,
-						final ReadingContext<MatcherContext> readingContext, final MatcherContext ctx)
-								throws IOException {
+				protected boolean processParsingResult(final String line, final LogPointer currentOffset, final ReadingContext<MatcherContext> readingContext, final MatcherContext ctx) throws IOException {
 					if (ctx != null) {
 						sCtx.linesWithoutPattern = 0;
 						if (sCtx.entry != null) {

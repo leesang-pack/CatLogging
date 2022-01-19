@@ -705,6 +705,46 @@ field (e.g. using the timestamp filter).'),
 ('ko', 'catlogging.nav.about', '설명'),
 ('zh', 'catlogging.nav.about', '关于'),
 
+('en', 'catlogging.nav.auth', 'Members'),
+('ko', 'catlogging.nav.auth', '사용자'),
+('zh', 'catlogging.nav.auth', '用户'),
+
+('en', 'catlogging.text.login.username', 'USERNAME'),
+('ko', 'catlogging.text.login.username', '유저이름'),
+('zh', 'catlogging.text.login.username', '用户名'),
+
+('en', 'catlogging.text.login.password', 'PASSWORD'),
+('ko', 'catlogging.text.login.password', '패스워드'),
+('zh', 'catlogging.text.login.password', '密码'),
+
+('en', 'catlogging.text.login.isAdmin', 'Is Admin'),
+('ko', 'catlogging.text.login.isAdmin', '관리자'),
+('zh', 'catlogging.text.login.isAdmin', '经理'),
+
+('en', 'catlogging.bt.login', 'LOGIN'),
+('ko', 'catlogging.bt.login', '로그인'),
+('zh', 'catlogging.bt.login', '登录'),
+
+('en', 'catlogging.bt.login.cancel', 'CANCEL'),
+('ko', 'catlogging.bt.login.cancel', '취소'),
+('zh', 'catlogging.bt.login.cancel', '消除'),
+
+('en', 'catlogging.bt.login.register', 'REGISTER'),
+('ko', 'catlogging.bt.login.register', '등록'),
+('zh', 'catlogging.bt.login.register', '注册'),
+
+('en', 'catlogging.bt.login.signup', 'SIGNUP'),
+('ko', 'catlogging.bt.login.signup', '회원가입'),
+('zh', 'catlogging.bt.login.signup', '报名'),
+
+('en', 'catlogging.form.login', 'CatLogging Log In'),
+('ko', 'catlogging.form.login', 'CatLogging 로그인'),
+('zh', 'catlogging.form.login', 'CatLogging 登录'),
+
+('en', 'catlogging.form.login.add', 'CatLogging Sign Up'),
+('ko', 'catlogging.form.login.add', 'CatLogging 회원가입'),
+('zh', 'catlogging.form.login.add', 'CatLogging 报名'),
+
 -- # Lang
 ('en', 'catlogging.lang.en','English'),
 ('ko', 'catlogging.lang.en','영어'),
@@ -716,4 +756,32 @@ field (e.g. using the timestamp filter).'),
 
 ('en', 'catlogging.lang.zh','Chinese'),
 ('ko', 'catlogging.lang.zh','중국어'),
-('zh', 'catlogging.lang.zh','普通話');
+('zh', 'catlogging.lang.zh','普通話'),
+
+--
+
+('en','catlogging.member.add.success','Member "{0}" Add successfully.'),
+('ko','catlogging.member.add.success','사용자 "{0}" 추가 되었습니다.'),
+('zh','catlogging.member.add.success','成员 "{0}" 添加成功.'),
+
+('en','catlogging.member.del.success','Member "{0}" Delete successfully.'),
+('ko','catlogging.member.del.success','사용자 "{0}" 삭제 되었습니다.'),
+('zh','catlogging.member.del.success','成员 "{0}" 已经存在.'),
+
+-- # Error
+('en','catlogging.member.auth.bed','Username / Password do not match.'),
+('ko','catlogging.member.auth.bed','유저이름 / 패스워드가 일치하지 않습니다.'),
+('zh','catlogging.member.auth.bed','用户名 / 密码不匹配.'),
+
+('en','catlogging.member.auth.expired','User usage has expired.'),
+('ko','catlogging.member.auth.expired','사용자 사용이 만료되었습니다.'),
+('zh','catlogging.member.auth.expired','用户使用已过期.'),
+
+('en','catlogging.member.auth.sessionDup','There are already logged in users.'),
+('ko','catlogging.member.auth.sessionDup','이미 로그인한 사용자가 있습니다.'),
+('zh','catlogging.member.auth.sessionDup','已经有登录用户.'),
+
+('en','catlogging.member.add.already','Member "{0}" Already Exist.!'),
+('ko','catlogging.member.add.already','사용자 "{0}" 이미 존재합니다.!'),
+('zh','catlogging.member.add.already','成员 "{0}" 已经存在.！'); -- 마지막 ';' 조심.
+

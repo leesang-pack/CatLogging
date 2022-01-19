@@ -23,12 +23,23 @@
 	<profiles>
 		<profile>
 			<id>release</id>
+			<properties>
+				<activatedProfile>NONE_QA</activatedProfile>
+				<activatedLog>release-Logback</activatedLog>
+				<activatedAuth>true</activatedAuth>
+			</properties>
+		</profile>
+		<profile>
+			<id>develop</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
-			<build>
-				<finalName>catlogging</finalName>
-			</build>
+			<properties>
+				<activatedProfile>NONE_QA</activatedProfile>
+				<activatedLog>develop-Logback</activatedLog>
+				<activatedRemoteAccess>true</activatedRemoteAccess>
+				<activatedAuth>true</activatedAuth>
+			</properties>
 		</profile>
 	</profiles>
 
@@ -193,9 +204,34 @@
 			<artifactId>tomcat-embed-jasper</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
+		<!-- CVE-2021-42550 -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>1.2.9</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.9</version>
+		</dependency>
 	</dependencies>
 
 	<build>
+		<finalName>catlogging</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>

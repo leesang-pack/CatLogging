@@ -34,60 +34,60 @@ angular
 	     };
 	     
 	     $scope.loadSettings = function() {
-		 $scope.state.busy = true;
-		 $http({
-		     url : $scope.contextPath + "/c/system/settings/general",
-		     method : "GET"
-		 })
-		.success(
-			function(data, status, headers, config) {
-			    $scope.settings = data;
-			    $log.info("Settings loaded", data);
-			    if (!$scope.settings.httpProxy || !$scope.settings.httpProxy.host) {
-				$scope.settings.httpProxy = null;
-				$scope.state.httpProxyEnabled = false;
-			    } else {
-				$scope.state.httpProxyEnabled = true;
-			    }
-			    $scope.state.busy = false;
-			}
-		)
-		.error(
-			function(data, status, headers, config, statusText) {
-			    $scope.state.busy = false;
-			    $scope.alerts.httpError("Failed to load settings", data, status, headers, config, statusText);
-			}
-		);
+			 $scope.state.busy = true;
+			 $http({
+				 url : $scope.contextPath + "/c/system/settings/general",
+				 method : "GET"
+			 })
+			 .success(
+				 function(data, status, headers, config) {
+					 $scope.settings = data;
+					 $log.info("Settings loaded", data);
+					 if (!$scope.settings.httpProxy || !$scope.settings.httpProxy.host) {
+						 $scope.settings.httpProxy = null;
+						 $scope.state.httpProxyEnabled = false;
+					 } else {
+						 $scope.state.httpProxyEnabled = true;
+					 }
+					 $scope.state.busy = false;
+				 }
+			 )
+			 .error(
+				 function(data, status, headers, config, statusText) {
+					 $scope.state.busy = false;
+					 $scope.alerts.httpError("Failed to load settings", data, status, headers, config, statusText);
+				 }
+			 );
 	     };
 	     
 	     $scope.save = function() {
-		$scope.state.busy = true;
-		$scope.alerts.clear();
-		if (!$scope.state.httpProxyEnabled) {
-		    $scope.settings.httpProxy = null;
-		}
-		$log.info("Saving settings", $scope.settings);
-		 $http({
-		     url : $scope.contextPath + "/c/system/settings/general",
-		     method : "POST",
-		     data: $scope.settings
-		 })
-		.success(
-			function(data, status, headers, config) {
-			    $log.info("Settings saved");
-			    $scope.state.busy = false;
-			    $scope.alerts.success("Changes applied successfully");
-			}
-		)
-		.error(
-			function(data, status, headers, config, statusText) {
-			    $scope.state.busy = false;
-			    $scope.alerts.httpError("Failed to save settings", data, status, headers, config, statusText);
-			    if (data && data.bindErrors) {
-			    	$scope.bindErrors = data.bindErrors;
-			    }
-			}
-		);
+			 $scope.state.busy = true;
+			 $scope.alerts.clear();
+			 if (!$scope.state.httpProxyEnabled) {
+				 $scope.settings.httpProxy = null;
+			 }
+			 $log.info("Saving settings", $scope.settings);
+			 $http({
+				 url : $scope.contextPath + "/c/system/settings/general",
+				 method : "POST",
+				 data: $scope.settings
+			 })
+			 .success(
+				 function(data, status, headers, config) {
+					 $log.info("Settings saved");
+					 $scope.state.busy = false;
+					 $scope.alerts.success("Changes applied successfully");
+				 }
+			 )
+			 .error(
+				 function(data, status, headers, config, statusText) {
+					 $scope.state.busy = false;
+					 $scope.alerts.httpError("Failed to save settings", data, status, headers, config, statusText);
+					 if (data && data.bindErrors) {
+						 $scope.bindErrors = data.bindErrors;
+					 }
+				 }
+			 );
 	     };
 	     
 	     // Init

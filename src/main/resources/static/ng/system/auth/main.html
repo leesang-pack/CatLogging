@@ -1,0 +1,37 @@
+<form lsf-busy-container busy="state.busy" name="form" method="post" role="form" novalidate="novalidate">
+    <div lsf-alerts alerts="alerts"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <label>Members</label>
+            <a class="btn btn-link" ng-click="addMember()">
+                <i class="glyphicon glyphicon-plus"></i> Add Member</a>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-1"><div style="padding:0.5em 0"><label type="text">No.</label></div></div>
+            <div class="col-md-3"><div style="padding:0.5em 0"><label type="text">MemberId</label></div></div>
+            <div class="col-md-3"><div style="padding:0.5em 0"><label type="text">Password</label></div></div>
+            <div class="col-md-3"><div style="padding:0.5em 0"><label type="text">IsAdmin</label></div></div>
+        </div>
+
+        <div ng-repeat="a in members">
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-1"><div style="padding:0.5em 0"><label type="text">{{$index+1}}</label></div></div>
+                <div class="col-md-3"><div style="padding:0.5em 0"><input type="text" ng-model="a.memberId" required="required" class="form-control" placeholder="memberId" /></div></div>
+                <div class="col-md-3"><div style="padding:0.5em 0"><input type="password" ng-model="a.password" required="required" class="form-control" placeholder="password" /></div></div>
+                <div class="col-md-3"><div style="padding:0.5em 0"><div class="input-group">
+                    <select ng-init="a.isAdmin = a.isAdmin" ng-model="a.isAdmin" ng-disabled="$index==0" class="form-control" required ng-options="m for m in [false,true]">
+                        <option value="" ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.pleaseSelect'">{{localeMessage}}</option>
+                    </select>
+                    <div class="input-group-btn">
+                        <button class="btn btn-default btn-sm" type="button" ng-show="$index!=0" ng-click="deleteMember($index)"><i class="glyphicon glyphicon-trash"></i></button>
+                        <button class="btn btn-default btn-sm" type="button" ng-click="saveMember($index)"><i class="glyphicon glyphicon-save"></i></button>
+                    </div>
+                </div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
