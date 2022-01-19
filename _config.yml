@@ -1,2 +1,0 @@
-theme: jekyll-theme-cayman
-plugins: ['jekyll-paginate', 'jekyll-sitemap', 'jekyll-include-cache', 'jekyll-gist']
