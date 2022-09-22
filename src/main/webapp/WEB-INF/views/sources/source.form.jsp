@@ -175,7 +175,7 @@
 	<uib-tabset>
     	<uib-tab>
     		<uib-tab-heading>
-				<spring:message code="catlogging.common.form.main" /> <i class="glyphicon muted" ng-class="{'glyphicon-ok-circle': formValidation.main, 'glyphicon-remove-circle': !formValidation.main}"></i>
+				<spring:message code="catlogging.common.form.main" text=""/> <i class="glyphicon muted" ng-class="{'glyphicon-ok-circle': formValidation.main, 'glyphicon-remove-circle': !formValidation.main}"></i>
 			</uib-tab-heading>
 			<div ng-form="mainForm">
 				<div ng-form="form">
@@ -183,7 +183,7 @@
 					<div class="row">
 						<div 
 							class="col-md-6 form-group" ng-class="{'has-error': form.name.$invalid && !form.name.$pristine || bindErrors.name && form.name.$pristine}">
-							<label class="control-label" for="name"><spring:message code="catlogging.common.form.name" />*:</label>
+							<label class="control-label" for="name"><spring:message code="catlogging.common.form.name" text=""/>*:</label>
 							<div class="controls">
 						        <input type="text" ng-model="dummy.statefullName" ng-change="nameChanged()" name="name" id="name" class="form-control" placeholder="Name" required>
 						    </div>
@@ -216,13 +216,13 @@
 
 		<uib-tab ng-if="beanWrapper[0]['@type'] && beanWrapper[0].readerConfigurable">
     		<uib-tab-heading>
-				<spring:message code="catlogging.common.form.reader" /> <i class="glyphicon muted" ng-class="{'glyphicon-ok-circle': formValidation.reader, 'glyphicon-remove-circle': !formValidation.reader}"></i>
+				<spring:message code="catlogging.common.form.reader" text=""/> <i class="glyphicon muted" ng-class="{'glyphicon-ok-circle': formValidation.reader, 'glyphicon-remove-circle': !formValidation.reader}"></i>
 			</uib-tab-heading>
 			<!-- TODO if reader is configurable -->
 			<div ng-form="readerForm">
 				<div id="log-reader-editor" ng-if="beanWrapper[0]['@type']" ng-form="form">
 					<lsf-form-valid-observer form="readerForm" on-valid-change="readerFormValid" />
-					<h4><spring:message code="catlogging.common.form.logEntryReader" /></h4>
+					<h4><spring:message code="catlogging.common.form.logEntryReader" text=""/></h4>
 					<lfs-bean-wizard bean="beanWrapper[0].reader.targetReader" bean-type-label="Reader" wizards="readerWizards"
 						shared-scope="sharedScope" bind-errors="bindErrors" bind-errors-prefix="reader.targetReader." model-exclude="['fieldTypes', 'supportedSeverities']">
 					</lfs-bean-wizard>
@@ -245,17 +245,17 @@
 	</script>
 		<uib-tab ng-if="beanWrapper[0]['@type']">
     		<uib-tab-heading>
-				<spring:message code="catlogging.common.form.filters" /> <i class="glyphicon muted" ng-class="{'glyphicon-ok-circle': formValidation.filters, 'glyphicon-remove-circle': !formValidation.filters}"></i>
+				<spring:message code="catlogging.common.form.filters" text=""/> <i class="glyphicon muted" ng-class="{'glyphicon-ok-circle': formValidation.filters, 'glyphicon-remove-circle': !formValidation.filters}"></i>
 			</uib-tab-heading>
 			<div ng-form="filtersForm">
 				<div id="source-reader-filters" ng-if="beanWrapper[0]['@type']" ng-form="form">
 					<lsf-form-valid-observer form="filtersForm" on-valid-change="filtersFormValid" />
-					<h4><spring:message code="catlogging.common.form.filters" />
-						<small><spring:message code="catlogging.wizard.filter.text.2" /></small></h4>
+					<h4><spring:message code="catlogging.common.form.filters" text=""/>
+						<small><spring:message code="catlogging.wizard.filter.text.2" text=""/></small></h4>
 					<div class="panel panel-default" ng-repeat="filter in beanWrapper[0].reader.filters">
 						<div class="panel-heading">
 							<button type="button" class="close pull-right btn-sm" title="Delete" ng-click="deleteReaderFilter($index)"><i class="glyphicon glyphicon-trash"></i></button>
-							<h3 class="panel-title"><spring:message code="catlogging.common.form.filter" /> {{$index+1}}</h3>
+							<h3 class="panel-title"><spring:message code="catlogging.common.form.filter" text=""/> {{$index+1}}</h3>
 						</div>
 						<div class="panel-body" ng-form="form">
 							<div ng-controller="SourceReaderFilterHelpController">
@@ -268,7 +268,7 @@
 					<div class="row post-desc">
 						<div class="col-md-12">
 							<a class="btn btn-link" ng-click="addReaderFilter()">
-								<i class="glyphicon glyphicon-plus"></i> <spring:message code="catlogging.wizard.eventScanner.add" /></a>
+								<i class="glyphicon glyphicon-plus"></i> <spring:message code="catlogging.wizard.eventScanner.add" text=""/></a>
 						</div>
 					</div>
 				</div>
@@ -276,7 +276,7 @@
 		</uib-tab>
 		<uib-tab ng-if="beanWrapper[0]['@type']">
     		<uib-tab-heading>
-				UI <spring:message code="catlogging.breadcrumb.settings" /> <i class="glyphicon muted" ng-class="{'glyphicon-ok-circle': formValidation.ui, 'glyphicon-remove-circle': !formValidation.ui}"></i>
+				UI <spring:message code="catlogging.breadcrumb.settings" text=""/> <i class="glyphicon muted" ng-class="{'glyphicon-ok-circle': formValidation.ui, 'glyphicon-remove-circle': !formValidation.ui}"></i>
 			</uib-tab-heading>
 			<div ng-form="uiForm">
 				<div id="source-ui" ng-form="form">
@@ -320,7 +320,7 @@
 
 	<div class="row">
 		<div class="col-md-12" us-spinner spinner-key="update">
-			<button type="button" class="btn btn-primary btn-sm" ng-disabled="form2.$invalid" ng-click="submit(form2)"><spring:message code="${param.submitLabel}" /> </button>
+			<button type="button" class="btn btn-primary btn-sm" ng-disabled="form2.$invalid" ng-click="submit(form2)"><spring:message code="${param.submitLabel}" text=""/> </button>
 			<button type="button" class="btn btn-default btn-sm" ng-click="testLogViewing()" ng-disabled="form2.$invalid">
 				<i class="glyphicon glyphicon-check"></i> <text ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.form.test.view'">{{localeMessage}}</text>
 			</button>

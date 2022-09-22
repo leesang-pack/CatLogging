@@ -6,12 +6,12 @@
 
 2. Option Start (recommend)
 ```
-    java -Dcatlogging.validationPath=/ -Dcatlogging.home=/home/catlogging -jar catlogging.war
+    nohup java -Dfile.encoding=UTF-8 -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Xms2048M -Xmx2096M -server -XX:+UseParallelGC -Dcatlogging.validationPath=/etc/ -Dcatlogging.home=/home/XXX -jar catlogging.war > /dev/null 2>&1 &
 ``` 
 
 ## Documentation
 
-- ENV : Linux x86
+- ENV : Linux,Windows,Mac..
 - Add Support i18n(en, kr, ch)
 - Add Support Log Validation path (For inaccessibility of basic system path.)
 - Change Dark theme UI

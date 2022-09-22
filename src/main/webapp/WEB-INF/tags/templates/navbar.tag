@@ -19,10 +19,10 @@
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li class="${active=='sources'?'active':'' }">
-                    <a href="<c:url value="/c/sources" />"><spring:message code="catlogging.nav.logs"/></a>
+                    <a href="<c:url value="/c/sources" />"><spring:message code="catlogging.nav.logs" text=""/></a>
                 </li>
                 <li class="${active=='sniffers'?'active':'' }">
-                    <a href="<c:url value="/c/sniffers" />"><spring:message code="catlogging.nav.events"/></a>
+                    <a href="<c:url value="/c/sniffers" />"><spring:message code="catlogging.nav.events" text=""/></a>
                 </li>
                 <!--
 		<li class="${active=='reports'?'active':'' }">
@@ -30,13 +30,13 @@
 		</li>
 		 -->
                 <li class="${active=='system'?'active':'' }">
-                    <a href="<c:url value="/c/system" />"><spring:message code="catlogging.nav.system"/></a>
+                    <a href="<c:url value="/c/system" />"><spring:message code="catlogging.nav.system" text=""/></a>
                 </li>
             </ul>
             <ul class="nav navbar-right navbar-nav">
-                <li><a href="/c/sources?lang=en" > <spring:message code="catlogging.lang.en"/> </a></li>
-                <li><a href="/c/sources?lang=ko" > <spring:message code="catlogging.lang.ko"/> </a></li>
-                <li><a href="/c/sources?lang=zh" > <spring:message code="catlogging.lang.zh"/> </a></li>
+                <li><a href="/c/sources?lang=en" > <spring:message code="catlogging.lang.en" text=""/> </a></li>
+                <li><a href="/c/sources?lang=ko" > <spring:message code="catlogging.lang.ko" text=""/> </a></li>
+                <li><a href="/c/sources?lang=zh" > <spring:message code="catlogging.lang.zh" text=""/> </a></li>
                 <li>
                     <a href="<c:url value="/c/system?path=notifications" />" title="{{systemNotificationSummary.count}} unread notification{{systemNotificationSummary.count!=1?'s':''}}"><i class="fa fa-bell"></i>
                         <sup ng-if="systemNotificationSummary.count!=0"><span class="label" ng-class="systemNotificationSummary.worstLevel=='ERROR'?'label-danger':(systemNotificationSummary.worstLevel=='WARN'?'label-warning':'label-info')">{{systemNotificationSummary.count}}</span></sup></a>

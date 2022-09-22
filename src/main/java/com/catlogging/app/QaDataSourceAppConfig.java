@@ -48,7 +48,7 @@ public class QaDataSourceAppConfig {
 	@Bean
 	public DataSource dataSource() {
 		return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-				.addScript("classpath:/sql/quartz/tables_h2.sql")
+//				.addScript("classpath:/sql/quartz/tables_h2.sql_")
 				.addScript("classpath:/sql/model/schema_h2_clean.sql")
 				.addScript("classpath:/sql/model/schema_h2.sql")
 				.addScript("classpath:/sql/model/schema_h2_data.sql").build();

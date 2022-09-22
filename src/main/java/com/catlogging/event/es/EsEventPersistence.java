@@ -26,8 +26,8 @@ import javax.annotation.PostConstruct;
 
 import com.catlogging.app.ElasticSearchConnect;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
@@ -38,6 +38,8 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.*;
 import org.elasticsearch.action.support.IndicesOptions;
 import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -146,7 +148,7 @@ public class EsEventPersistence implements EventPersistence {
 	public void refreshIndex() {
 		try {
 			RefreshRequest refreshRequest =  new RefreshRequest();
-			RefreshResponse refreshResponse = elasticSearchConnect.getClientConnection().indices().refresh(refreshRequest);
+			RefreshResponse refreshResponse = elasticSearchConnect.getClientConnection().indices().refresh(refreshRequest, RequestOptions.DEFAULT);
 			log.debug("refresh response: {}", refreshResponse);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -164,7 +166,7 @@ public class EsEventPersistence implements EventPersistence {
 					.type(getType(event.getSnifferId()))
 					.source(evStr, XContentType.JSON);
 
-			IndexResponse indexResponse =elasticSearchConnect.getClientConnection().index(indexRequest);
+			IndexResponse indexResponse =elasticSearchConnect.getClientConnection().index(indexRequest, RequestOptions.DEFAULT);
 			String eventId = indexResponse.getId();
 			log.debug("Persisted event with id: {} eventBody:{}", eventId, indexResponse.toString());
 
@@ -183,7 +185,7 @@ public class EsEventPersistence implements EventPersistence {
 					deletes.add(new DeleteRequest(index, getType(snifferId), id));
 				}
 			}
-			elasticSearchConnect.getClientConnection().bulk(deletes);
+			elasticSearchConnect.getClientConnection().bulk(deletes, RequestOptions.DEFAULT);
 			log.info("Deleted events: {}", (Object[]) eventIds);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -202,7 +204,7 @@ public class EsEventPersistence implements EventPersistence {
 						.indices(index)
 						.indicesOptions(IndicesOptions.lenientExpandOpen());
 
-				DeleteIndexResponse deleteIndexResponse = elasticSearchConnect.getClientConnection().indices().delete(deleteIndexRequest);
+				AcknowledgedResponse deleteIndexResponse = elasticSearchConnect.getClientConnection().indices().delete(deleteIndexRequest, RequestOptions.DEFAULT);
 
 				log.info("index delete all:{}",deleteIndexResponse.isAcknowledged());
 			} catch (Exception e) {
@@ -287,7 +289,7 @@ public class EsEventPersistence implements EventPersistence {
 								.indicesOptions(IndicesOptions.lenientExpandOpen())
 								.types(getType(snifferId))
 								.source(timeRangeQuery);
-						SearchResponse searchResponse = elasticSearchConnect.getClientConnection().search(timeRangeQuerySearchRequest);
+						SearchResponse searchResponse = elasticSearchConnect.getClientConnection().search(timeRangeQuerySearchRequest, RequestOptions.DEFAULT);
 
 						final Aggregations aggregations = searchResponse.getAggregations();
 						if (aggregations != null) {
@@ -311,7 +313,7 @@ public class EsEventPersistence implements EventPersistence {
 
 				final List<EventPersistence.AspectEvent> events = new ArrayList<>();
 				SearchHit[] searchHits = new SearchHit[0];
-				SearchResponse searchResponse = elasticSearchConnect.getClientConnection().search(searchRequest);
+				SearchResponse searchResponse = elasticSearchConnect.getClientConnection().search(searchRequest, RequestOptions.DEFAULT);
 				searchHits = searchResponse.getHits().getHits();
 				for (SearchHit searchHit : searchHits) {
 					final AspectEventImpl event = jsonMapper.readValue(searchHit.getSourceAsString(), AspectEventImpl.class);
@@ -457,7 +459,7 @@ public class EsEventPersistence implements EventPersistence {
 					.types(getType(snifferId))
 					.source(searchSourceBuilder);
 
-			SearchHit[] searchHits = elasticSearchConnect.getClientConnection().search(searchRequest).getHits().getHits();
+			SearchHit[] searchHits = elasticSearchConnect.getClientConnection().search(searchRequest, RequestOptions.DEFAULT).getHits().getHits();
 			if (searchHits != null && searchHits.length > 0) {
 				final SearchHit hit = searchHits[0];
 				final Event event = jsonMapper.readValue(hit.getSourceAsString(), Event.class);
@@ -543,7 +545,7 @@ public class EsEventPersistence implements EventPersistence {
 							.aggregation(terms);
 					SearchRequest searchRequest = new SearchRequest()
 							.source(searchSourceBuilder);
-					SearchResponse searchResponse = elasticSearchConnect.getClientConnection().search(searchRequest);
+					SearchResponse searchResponse = elasticSearchConnect.getClientConnection().search(searchRequest, RequestOptions.DEFAULT);
 					log.debug("Performed events counting search {} in {}ms", searchSourceBuilder, System.currentTimeMillis() - start);
 					final Terms eventsCounterAgg = searchResponse.getAggregations() != null ? (Terms) searchResponse.getAggregations().get("eventsCounter") : null;
 					if (eventsCounterAgg != null) {
@@ -607,7 +609,23 @@ public class EsEventPersistence implements EventPersistence {
 					.type(getType(snifferId))
 					.indices(indexNamingStrategy.buildActiveName(snifferId));
 
-			elasticSearchConnect.getClientConnection().indices().putMapping(request);
+			elasticSearchConnect.getClientConnection().indices()
+					.putMappingAsync(
+							request,
+							RequestOptions.DEFAULT,
+							new ActionListener<AcknowledgedResponse>() {
+
+								@Override
+								public void onResponse(AcknowledgedResponse acknowledgedResponse) {
+
+								}
+
+								@Override
+								public void onFailure(Exception e) {
+									// TODO handle failure here
+								}
+							});
+
 		} catch (Exception e) {
 			log.warn("Failed to update mapping for sniffer " + snifferId + ", try to delete all events", e);
 		}

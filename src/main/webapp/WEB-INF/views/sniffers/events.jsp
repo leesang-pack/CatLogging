@@ -24,8 +24,8 @@
 					    scheduled: ${scheduled}  
 				    };
 					$scope.nls = {
-						on:'<spring:message code="catlogging.sniffers.scheduled.true" />',
-						off:'<spring:message code="catlogging.sniffers.scheduled.false" />'
+						on:'<spring:message code="catlogging.sniffers.scheduled.true" text=""/>',
+						off:'<spring:message code="catlogging.sniffers.scheduled.false" text=""/>'
 					};
 				}]
 			);

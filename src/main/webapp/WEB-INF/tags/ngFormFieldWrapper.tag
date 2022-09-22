@@ -19,7 +19,7 @@
 								form.${fieldName}.$invalid
 							&& !form.${fieldName}.$pristine
 							&& form.${empty isValidationPath?false:isValidationPath}
-							|| form.${fieldName}.$error.pattern"> <spring:message code="catlogging.common.absolutePath" arguments="${catloggingProps['catlogging.validationPath']}" /></p>
+							|| form.${fieldName}.$error.pattern"> <spring:message code="catlogging.common.absolutePath" arguments="${catloggingProps['catlogging.validationPath']}" text=""/></p>
 
 	<jsp:doBody />
 	<div class="help-block" ng-if="bindErrors['${empty bindErrorsPath?fieldName:bindErrorsPath}']

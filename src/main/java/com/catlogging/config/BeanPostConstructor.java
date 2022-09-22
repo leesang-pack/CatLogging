@@ -41,6 +41,6 @@ public interface BeanPostConstructor<BeanType> {
 	 * @throws ConfigException
 	 *             in case of errors.
 	 */
-	void postConstruct(BeanType bean, BeanConfigFactoryManager configManager)
-			throws ConfigException;
+//	void postConstruct(BeanType bean, BeanConfigFactoryManager configManager)
+	void postConstruct(BeanType bean) throws ConfigException;
 }

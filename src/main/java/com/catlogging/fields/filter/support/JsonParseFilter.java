@@ -46,15 +46,13 @@ public final class JsonParseFilter extends AbstractTransformationFilter<Object> 
 	private ObjectMapper objectMapper;
 
 	@Component
-	public static final class JsonParseFilterBuilder implements
-			BeanPostConstructor<JsonParseFilter> {
+	public static final class JsonParseFilterBuilder implements BeanPostConstructor<JsonParseFilter> {
 		@Autowired
 		private ObjectMapper objectMapper;
 
+//		final BeanConfigFactoryManager configManager)
 		@Override
-		public void postConstruct(final JsonParseFilter bean,
-				final BeanConfigFactoryManager configManager)
-				throws ConfigException {
+		public void postConstruct(final JsonParseFilter bean) throws ConfigException {
 			bean.objectMapper = objectMapper;
 			bean.parseFallback();
 		}

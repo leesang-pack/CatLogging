@@ -62,9 +62,9 @@ public class CompoundLogSource extends BaseLogsSource<CompoundLogAccess> {
 		@Autowired
 		private LogSourceProvider logSourceProvider;
 
+//		public void postConstruct(final CompoundLogSource bean, final BeanConfigFactoryManager configManager)
 		@Override
-		public void postConstruct(final CompoundLogSource bean, final BeanConfigFactoryManager configManager)
-				throws ConfigException {
+		public void postConstruct(final CompoundLogSource bean) throws ConfigException {
 			bean.logSourceProvider = logSourceProvider;
 		}
 

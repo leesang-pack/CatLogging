@@ -28,20 +28,17 @@ import com.catlogging.event.publisher.VelocityEventRenderer;
 import com.catlogging.settings.http.HttpSettings;
 
 @Component
-public class HttpPublisherConfigurer implements
-		BeanPostConstructor<HttpPublisher> {
+public class HttpPublisherConfigurer implements BeanPostConstructor<HttpPublisher> {
 	@Autowired
 	private HttpSettings httpSettings;
 
 	@Autowired
 	private VelocityEventRenderer velocityRenderer;
 
+//	final BeanConfigFactoryManager configManager)
 	@Override
-	public void postConstruct(final HttpPublisher bean,
-			final BeanConfigFactoryManager configManager)
-			throws ConfigException {
-		bean.init(velocityRenderer, httpSettings.createHttpClientBuilder()
-				.build());
+	public void postConstruct(final HttpPublisher bean) throws ConfigException {
+		bean.init(velocityRenderer, httpSettings.createHttpClientBuilder().build());
 	}
 
 }

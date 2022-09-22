@@ -6,7 +6,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<spring:message code="catlogging.breadcrumb.reports" var="title"/>
+<spring:message code="catlogging.breadcrumb.reports" var="title" text=""/>
 <tpl:bodyFull title="${title}" activeNavbar="reports">
 	<jsp:body>
 		<ul class="breadcrumb">
@@ -44,7 +44,7 @@
 							|
 							Created: <t:outputDate value="${report.createdAt}" />
 							|
-							<a href="<c:url value="/c/reports/${report.id}" />"><i class="glyphicon glyphicon-edit"></i> <spring:message code="catlogging.common.form.edit"/></a>
+							<a href="<c:url value="/c/reports/${report.id}" />"><i class="glyphicon glyphicon-edit"></i> <spring:message code="catlogging.common.form.edit" text=""/></a>
 						</div>
 					</div>
 				</div>

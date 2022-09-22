@@ -6,7 +6,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <div id="source-wildcard-file-wizard">
-	<span class="text-muted"><spring:message code="catlogging.common.fileWildcard.text.1"/></span>
+	<span class="text-muted"><spring:message code="catlogging.common.fileWildcard.text.1" text=""/></span>
 	<div class="row">
 		<%--
 			ngFormFieldWrapper에서 필수 인자 fieldName이 필요하다.
@@ -17,7 +17,7 @@
 		<%--
 			툴팁
         --%>
-			<lsf-info-label label="<spring:message code="catlogging.common.fileWildcard.text.2"/>:" for="pattern">
+			<lsf-info-label label="<spring:message code="catlogging.common.fileWildcard.text.2" text=""/>:" for="pattern">
 				<p ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.fileWildcard.text.3'" ng-bind-html="sanitizeLocalMessage()"></p>
 			</lsf-info-label>
 

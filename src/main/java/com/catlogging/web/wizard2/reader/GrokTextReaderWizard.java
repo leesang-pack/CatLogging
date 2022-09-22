@@ -68,7 +68,8 @@ public class GrokTextReaderWizard implements ConfigBeanWizard<GrokTextReader> {
 	@Override
 	public GrokTextReader getTemplate() {
 		GrokTextReader reader = new GrokTextReader();
-		grokTextReaderConstructor.postConstruct(reader, configManager);
+//		grokTextReaderConstructor.postConstruct(reader, configManager);
+		grokTextReaderConstructor.postConstruct(reader);
 		return reader;
 	}
 

@@ -52,7 +52,7 @@
 			<t:ngFormFieldWrapper cssClass="col-md-9" fieldName="severityNumber">
 				<select ng-model="bean.severityNumber" name="severityNumber" class="form-control" required
 					ng-options="s.o as s.n for s in supportedSeverities">
-					<option value=""><spring:message code="catlogging.common.pleaseSelect" /></option>
+					<option value=""><spring:message code="catlogging.common.pleaseSelect" text=""/></option>
 				</select>
 				<div class="help-block" ng-if="severitiesHelpInfo">{{severitiesHelpInfo}}</div>
 			</t:ngFormFieldWrapper>
