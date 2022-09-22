@@ -28,13 +28,13 @@
 <!-- Reader wizard -->
 <div id="log-reader-editor" ng-controller="ReaderBeanWizardControllerWrapper" ng-form="form">
 	<div ng-controller="BeanWizardController">
-		<h4><spring:message code="catlogging.common.form.logEntryReader" /></h4>
+		<h4><spring:message code="catlogging.common.form.logEntryReader" text=""/></h4>
 		<div class="row">
 			<div class="col-md-6 form-group" ng-class="{'has-error': form.selectedWizard.$invalid && !form.selectedWizard.$pristine}">
 				<label class="control-label">Reader type*:</label>
 				<div class="controls">
 			        <select ng-model="selectedWizard" name="selectedWizard" class="form-control" ng-options="w.label for w in wizards" required>
-			        	<option value=""><spring:message code="catlogging.common.pleaseSelect" /></option>
+			        	<option value=""><spring:message code="catlogging.common.pleaseSelect" text=""/></option>
 			        </select>
 			    </div>
 		    </div>

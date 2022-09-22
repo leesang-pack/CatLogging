@@ -33,7 +33,7 @@ public class H2NotificationProvider implements NotificationProvider {
 
 	private class NotificationCreator implements PreparedStatementCreator {
 		private static final String SQL_SET = TABLE_NAME
-				+ " SET ID=?, NTYPE=?, TITLE=?, MESSAGE=?, LEVEL=?, EXPIRATION=?, CREATION=?";
+				+ " SET SYSTEM_ID=?, NTYPE=?, TITLE=?, MESSAGE=?, LEVEL=?, EXPIRATION=?, CREATION=?";
 		private static final String SQL_INSERT = "INSERT INTO " + SQL_SET;
 		private final Notification notification;
 
@@ -63,7 +63,7 @@ public class H2NotificationProvider implements NotificationProvider {
 		@Override
 		public Notification mapRow(final ResultSet rs, final int rowNum) throws SQLException {
 			final Notification n = new Notification();
-			n.setId(rs.getString("ID"));
+			n.setId(rs.getString("SYSTEM_ID"));
 			n.setType(mapType(rs.getInt("NTYPE")));
 			n.setTitle(rs.getString("TITLE"));
 			n.setMessage(rs.getString("MESSAGE"));
@@ -93,7 +93,7 @@ public class H2NotificationProvider implements NotificationProvider {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public boolean store(final Notification n, final boolean override) {
-		if (jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE ID=?",
+		if (jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE SYSTEM_ID=?",
 				Integer.class,
 				n.getId()).intValue() == 0) {
 			jdbcTemplate.update(new NotificationCreator(n));
@@ -105,11 +105,11 @@ public class H2NotificationProvider implements NotificationProvider {
 			log.debug("Overridden notification: {}", n);
 			return true;
 		} else if (n.getExpirationDate() != null
-				&& jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE ID=? AND EXPIRATION = ?",
+				&& jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE SYSTEM_ID=? AND EXPIRATION = ?",
 				Integer.class,
 				n.getId(),
 				n.getExpirationDate()).intValue() == 0) {
-			jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET EXPIRATION = ? WHERE ID=?",
+			jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET EXPIRATION = ? WHERE SYSTEM_ID=?",
 					n.getExpirationDate(),
 					n.getId());
 			log.debug("Updated expiration date of notification: {}", n);
@@ -124,9 +124,9 @@ public class H2NotificationProvider implements NotificationProvider {
 		final PageableResult<Notification> n = new PageableResult<>();
 		n.setTotalCount(getSummary(userToken).getCount());
 		n.setItems(jdbcTemplate.query(
-				"SELECT a.ID, a.NTYPE, a.TITLE, a.MESSAGE, a.LEVEL, a.EXPIRATION, a.CREATION FROM " + TABLE_NAME
+				"SELECT a.SYSTEM_ID, a.NTYPE, a.TITLE, a.MESSAGE, a.LEVEL, a.EXPIRATION, a.CREATION FROM " + TABLE_NAME
 						+ " a LEFT JOIN " + TABLE_NAME_ACK
-						+ " b ON (a.ID = b.ID AND b.USER=?) WHERE a.NTYPE=? OR (b.USER IS NULL AND (a.EXPIRATION IS NULL OR a.EXPIRATION >= ?))"
+						+ " b ON (a.SYSTEM_ID = b.SYSTEM_ID AND b.SYSTEM_USER_NAME=?) WHERE a.NTYPE=? OR (b.SYSTEM_USER_NAME IS NULL AND (a.EXPIRATION IS NULL OR a.EXPIRATION >= ?))"
 						+ " ORDER BY a.LEVEL DESC, a.CREATION DESC",
 				new Object[] { userToken, Type.MESSAGE.ordinal(), new Date() }, new NotificationRowMapper()));
 		return n;
@@ -137,7 +137,7 @@ public class H2NotificationProvider implements NotificationProvider {
 		final long start = System.currentTimeMillis();
 		final Map<String, Object> r = jdbcTemplate.queryForMap(
 				"SELECT COUNT(*) as c, MAX(a.LEVEL) as m FROM " + TABLE_NAME + " a LEFT JOIN " + TABLE_NAME_ACK
-						+ " b ON (a.ID = b.ID AND b.USER=?) WHERE NTYPE=? OR (b.USER IS NULL AND (a.EXPIRATION IS NULL OR a.EXPIRATION >= ?))",
+						+ " b ON (a.SYSTEM_ID = b.SYSTEM_ID AND b.SYSTEM_USER_NAME=?) WHERE NTYPE=? OR (b.SYSTEM_USER_NAME IS NULL AND (a.EXPIRATION IS NULL OR a.EXPIRATION >= ?))",
 				userToken, Type.MESSAGE.ordinal(), new Date());
 		Level worst = null;
 		if (r.get("m") != null) {
@@ -158,15 +158,15 @@ public class H2NotificationProvider implements NotificationProvider {
 
 	@Override
 	public void acknowledge(final String notificationId, final String userToken) {
-		jdbcTemplate.update("INSERT INTO " + TABLE_NAME_ACK + " SET ID = ?, USER = ?", notificationId, userToken);
+		jdbcTemplate.update("INSERT INTO " + TABLE_NAME_ACK + " SET SYSTEM_ID = ?, SYSTEM_USER_NAME = ?", notificationId, userToken);
 	}
 
 	@Override
 	@Transactional
 	public void delete(final String notificationId) {
 		log.debug("Deleting notification: {}", notificationId);
-		jdbcTemplate.update("DELETE FROM " + TABLE_NAME_ACK + " WHERE ID = ?", notificationId);
-		jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE ID = ?", notificationId);
+		jdbcTemplate.update("DELETE FROM " + TABLE_NAME_ACK + " WHERE SYSTEM_ID = ?", notificationId);
+		jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE SYSTEM_ID = ?", notificationId);
 	}
 
 }

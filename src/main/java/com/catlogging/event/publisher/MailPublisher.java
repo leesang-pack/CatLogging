@@ -160,9 +160,9 @@ public class MailPublisher implements Publisher, BeanPostConstructor<MailPublish
 		this.textMessage = textMessage;
 	}
 
+//	public void postConstruct(final MailPublisher bean, final BeanConfigFactoryManager configManager)
 	@Override
-	public void postConstruct(final MailPublisher bean, final BeanConfigFactoryManager configManager)
-			throws ConfigException {
+	public void postConstruct(final MailPublisher bean) throws ConfigException {
 		bean.mailSender = mailSender;
 		bean.velocityEngine = velocityEngine;
 		bean.velocityRenderer = velocityRenderer;

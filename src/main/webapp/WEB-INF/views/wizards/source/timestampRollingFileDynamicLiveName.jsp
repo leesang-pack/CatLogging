@@ -6,14 +6,14 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <div id="source-wildcard-rolling-file-wizard">
-	<lsf-info-label label="<spring:message code="catlogging.common.timestampDynamic.label.1"/>" class="text-muted">
+	<lsf-info-label label="<spring:message code="catlogging.common.timestampDynamic.label.1" text=""/>" class="text-muted">
 		<p ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.timestampDynamic.text.1'" ng-bind-html="sanitizeLocalMessage()"></p>
 	</lsf-info-label>
 	<div class="row">
 <%--		<div class="col-md-8">--%>
 		<lsf-form-group class="form-group required" field-name="pattern" field-path="pattern" bind-errors="bindErrors">
 			<t:ngFormFieldWrapper cssClass="form-group col-md-12 required" fieldName="pattern">
-				<lsf-info-label label="<spring:message code="catlogging.common.timestampDynamic.label.2"/>:" for="pattern">
+				<lsf-info-label label="<spring:message code="catlogging.common.timestampDynamic.label.2" text=""/>:" for="pattern">
 					<p ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.timestampDynamic.text.2'" ng-bind-html="sanitizeLocalMessage()"></p>
 				</lsf-info-label>
 				<input type="text" ng-model="bean.pattern" name="pattern" id="pattern" ng-pattern="/${catloggingProps['catlogging.validationPath']}/" class="form-control" required>
@@ -22,12 +22,12 @@
 <%--		</div>--%>
 		<div class="col-md-4">
 			<lsf-form-group class="form-group required" field-name="pastLogsType" field-path="pastLogsType" bind-errors="bindErrors">
-				<lsf-info-label label="<spring:message code="catlogging.common.orderRollFile"/>:" for="pastLogsType">
+				<lsf-info-label label="<spring:message code="catlogging.common.orderRollFile" text=""/>:" for="pastLogsType">
 					<p ng-controller="LocaleMessageController" ng-init="localeMessageKey='catlogging.common.orderRollFile.text'" ng-bind-html="sanitizeLocalMessage()"></p>
 				</lsf-info-label>
 				<select ng-model="bean.pastLogsType" name="pastLogsType" id="pastLogsType" class="form-control" required>
-					<option value="NAME"><spring:message code="catlogging.common.filename"/></option>
-					<option value="LAST_MODIFIED"><spring:message code="catlogging.common.lastofmodify"/> </option>
+					<option value="NAME"><spring:message code="catlogging.common.filename" text=""/></option>
+					<option value="LAST_MODIFIED"><spring:message code="catlogging.common.lastofmodify" text=""/> </option>
 				</select>
 			</lsf-form-group>
 		</div>

@@ -46,15 +46,14 @@ public class ShellCommandPublisher implements Publisher {
 	private String workingDir;
 
 	@Component
-	public static class ShellPublisherConstructor implements
-			BeanPostConstructor<ShellCommandPublisher> {
+	public static class ShellPublisherConstructor implements BeanPostConstructor<ShellCommandPublisher> {
 		@Autowired
 		private VelocityEventRenderer velocityRenderer;
 
+//		public void postConstruct(final ShellCommandPublisher bean,
+//								  final BeanConfigFactoryManager configManager)
 		@Override
-		public void postConstruct(final ShellCommandPublisher bean,
-				final BeanConfigFactoryManager configManager)
-				throws ConfigException {
+		public void postConstruct(final ShellCommandPublisher bean) throws ConfigException {
 			bean.velocityRenderer = velocityRenderer;
 		}
 

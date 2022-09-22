@@ -7,7 +7,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 
-<spring:message code="catlogging.common.form.edit" var="paramEdit"/>
+<spring:message code="catlogging.common.form.edit" var="paramEdit" text=""/>
 <%--<spring:message code="catlogging.common.form.save" var="formSave" javaScriptEscape="true" />--%>
 <tpl:bodyFull title="${activeSource.name } - ${paramEdit}" activeNavbar="sources" ngModules="'SourceEditorModule'">
 	<jsp:attribute name="htmlHead">

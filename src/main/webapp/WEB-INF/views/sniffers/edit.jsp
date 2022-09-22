@@ -7,7 +7,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 
-<spring:message code="catlogging.common.form.edit" var="paramEdit"/>
+<spring:message code="catlogging.common.form.edit" var="paramEdit" text=""/>
 <tpl:bodyFull title="${activeSniffer.name } - ${paramEdit}" activeNavbar="sniffers" ngModules="'SnifferEditorModule'">
 	
 	<jsp:attribute name="htmlHead">

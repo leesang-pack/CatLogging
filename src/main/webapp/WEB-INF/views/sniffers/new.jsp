@@ -6,8 +6,8 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
-<spring:message code="catlogging.common.sniffer" var="paramObserver"/>
-<spring:message code="catlogging.common.new" var="paramNew"/>
+<spring:message code="catlogging.common.sniffer" var="paramObserver" text=""/>
+<spring:message code="catlogging.common.new" var="paramNew" text=""/>
 <tpl:bodyFull title="${paramNew} ${paramObserver}" activeNavbar="sniffers" ngModules="'SnifferEditorModule'">
 	<jsp:attribute name="htmlHead">
 		<script type="text/javascript" src="<c:url value="/ng/sniffer/snifferTest.js?v=${catloggingProps['catlogging.version']}" />"></script>
@@ -15,8 +15,8 @@
 
 	<jsp:body>
 		<ul class="breadcrumb">
-			<li><a href="<c:url value="/c/sniffers" />"><spring:message code="catlogging.breadcrumb.eventObserver" /></a> </li>
-				<li class="active"><spring:message code="catlogging.common.new" /></li>
+			<li><a href="<c:url value="/c/sniffers" />"><spring:message code="catlogging.breadcrumb.eventObserver" text=""/></a> </li>
+				<li class="active"><spring:message code="catlogging.common.new" text=""/></li>
 			</ul>
 
 
@@ -71,7 +71,7 @@
 			<hr>
 			<div class="row">
 				<div class="col-md-12" us-spinner spinner-key="update">
-					<button type="button" class="btn btn-primary btn-sm" ng-disabled="form.$invalid" ng-click="submit(form)"><spring:message code="catlogging.common.form.create" /></button>
+					<button type="button" class="btn btn-primary btn-sm" ng-disabled="form.$invalid" ng-click="submit(form)"><spring:message code="catlogging.common.form.create" text=""/></button>
 				</div>
 			</div>
 		</form>

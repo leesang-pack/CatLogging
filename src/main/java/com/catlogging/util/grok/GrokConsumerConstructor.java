@@ -34,8 +34,9 @@ public class GrokConsumerConstructor implements BeanPostConstructor<GrokConsumer
 		void initGrokFactory(GroksRegistry groksRegistry);
 	}
 
+//	public void postConstruct(GrokConsumer bean, BeanConfigFactoryManager configManager) throws ConfigException {
 	@Override
-	public void postConstruct(GrokConsumer bean, BeanConfigFactoryManager configManager) throws ConfigException {
+	public void postConstruct(GrokConsumer bean) throws ConfigException {
 		bean.initGrokFactory(groksRegistry);
 	}
 }

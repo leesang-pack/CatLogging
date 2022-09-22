@@ -247,7 +247,7 @@
 	</jsp:attribute>
 	<jsp:body>
 		<ul class="breadcrumb">
-			<li><a href="<c:url value="/c/reports" />"><spring:message code="catlogging.breadcrumb.reports"/></a> </li>
+			<li><a href="<c:url value="/c/reports" />"><spring:message code="catlogging.breadcrumb.reports" text=""/></a> </li>
 			<li class="active">${report.name}</li>
 		</ul>
 		<div class="dashboard" id="dashboard" ng-app="dashboard" ng-controller="DashboardController">
@@ -272,7 +272,7 @@
 					<input type="hidden" name="widgets[{{$index}}].layout" ng-stringify ng-model="widget.layout"/>
 				</div>
 
-				<spring:message code="catlogging.confirms.delete" var="confirmDelMsg"/>
+				<spring:message code="catlogging.confirms.delete" var="confirmDelMsg" text=""/>
 				<div class="row widgets-grid gridster">
 					<c:forEach var="widget" items="${report.widgets}" varStatus="status">
 						<c:set var="layout" value="${logfn:jsonObject(widget.layout)}"/>

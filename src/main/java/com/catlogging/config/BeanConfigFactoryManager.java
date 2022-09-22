@@ -18,8 +18,10 @@
  *******************************************************************************/
 package com.catlogging.config;
 
+import com.catlogging.app.ContextProvider;
 import com.catlogging.config.ConfiguredBean.ConfiguredBeanDeserializer;
 import com.catlogging.util.value.ConfigInjector;
+import com.catlogging.web.wizard2.ConfigBeanWizard;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -34,10 +36,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Manages creating, serialization and deserialization of bean configs.
@@ -47,9 +46,6 @@ import java.util.Map;
  */
 @Slf4j
 public class BeanConfigFactoryManager implements ConfigBeanTypeResolver {
-
-	@Autowired(required = false)
-	private BeanPostConstructor<?>[] postConstructors;
 
 	private final HashMap<Class<?>, BeanPostConstructor<?>> mappedPostConstrucors = new HashMap<Class<?>, BeanPostConstructor<?>>();
 
@@ -76,11 +72,6 @@ public class BeanConfigFactoryManager implements ConfigBeanTypeResolver {
 			}
 		});
 		jsonMapper.registerModule(module);
-		if (postConstructors != null) {
-			for (final BeanPostConstructor<?> bpc : postConstructors) {
-				mappedPostConstrucors.put(bpc.getClass(), bpc);
-			}
-		}
 
 		// Register sub beans
 		final ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(
@@ -90,8 +81,7 @@ public class BeanConfigFactoryManager implements ConfigBeanTypeResolver {
 
 		for (final BeanDefinition bd : scanner.findCandidateComponents("com.catlogging")) {
 			try {
-				final Class<? extends ConfiguredBean> clazz = (Class<? extends ConfiguredBean>) Class
-						.forName(bd.getBeanClassName());
+				final Class<? extends ConfiguredBean> clazz = (Class<? extends ConfiguredBean>) Class.forName(bd.getBeanClassName());
 				final JsonTypeName jsonNameAnnotation = clazz.getAnnotation(JsonTypeName.class);
 				final List<String> names = new ArrayList<String>();
 				configBeanNames.put(clazz, names);
@@ -137,16 +127,16 @@ public class BeanConfigFactoryManager implements ConfigBeanTypeResolver {
 		}
 		final PostConstructed pc = AnnotationUtils.findAnnotation(bean.getClass(), PostConstructed.class);
 		if (bean instanceof BeanPostConstructor<?>
-				&& (pc == null || !mappedPostConstrucors.containsKey(bean.getClass()))) {
-			((BeanPostConstructor) bean).postConstruct(bean, this);
+		&& (pc == null || !mappedPostConstrucors.containsKey(bean.getClass()))) {
+//			((BeanPostConstructor) bean).postConstruct(bean, this);
+			((BeanPostConstructor) bean).postConstruct(bean);
 		}
 		if (pc != null) {
-			final BeanPostConstructor bpc = mappedPostConstrucors.get(pc.constructor());
+			BeanPostConstructor bpc = ContextProvider.getContext().getBean(pc.constructor());
 			if (bpc != null) {
-				bpc.postConstruct(bean, this);
+				bpc.postConstruct(bean);
 			} else {
-				log.error("Unsatisfied bean construction of '{}' due to missing post constructor of type: {}", bean,
-						pc.getClass());
+				log.error("Unsatisfied bean construction of '{}' due to missing post constructor of type: {}", bean, pc.getClass());
 			}
 		}
 		configInjector.postProcessBeforeInitialization(bean, bean.getClass().getName());
@@ -184,8 +174,7 @@ public class BeanConfigFactoryManager implements ConfigBeanTypeResolver {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends ConfiguredBean> Class<? extends T> resolveTypeClass(final String searchNname,
-			final Class<T> wantedSuperType) throws ConfigException {
+	public <T extends ConfiguredBean> Class<? extends T> resolveTypeClass(final String searchNname, final Class<T> wantedSuperType) throws ConfigException {
 		for (final Class<? extends ConfiguredBean> clazz : configBeanNames.keySet()) {
 			if (wantedSuperType == null || wantedSuperType.isAssignableFrom(clazz)) {
 				for (final String name : configBeanNames.get(clazz)) {

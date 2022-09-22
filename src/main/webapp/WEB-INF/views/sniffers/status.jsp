@@ -201,8 +201,8 @@
 	
 				<div lsf-alerts alerts="alerts"></div>
 				<h3>Positioning
-					 <small ng-if="scheduleInfo.scheduled"><spring:message code="catlogging.sniffers.positioning.show"/></small>
-					 <small ng-if="!scheduleInfo.scheduled"><spring:message code="catlogging.sniffers.positioning.set"/></small>
+					 <small ng-if="scheduleInfo.scheduled"><spring:message code="catlogging.sniffers.positioning.show" text=""/></small>
+					 <small ng-if="!scheduleInfo.scheduled"><spring:message code="catlogging.sniffers.positioning.set" text=""/></small>
 				</h3>
 				<div class="well well-sm" ng-repeat="s in status" lsf-busy-container busy="s.busy">
 					<h4>{{s.log.path!='default'?s.log.path:s.log.name}}</h4>

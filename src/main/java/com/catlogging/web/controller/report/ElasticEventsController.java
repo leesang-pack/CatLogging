@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.IndicesOptions;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.*;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class ElasticEventsController {
 				.types("event")
 				.source(searchSourceBuilder);
 
-		SearchResponse searchResponse = elasticSearchConnect.getClientConnection().search(searchRequest);
+		SearchResponse searchResponse = elasticSearchConnect.getClientConnection().search(searchRequest, RequestOptions.DEFAULT);
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		OutputStream responseStream = response.getOutputStream();
 

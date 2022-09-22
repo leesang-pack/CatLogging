@@ -47,8 +47,7 @@ import com.catlogging.util.grok.GroksRegistry;
  *
  */
 @PostConstructed(constructor = GrokConsumerConstructor.class)
-public class RegexPatternScanner extends SingleEntryIncrementalMatcher
-		implements GrokConsumer, GrokPatternBeanJsonModel {
+public class RegexPatternScanner extends SingleEntryIncrementalMatcher implements GrokConsumer, GrokPatternBeanJsonModel {
 	@JsonIgnore
 	private GroksRegistry groksRegistry;
 

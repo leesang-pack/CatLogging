@@ -48,6 +48,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.security.cert.X509Certificate;
@@ -67,7 +68,7 @@ public class ElasticSearchConnect {
 
 	@Autowired
 	CatLoggingHome catloggingHome;
-	private static final String ELASTIC_VERSION = "6.3.0";
+	private static final String ELASTIC_VERSION = "6.8.23";
 	static final int HTTP_PORT_VALUE = 9200;
 	static final int TCP_PORT_VALUE = 9300;
 
@@ -131,7 +132,7 @@ public class ElasticSearchConnect {
 					.withSetting(PopularProperties.CLUSTER_NAME, "embedded")
 					.withDownloadDirectory(esHomeDir)
 					.withInstallationDirectory(esHomeDir)
-					.withEsJavaOpts("-Xms1G -Xmx1G")
+					.withEsJavaOpts("-Xms1G -Xmx1G -Dlog4j2.formatMsgNoLookups=true")
 					.withStartTimeout(1, MINUTES)
 					.withJavaHome(JavaHomeOption.inheritTestSuite())
 					.build();
@@ -197,7 +198,6 @@ public class ElasticSearchConnect {
 				}
 				Thread.sleep(1000);
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

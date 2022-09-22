@@ -36,19 +36,19 @@
 <div id="reader-log4j-wizard" class="wizard" ng-controller="Log4jWizardController">
 	<div class="row">
 		<t:ngFormFieldWrapper cssClass="form-group col-md-10" fieldName="formatPattern">
-			<label class="control-label" for="formatPattern"><spring:message code="catlogging.wizard.reader.conversion" />*:
+			<label class="control-label" for="formatPattern"><spring:message code="catlogging.wizard.reader.conversion" text=""/>*:
 				<i class="glyphicon glyphicon-info-sign help-popup" data-container="body" data-html="true" data-content="
-				<spring:message code="catlogging.wizard.reader.conversion.text.1" />"
-				 data-title="<spring:message code="catlogging.wizard.reader.conversion.label.1" />"></i>
+				<spring:message code="catlogging.wizard.reader.conversion.text.1" text=""/>"
+				 data-title="<spring:message code="catlogging.wizard.reader.conversion.label.1" text=""/>"></i>
 			</label>
 			<div class="controls controls-row">
 				<input type="text" class="form-control pattern" ng-model="bean.formatPattern" name="formatPattern" id="formatPattern" required/>
 			</div>
 		</t:ngFormFieldWrapper>
 		<t:ngFormFieldWrapper cssClass="form-group col-md-2" fieldName="charset">
-			<label for="charset" class="control-label"><spring:message code="catlogging.common.form.characterSet" />*:</label>
+			<label for="charset" class="control-label"><spring:message code="catlogging.common.form.characterSet" text=""/>*:</label>
 			<select name="charset" id="charset" ng-model="bean.charset" class="form-control" required>
-				<option value=""><spring:message code="catlogging.common.pleaseSelect" /></option>
+				<option value=""><spring:message code="catlogging.common.pleaseSelect" text=""/></option>
 				<c:forEach items="<%=Charset.availableCharsets() %>" var="entry">
 					<option value="${entry.key}">${entry.key}</option>
 				</c:forEach>
@@ -60,10 +60,10 @@
 	</div>
 	<div class="row">
 		<div class="form-group col-md-12">
-			<label class="control-label"><spring:message code="catlogging.wizard.reader.conversion.mapping" />:
+			<label class="control-label"><spring:message code="catlogging.wizard.reader.conversion.mapping" text=""/>:
 				<i class="glyphicon glyphicon-info-sign help-popup" data-container="body" data-html="true" data-content="
-				<spring:message code="catlogging.wizard.reader.conversion.mapping.text.1" />"
-					 data-title="<spring:message code="catlogging.wizard.reader.conversion.mapping.label.1" />"></i></label>
+				<spring:message code="catlogging.wizard.reader.conversion.mapping.text.1" text=""/>"
+					 data-title="<spring:message code="catlogging.wizard.reader.conversion.mapping.label.1" text=""/>"></i></label>
 			<div class="row form-group form-horizontal" ng-repeat="c in getUsedSpecifiers(bean.formatPattern)" ng-if="c!='n'">
 				<div class="col-md-1 cc"><label class="control-label">%{{c}}:</label></div>				
 				<div class="col-md-5">
@@ -72,7 +72,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="help-block" ng-if="getUsedSpecifiers(bean.formatPattern).length==0"><spring:message code="catlogging.wizard.reader.conversion.mapping.text.2" /></div>
+			<div class="help-block" ng-if="getUsedSpecifiers(bean.formatPattern).length==0"><spring:message code="catlogging.wizard.reader.conversion.mapping.text.2" text=""/></div>
 		</div>
 	</div>
 </div>

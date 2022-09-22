@@ -23,22 +23,14 @@ import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.MigrationVersion;
 import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.h2.jdbcx.JdbcConnectionPool;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.flyway.FlywayMigrationInitializer;
-import org.springframework.boot.autoconfigure.jdbc.JdbcOperationsDependsOnPostProcessor;
-import org.springframework.boot.jdbc.SchemaManagement;
-import org.springframework.boot.jdbc.SchemaManagementProvider;
+//import org.springframework.boot.autoconfigure.jdbc.JdbcOperationsDependsOnPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
@@ -126,7 +118,7 @@ public class DataSourceAppConfig {
 
 			try {
 				final ResourceDatabasePopulator dbPopulator = new ResourceDatabasePopulator();
-				dbPopulator.addScript(new ClassPathResource("/sql/quartz/tables_h2.sql"));
+//				dbPopulator.addScript(new ClassPathResource("/sql/quartz/tables_h2.sql_"));
 				dbPopulator.addScript(new ClassPathResource("/sql/model/schema_h2.sql"));
 				dbPopulator.addScript(new ClassPathResource("/sql/model/schema_h2_data.sql"));
 				dbPopulator.populate(con);

@@ -6,9 +6,9 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
-<spring:message var="typeLabel" code="catlogging.type.${ex.resourceType.name}" text="Resource"/>
-<spring:message var="errorShort" code="catlogging.exception.404.short" arguments="${typeLabel}" />
-<spring:message var="errorDetail" code="catlogging.exception.404.detail" arguments="${typeLabel},${ex.id}" />
+<spring:message var="typeLabel" code="catlogging.type.${ex.resourceType.name}" text=""/>
+<spring:message var="errorShort" code="catlogging.exception.404.short" arguments="${typeLabel}" text=""/>
+<spring:message var="errorDetail" code="catlogging.exception.404.detail" arguments="${typeLabel},${ex.id}" text=""/>
 
 <tpl:main title="${errorShort}">
 	<tpl:navbar />
