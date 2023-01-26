@@ -1,0 +1,38 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="templates/layouts/layout"
+	  th:with="title=#{catlogging.exception.404.short(#{catlogging.type.__${ex.resourceType.name}__})},
+      activeNavbar='',
+      ngModules='',
+      isAuth=${not #maps.isEmpty(catloggingProps) and catloggingProps['catlogging.enable.auth'] == 'true' ? true : false},
+      errorShort=#{catlogging.exception.404.short(#{catlogging.type.__${ex.resourceType.name}__})},
+      errorDetail=#{catlogging.exception.404.detail(#{catlogging.type.__${ex.resourceType.name}__},${ex.id})}"
+>
+
+<!-- 삽입될 각 개별적인 영역을 작성 -->
+<th:block layout:fragment="content" >
+	<div class="alert alert-danger">
+		<h1>[[${errorShort}]]</h1>
+		<p>[[${errorDetail}]]</p>
+	</div>
+</th:block>
+</html>

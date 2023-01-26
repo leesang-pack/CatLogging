@@ -1,0 +1,60 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!--실시간 로깅 페이지-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="templates/layouts/layout"
+	  th:with="title=${activeLog.name} + ' - ' + #{catlogging.common.form.viewer},
+      activeNavbar='sources',
+      ngModules='LogShowModule',
+      isAuth=${catloggingProps['catlogging.enable.auth'] == 'true' ? true : false},
+	  entriesJsonURL=@{/c/sources/${activeSource.id}/entries(log=${activeLog.path},mark='-mark-',count='-count-')},
+	  randomAccessEntriesJsonURL=@{/c/sources/${activeSource.id}/randomAccessEntries(log=${activeLog.path},mark='-mark-')},
+	  searchEntriesJsonURL=@{/c/sources/${activeSource.id}/search(log=${activeLog.path},mark='-mark-',count='-count-')},
+	  moreBaseURL=@{/c/sources/${activeSource.id}/show(log=${activeLog.path})}
+">
+
+<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+<head th:insert="templates/sources/custumShowHeadHtml::htmlHead"></head>
+
+<!-- 삽입될 각 개별적인 영역을 작성 -->
+<th:block layout:fragment="content" >
+	<div class="row">
+		<div class="main">
+
+			<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+			<th:block th:replace="templates/sources/customShowInfoBreadcrumb::breadcrumb"></th:block>
+
+			<!-- 해당 기능에서 커스텀 insert. -->
+			<div class="container-fluid well log" ng-controller="LogShowController">
+
+				<div lsf-alerts alerts="alerts"></div>
+
+				<lsf-log-viewer source="source" log="log" pointer="pointer" fix-top-element-selector=".navbar-fixed-top"
+								init-tail="initTail" search-wizards="scannerWizards" full-height="true" configured-viewer-fields="viewerFields"
+								default-viewer-fields="source.uiSettings.viewerFields" viewer-fields-config-enabled="true" highlight-pointer="highlightPointer">
+
+				</lsf-log-viewer>
+
+			</div>
+		</div>
+	</div>
+</th:block>
+</html>

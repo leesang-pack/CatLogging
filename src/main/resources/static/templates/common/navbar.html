@@ -1,0 +1,69 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="topbarFragment" th:with="active=${activeNavbar}">
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" th:href="@{/}" />catlogging</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="${active=='sources'?'active':'' }">
+                    <a th:href="@{/c/sources}" th:utext="#{catlogging.nav.logs}"></a>
+                </li>
+                <li class="${active=='sniffers'?'active':'' }">
+                    <a th:href="@{/c/sniffers}" th:utext="#{catlogging.nav.events}"></a>
+                </li>
+                <!--
+		<li class="${active=='reports'?'active':'' }">
+			<a href="<c:url value="/c/reports" />">Dashboards</a>
+		</li>
+		 -->
+                <li class="${active=='system'?'active':'' }">
+                    <a th:href="@{/c/system}" th:utext="#{catlogging.nav.system}"></a>
+                </li>
+            </ul>
+            <ul class="nav navbar-right navbar-nav">
+                <li><a th:href="@{/c/sources?lang=en}" th:utext="#{catlogging.lang.en}"></a></li>
+                <li><a th:href="@{/c/sources?lang=ko}" th:utext="#{catlogging.lang.ko}"></a></li>
+                <li><a th:href="@{/c/sources?lang=zh}" th:utext="#{catlogging.lang.zh}"></a></li>
+                <li>
+                    <a th:href="@{/c/system(path=notifications)}" th:title="${systemNotificationSummary?.count}+' unread notification'+${systemNotificationSummary?.count!=1?'s':''}"> <i class="fa fa-bell"></i>
+                        <sup ng-if="systemNotificationSummary.count!=0">
+                            <span class="label" ng-class="systemNotificationSummary.worstLevel=='ERROR'?'label-danger':(systemNotificationSummary.worstLevel=='WARN'?'label-warning':'label-info')" th:text="${systemNotificationSummary?.count}"></span>
+                        </sup>
+                    </a>
+                </li>
+                <div th:if="${isAuth}">
+                    <li><a th:href="@{/logout}" > <i class="fa fa-sign-out"></i> </a></li>
+                </div>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</div>
+</th:block>
+</html>

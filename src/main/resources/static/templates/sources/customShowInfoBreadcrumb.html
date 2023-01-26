@@ -1,0 +1,35 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<th:block th:fragment="breadcrumb" th:with="url=@{/c/sources}">
+	<ul class="breadcrumb">
+		<li><a th:href="@{${url}}">[[#{catlogging.breadcrumb.sources}]]</a></li>
+		<li><a th:href="@{${url}+'/'+${activeSource.id} +'/logs'}">[[${activeSource.name}]]</a></li>
+		<li class="active">[[${activeLog.name}]]</li>
+		<li class="dropdown">
+			<button data-toggle="dropdown" href="#" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-cog"></i> <span class="caret"></span></button>
+			<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+				<li><a th:href="@{${url}+'/'+${activeSource.id}+'/show'(log=${activeLog.path})}"><i class="glyphicon glyphicon-search"></i> [[#{catlogging.common.form.viewer}]]</a></li>
+				<li><a th:href="@{${url}+'/'+${activeSource.id}+'/info'(log=${activeLog.path})}"><i class="glyphicon glyphicon-info-sign"></i> [[#{catlogging.common.form.info}]]</a></li>
+			</ul>
+		</li>
+	</ul>
+</th:block>
+</html>

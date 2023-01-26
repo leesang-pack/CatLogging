@@ -1,0 +1,38 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="sessionFragment" >
+    <div ng-show="IsVisible" id="AppIdleCtrlModal" class="modal" ng-controller="AppIdleCtrl" style="background-color: rgba(0, 0, 0, 0.7);padding: 5%;">
+        <div class="modal-content">
+            <h4>Your Session is about to expire!</h4>
+            <div style="float: left; height: 50px;">
+                <span class="glyphicon glyphicon-warning-sign text-danger btn-lg"></span>
+            </div>
+            <div idle-countdown="countdown">
+                Session will expire in <b>{{countdown}}</b> seconds.<br />
+                Do you want to reset?
+                <br /><br />
+                <button type="button" ng-click="Reset()" class="btn btn-primary btn-sm">Yes</button>
+                <button type="button" ng-click="SignOut()" class="btn btn-danger btn-sm">No</button>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>

@@ -1,0 +1,127 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="htmlHead">
+    <th:block th:if="${isNgPage}">
+        <!-- NG System page -->
+        <th:block th:each="jsFile : ${activeNode.pageContext.jsFiles}">
+            <script type="text/javascript" th:src="@{${jsFile}(v=${catloggingProps['catlogging.version']})}"></script>
+        </th:block>
+    </th:block>
+    <script th:inline="javascript" >
+        angular.module('SystemRootModule', [
+            /*<![CDATA[*/
+            /*[+ [#th:block th:if="${isNgPage}"] +]*/
+            /*[+    [#th:block th:utext="|'${activeNode.pageContext.module}'|" /] +]*/
+            /*[+ [/th:block] +]*/
+            /*]]>*/
+        ])
+        .controller(
+            "SystemAbstractController",
+            [
+                '$scope',
+                '$http',
+                '$log',
+                'lsfAlerts',
+                function($scope, $http, $log, lsfAlerts) {
+                    $scope.loadSettings = function(childScope) {
+                        var callbacks = {};
+                        childScope.state.busy = true;
+                        $http({
+                            url : childScope.settingsRessource,
+                            method : "GET"
+                        })
+                            .success(
+                                function(data, status, headers, config) {
+                                    $log.info("Settings loaded from", $scope.settingsRessource, data);
+                                    childScope.state.busy = false;
+                                    if (callbacks.success) {
+                                        callbacks.success(data, status, headers, config);
+                                    }
+                                }
+                            )
+                            .error(
+                                function(data, status, headers, config, statusText) {
+                                    childScope.state.busy = false;
+                                    childScope.alerts.httpError("Failed to load settings", data, status, headers, config, statusText);
+                                    if (callbacks.error) {
+                                        callbacks.error(data, status, headers, config, statusText);
+                                    }
+                                }
+                            );
+
+                        return {
+                            success: function(callback) {
+                                callbacks.success = callback;
+                            },
+                            error: function(callback) {
+                                callbacks.error = callback;
+                            }
+                        };
+                    };
+
+                    $scope.saveSettings = function(childScope, settings) {
+                        var callbacks = {};
+                        childScope.state.busy = true;
+                        childScope.alerts.clear();
+                        $log.info("Saving settings", settings);
+                        $http({
+                            url : childScope.settingsRessource,
+                            method : "POST",
+                            data: settings
+                        })
+                            .success(
+                                function(data, status, headers, config) {
+                                    $log.info("Settings saved", childScope.settingsRessource);
+                                    childScope.state.busy = false;
+                                    childScope.alerts.success("Changes applied successfully");
+                                    if (callbacks.success) {
+                                        callbacks.success(data, status, headers, config);
+                                    }
+                                }
+                            )
+                            .error(
+                                function(data, status, headers, config, statusText) {
+                                    childScope.state.busy = false;
+                                    childScope.alerts.httpError("Failed to save settings", data, status, headers, config, statusText);
+                                    if (data && data.bindErrors) {
+                                        childScope.bindErrors = data.bindErrors;
+                                    }
+                                    if (callbacks.error) {
+                                        callbacks.error(data, status, headers, config, statusText);
+                                    }
+                                }
+                            );
+                        return {
+                            success: function(callback) {
+                                callbacks.success = callback;
+                            },
+                            error: function(callback) {
+                                callbacks.error = callback;
+                            }
+                        };
+
+                    };
+                }
+            ]
+        );
+    </script>
+</th:block>
+</html>

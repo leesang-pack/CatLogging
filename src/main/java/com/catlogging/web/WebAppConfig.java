@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.type.MapType;
 import lombok.extern.slf4j.Slf4j;
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
@@ -43,8 +44,6 @@ import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.spring5.ISpringTemplateEngine;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
@@ -126,16 +125,27 @@ public class WebAppConfig implements WebMvcConfigurer {
 	@Bean
 	public SpringTemplateEngine templateEngine() {
 		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-		templateEngine.setTemplateResolver(templateResolver());
+		templateEngine.addTemplateResolver(templateResolver());
+		// Dialect를 쓰기위해 반드시 추가해야함.
+		templateEngine.addDialect(layoutDialect());
 		return templateEngine;
 	}
+	@Bean
+	public LayoutDialect layoutDialect() {
+		return new LayoutDialect();
+	}
+
 	@Bean
 	ThymeleafViewResolver viewResolver() {
 		log.debug("INIT [ThymeleafViewResolver] Start.");
 		ThymeleafViewResolver resolver = new ThymeleafViewResolver();
 		resolver.setTemplateEngine(templateEngine());
 		// static의 디렉토리 안에 커스텀한 th 디렉토리의 파일, 뷰어주소를 맵핑한다.
-		resolver.setViewNames(new String[] {"th/*"});
+		// thumeleaf에서는 안할 시 setViewNames해도 기본적으로 /resources/templates로 찾는다.
+		// 하지만 앞에 /static의 기준이므로 서로 찾는 위치가 달라 파일을 접근할 수 없다.
+		// 위의 값 토대로
+		// static/templates/로 찾게된다.
+		resolver.setViewNames(new String[] {"templates/*"});
 
 		// 한글 깨짐(???) 방지
 		resolver.setCharacterEncoding("UTF-8");;

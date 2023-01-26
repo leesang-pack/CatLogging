@@ -100,7 +100,7 @@ public class SourcesController {
 
 	@RequestMapping(value = "/sources", method = RequestMethod.GET)
 	ModelAndView listSources() {
-		final ModelAndView mv = new ModelAndView("sources/list");
+		final ModelAndView mv = new ModelAndView("templates/sources/list");
 		final List<LogSource<LogRawAccess<? extends LogInputStream>>> logSources = logsSourceProvider.getSources();
 		mv.addObject("logSources", logSources);
 		return mv;
@@ -109,7 +109,7 @@ public class SourcesController {
 	@RequestMapping(value = "/sources/{logSourceId}/logs", method = RequestMethod.GET)
 	ModelAndView listSourceLogs(@PathVariable("logSourceId") final long logSourceId)
 			throws IOException, ResourceNotFoundException {
-		final ModelAndView mv = new ModelAndView("sources/logs");
+		final ModelAndView mv = new ModelAndView("templates/sources/logs");
 		final LogSource<?> activeSource = getAndFillActiveLogSource(mv, logSourceId);
 		final List<LogSource<LogRawAccess<? extends LogInputStream>>> logSources = logsSourceProvider.getSources();
 		mv.addObject("logSources", logSources);
@@ -121,7 +121,7 @@ public class SourcesController {
 	@RequestMapping(value = "/sources/{logSource}/info", method = RequestMethod.GET)
 	ModelAndView info(@PathVariable("logSource") final long logSource, @RequestParam("log") final String logPath)
 			throws IOException, ResourceNotFoundException {
-		final ModelAndView mv = new ModelAndView("sources/info");
+		final ModelAndView mv = new ModelAndView("templates/sources/info");
 		getAndFillLog(mv, getAndFillActiveLogSource(mv, logSource), logPath);
 		return mv;
 	}
@@ -130,7 +130,7 @@ public class SourcesController {
 	ModelAndView showStart(@PathVariable("logSource") final long logSourceId, @RequestParam("log") final String logPath,
 			final HttpServletRequest request, final HttpServletResponse response)
 			throws IOException, ResourceNotFoundException {
-		final ModelAndView mv = new ModelAndView("sources/show");
+		final ModelAndView mv = new ModelAndView("templates/sources/show");
 		final LogSource<?> logSource = getAndFillActiveLogSource(mv, logSourceId);
 		final Log log = getAndFillLog(mv, logSource, logPath);
 		mv.addObject("defaultCount", DEFAULT_ENTRIES_COUNT);

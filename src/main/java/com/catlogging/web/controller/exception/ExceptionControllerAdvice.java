@@ -46,7 +46,7 @@ public class ExceptionControllerAdvice {
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ModelAndView handleResourceNotFound(final ResourceNotFoundException ex) {
 		log.info("Catched resource not found exception", ex);
-		final ModelAndView mv = new ModelAndView("errors/404");
+		final ModelAndView mv = new ModelAndView("templates/errors/404");
 		mv.addObject("ex", ex);
 		return mv;
 	}
@@ -54,7 +54,7 @@ public class ExceptionControllerAdvice {
 	@ExceptionHandler(ActionViolationException.class)
 	public ModelAndView handleActionViolation(final ActionViolationException ex) {
 		log.info("Catched action violation exception", ex);
-		final ModelAndView mv = new ModelAndView("errors/action-violation");
+		final ModelAndView mv = new ModelAndView("templates/errors/action-violation");
 		mv.addObject("ex", ex);
 		return mv;
 	}
@@ -62,7 +62,7 @@ public class ExceptionControllerAdvice {
 	@ExceptionHandler(ReferenceIntegrityException.class)
 	public ModelAndView handleActionViolation(final ReferenceIntegrityException ex) {
 		log.info("Catched reference integrity violation exception", ex);
-		final ModelAndView mv = new ModelAndView("errors/ref-intg-violation");
+		final ModelAndView mv = new ModelAndView("templates/errors/ref-intg-violation");
 		mv.addObject("ex", ex);
 		return mv;
 	}
@@ -70,7 +70,7 @@ public class ExceptionControllerAdvice {
 	@ExceptionHandler(Throwable.class)
 	public ModelAndView processAllExceptions(final Throwable ex) throws IOException {
 		log.error("Catched untyped exception", ex);
-		final ModelAndView mv = new ModelAndView("errors/ups");
+		final ModelAndView mv = new ModelAndView("templates/errors/ups");
 		mv.addObject("ex", ex);
 		return mv;
 	}

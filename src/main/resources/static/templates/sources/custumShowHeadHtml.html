@@ -1,0 +1,89 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="htmlHead">
+    <!-- NG Show page -->
+    <script th:inline="javascript">
+        var LogShowModule=angular.module('LogShowModule', ['ui.bootstrap', 'angularSpinner']);
+        LogShowModule.controller(
+            "LogShowController",
+            function($scope, $location, $log, $http, lsfAlerts) {
+                $scope.alerts = lsfAlerts.create();
+
+                $scope.scannerWizards=[(${@jstlFunctionsLibraryBean.jsonify(filterScannerWizards)})];
+
+                $scope.source=[(${@jstlFunctionsLibraryBean.jsonify(activeSource)})];
+                $scope.log = [(${@jstlFunctionsLibraryBean.jsonify(activeLog)})];
+                $scope.sharedScope = {
+                    source: $scope.source
+                };
+                $scope.pointerTpl = [(${pointerTpl.json})];
+                $scope.pointer = {};
+                $scope.initTail = $location.hash()=="tail";
+
+                $scope.viewerFields = null;
+                var userProfileViewerFields = [(${@jstlFunctionsLibraryBean.jsonify(userProfileViewerFields)})];
+                if (userProfileViewerFields) {
+                    $scope.viewerFields = userProfileViewerFields.fields;
+                }
+                if (!$scope.viewerFields && $scope.source && $scope.source.uiSettings && $scope.source.uiSettings.viewerFields) {
+                    $log.info("Viewer fields not configured in profile settings, the default source settings are used");
+                    $scope.viewerFields = $scope.source.uiSettings.viewerFields;
+                }
+                $log.info("Using viewer fields config", $scope.viewerFields);
+
+
+                var pointerParam = $location.search().pointer;
+                if (pointerParam && typeof pointerParam == "string") {
+                    try {
+                        $scope.pointer = JSON.parse(pointerParam);
+                        $log.info("Initiated log view with pointer: ", $scope.pointer);
+                    } catch(e)
+                    {
+                        $log.warn("Failed to init log viewer with erroneous JSON pointer: ", pointerParam, e);
+                    }
+                }
+                $scope.highlightPointer = $location.search().highlight=="true";
+
+                $scope.$on("viewerFieldsChanged", function(event, viewerFields) {
+                    $log.info("Saving changed viewer fields as profile settings", viewerFields);
+                    $http(
+                        {
+                            url : $scope.contextPath + "/c/user/profile/settings/logSource/"+$scope.source.id+"/viewerFields",
+                            method : "POST",
+                            data : {
+                                fields: viewerFields
+                            }
+                        })
+                        .success(
+                            function(data, status, headers, config) {
+                                $log.info("Viewer fields stored to profile settings");
+                            })
+                        .error(
+                            function(data, status, headers, config, statusText) {
+                                $scope.alerts.httpError("Failed to save viewer fields configuration", data, status, headers, config, statusText);
+                            }
+                        );
+                });
+            }
+        );
+    </script>
+</th:block>
+</html>

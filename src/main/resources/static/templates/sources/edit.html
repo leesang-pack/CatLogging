@@ -1,0 +1,59 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="templates/layouts/layout"
+      th:with="title=#{${activeSource.name}} + ' - ' + #{catlogging.common.form.edit},
+      activeNavbar='sources',
+      ngModules='SourceEditorModule',
+      submitLabel=#{catlogging.common.form.save},
+      isAuth=${catloggingProps['catlogging.enable.auth'] == 'true' ? true : false}"
+>
+
+<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+<head th:insert="templates/sources/custumEditHeadHtml::htmlHead"></head>
+
+<!-- 삽입될 각 개별적인 영역을 작성 -->
+<th:block layout:fragment="content" >
+    <div class="row">
+        <div class="main">
+
+            <!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+            <th:block th:replace="templates/sources/customLogsEditBreadcrumb::breadcrumb"></th:block>
+
+            <!-- 커스텀 alert-->
+            <th:block th:if="${created}">
+                <div class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <h4>Successfully created</h4>
+                </div>
+            </th:block>
+
+            <!-- 해당 기능에서 커스텀 insert. -->
+            <div class="tab-pane active">
+                <form id="refresh" method="post"></form>
+                <form ng-controller="SourceEditController" name="form" method="post" th:action="|/c/sources/${activeSource.id}|" th:field="*{errorForm.value}" id="sourceForm" role="form" novalidate="novalidate">
+                    <th:block th:replace="templates/sources/customEditNewFormBody::formbody"></th:block>
+                </form>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>

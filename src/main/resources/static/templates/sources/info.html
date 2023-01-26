@@ -1,0 +1,66 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!--로그 출력 페이지에서 정보페이지-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="templates/layouts/layout"
+	  th:with="title=${T(org.apache.commons.io.FilenameUtils).getPathNoEndSeparator(activeLog.path)} + ' - ' + #{catlogging.common.form.info},
+      activeNavbar='sources',
+      ngModules='',
+      isAuth=${catloggingProps['catlogging.enable.auth'] == 'true' ? true : false}"
+>
+
+<!-- 삽입될 각 개별적인 영역을 작성 -->
+<th:block layout:fragment="content" >
+	<div class="row">
+		<div class="main">
+
+			<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+			<th:block th:replace="templates/sources/customShowInfoBreadcrumb::breadcrumb"></th:block>
+
+			<!-- 해당 기능에서 커스텀 insert. -->
+			<table class="table table-hover">
+				<thead>
+				<tr><th>Log file</th><th>Last modified</th><th><div class="text-right">Size</div></th></tr>
+				</thead>
+				<tbody>
+					<th:block th:if="${@jstlFunctionsLibraryBean.isRollingLog(activeLog)}">
+						<th:block th:each="part : ${activeLog.parts}">
+							<tr>
+								<td>[[${part.path}]]</td>
+								<td th:with="date=${@jstlFunctionsLibraryBean.getTimestampAsDate(part.lastModified)}">[[${#calendars.format(date)}]]</td>
+								<td><div class="text-right">[[${@jstlFunctionsLibraryBean.bytesToSize(part.size, 2)}]]</div></td>
+							</tr>
+						</th:block>
+					</th:block>
+					<th:block th:unless="${@jstlFunctionsLibraryBean.isRollingLog(activeLog)}">
+						<tr>
+							<td>[[${activeLog.path}]]</td>
+							<td th:with="date=${@jstlFunctionsLibraryBean.getTimestampAsDate(activeLog.lastModified)}">[[${#calendars.format(date)}]]</td>
+							<td><div class="text-right">[[${@jstlFunctionsLibraryBean.bytesToSize(activeLog.size, 2)}]]</div></td>
+						</tr>
+					</th:block>
+				</tbody>
+			</table>
+
+		</div>
+	</div>
+</th:block>
+</html>

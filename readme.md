@@ -37,9 +37,9 @@
 ### H2 Connection Info 
 - username : catlogging
 - password : catlogging 
-- url : jdbc:h2:tcp://localhost:9092/`opt:catlogging.home`/h2/catlogging
+- url : jdbc:h2:tcp://localhost:8092/`opt:catlogging.home`/h2/catlogging
 
 > Example
 > ```bash
-> jdbc:h2:tcp://localhost:9092//home/catlogging/h2/catlogging
+> jdbc:h2:tcp://localhost:8092//home/catlogging/h2/catlogging
 > ```
