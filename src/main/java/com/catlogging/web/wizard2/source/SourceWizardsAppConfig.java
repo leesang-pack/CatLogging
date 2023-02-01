@@ -39,25 +39,25 @@ public class SourceWizardsAppConfig {
 	@Bean
 	public ConfigBeanWizard<WildcardLogsSource> wildcardFileSourceWizard() {
 		return new SimpleBeanWizard<WildcardLogsSource>("catlogging.wizard.source.file.wildcard",
-				"wizards/source/file.wildcard", WildcardLogsSource.class, new WildcardLogsSource());
+				"templates/wizards/source/file.wildcard", WildcardLogsSource.class, new WildcardLogsSource());
 	}
 
 	@Bean
 	public ConfigBeanWizard<RollingLogsSource> rollingFileStaticLiveSourceWizard() {
 		return new SimpleBeanWizard<RollingLogsSource>("catlogging.wizard.source.file.timestampRollingStaticLiveName",
-				"wizards/source/timestampRollingFileStaticLiveName", RollingLogsSource.class, new RollingLogsSource());
+				"templates/wizards/source/timestampRollingFileStaticLiveName", RollingLogsSource.class, new RollingLogsSource());
 	}
 
 	@Bean
 	public ConfigBeanWizard<RollingLogsSourceDynamicLiveName> rollingFileDynamicLiveSourceWizard() {
 		return new SimpleBeanWizard<RollingLogsSourceDynamicLiveName>(
 				"catlogging.wizard.source.file.timestampRollingDynamicLiveName",
-				"wizards/source/timestampRollingFileDynamicLiveName", RollingLogsSourceDynamicLiveName.class, new RollingLogsSourceDynamicLiveName());
+				"templates/wizards/source/timestampRollingFileDynamicLiveName", RollingLogsSourceDynamicLiveName.class, new RollingLogsSourceDynamicLiveName());
 	}
 
 	@Bean
 	public ConfigBeanWizard<CompoundLogSource> compoundLogSourceWizard() {
 		return new SimpleBeanWizard<CompoundLogSource>("catlogging.wizard.source.compoundLogSource",
-				"/ng/wizards/source/compoundLog.html", CompoundLogSource.class, new CompoundLogSource());
+				"templates/wizards/source/compoundLog", CompoundLogSource.class, new CompoundLogSource());
 	}
 }

@@ -20,15 +20,13 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" >
 <th:block th:fragment="sidebar">
 	<ul class="nav nav-sidebar">
-		<th:block th:each="source: ${logSources}" th:with="url=@{/c/sources} ">
-			<li th:class="${source.id==activeSource?.id ? 'active' : ''}"><a th:href="|${url}/${source.id}/logs|">[[${source.name}]]</a>
-				<ul>
-					<th:block th:each="log : ${source.logs}" th:with="logpath=${log.path},logLink=@{${url}+'/'+${source.id} +'/show'(log=${log.path})}">
-						<li th:class="${log eq activeLog ? 'active' : ''}"><a th:href="${logLink}" th:title="${log.path}">
-							[[${T(org.apache.commons.io.FilenameUtils).getName(logpath)}]]</a>
-						</li>
+		<th:block th:each="sniffer : ${sniffers}" th:with="url=@{/c/sniffers}" >
+			<li th:class="${sniffer==activeSniffer?'active':''}">
+				<a th:href="|${url}/${sniffer.id}/events|" th:title="${sniffer.name}" th:with="count=${@jstlFunctionsLibraryBean.getAspect(sniffer,'eventsCount')}">[[${sniffer.name}]]
+					<th:block th:if="${count > 0}">
+						<span class="badge badge-warning pull-right">[(${count})]</span>
 					</th:block>
-				</ul>
+				</a>
 			</li>
 		</th:block>
 	</ul>

@@ -1,0 +1,161 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<script type="text/javascript">
+catloggingNgApp.controllerProvider.register(
+	"CompoundSourceController", ['$scope', '$http', 'lsfAlerts', '$log',
+	function ($scope, $http, lsfAlerts, $log) {
+		$scope.alerts = lsfAlerts.create();
+		$scope.busy = false;
+		$scope.sources = [];
+		$scope.logs = {};
+
+		$scope.$watch('bean.parts', function(newValue, oldValue) {
+			if (!angular.isArray(newValue) || newValue.length==0) {
+				$scope.bean.parts=[{
+					sourceId: null,
+					logPath: null
+				}];
+			}
+		}, true);
+
+		$scope.$watch('bean.reader.targetReader', function(newValue, oldValue) {
+			$scope.bean.reader.targetReader = null;
+		}, true);
+
+		$scope.addInstance = function() {
+			$scope.bean.parts.push({
+				sourceId: null,
+				logPath: null
+			})
+		};
+		$scope.deleteInstance = function(i) {
+			$scope.bean.parts.splice(i,1);
+		};
+
+		$scope.loadLogsForSource = function (sourceId) {
+			if (typeof $scope.logs[sourceId] == "undefined") {
+				$scope.logs[sourceId] = [];
+       		    $scope.busy = true;
+				$log.info("Resolving logs for source", sourceId);
+				$http({
+		        		url : $scope.contextPath + "/c/sources/"+sourceId+"/logs",
+		        		method : "GET"
+		        	})
+		       	.success(
+		       		function(data, status, headers, config) {
+		       		    $scope.busy = false;
+		       		 	$scope.logs[sourceId] = data;
+		       		    $log.info("Loaded logs for source: ", sourceId, data);
+		       		})
+		       	.error(
+		       		function(data, status, headers, config, statusText) {
+		       		    $scope.busy = false;
+		       		    $scope.alerts.httpError("Failed to load logs for source " + sourceId, data, status, headers, config, statusText);
+		       		}
+		       	);
+			}
+		};
+
+		$log.info("Resolving sources");
+		$http({
+        		url : $scope.contextPath + "/c/sources",
+        		method : "GET"
+        	})
+       	.success(
+       		function(data, status, headers, config) {
+       		    $scope.busy = false;
+       		    $scope.sources = [];
+       		    for(var i=0;i<data.length;i++) {
+       		    	if (data[i].id == $scope.bean.id) {
+       		    		// Filter out current source
+       		    		continue;
+       		    	}
+       		    	var tmstField = catlogging.get(data[i], 'reader.fieldTypes.lf_timestamp');
+       		    	if (tmstField != "DATE") {
+       		    		// Filter out sources without timestamp field
+	       		    	$log.info("Source "+data[i].id+" is filtered out, because it has not a lf_timestamp field of type DATE: ", tmstField);
+       		    		continue;
+       		    	}
+       		    	$scope.sources.push(data[i]);
+       		    }
+       		    $log.info("Sources loaded: ", $scope.sources);
+       		})
+       	.error(
+       		function(data, status, headers, config, statusText) {
+       		    $scope.busy = false;
+       		    $scope.alerts.httpError("Failed to load log sources", data, status, headers, config, statusText);
+       		}
+       	);
+}]);
+catloggingNgApp.controllerProvider.register(
+	"CompoundSourcePartController", ['$scope', '$http', '$log',
+	function ($scope, $http, $log) {
+		$scope.$watch('part.sourceId', function(newValue, oldValue) {
+			// Call in parent
+			if (newValue) {
+				$scope.loadLogsForSource(newValue);
+			}
+		});
+}]);
+</script>
+<div id="source-compound-wizard" ng-controller="CompoundSourceController">
+	<div lsf-alerts alerts="alerts"></div>
+	<div lsf-busy-container busy="busy" >
+        <lsf-info-label th:attr="label=#{catlogging.common.compoundLogData.text.1}" class="text-muted">
+            <p> [(#{catlogging.common.compoundLogData.text.2})]</p>
+		</lsf-info-label>
+
+		<label> [[#{catlogging.common.compoundLogData}]]</label>
+		<a class="btn btn-link" ng-click="addInstance()" >
+			<i class="glyphicon glyphicon-plus"></i> [[#{catlogging.common.add}]] [[#{catlogging.common.instance}]]</a>
+		<div ng-repeat="part in bean.parts">
+			<div class="row" ng-controller="CompoundSourcePartController">
+				<div class="col-md-6">
+					<lsf-form-group class="form-group required" field-name="part[{{$index}}].sourceId" field-path="parts[{{$index}}].sourceId" bind-errors="bindErrors">
+						<label for="part[{{$index}}].sourceId" class="form-label">[[#{catlogging.common.source}]]:</label>
+						<select ng-model="part.sourceId" name="part[{{$index}}].sourceId" id="part[{{$index}}].sourceId"
+							required="required" ng-options="logSource.id as logSource.name for logSource in sources" class="form-control">
+							<option value="">[[#{catlogging.common.pleaseSelect}]]</option>
+						</select>
+					</lsf-form-group>
+				</div>
+				<div class="col-md-6">
+					<lsf-form-group class="form-group required" field-name="part[{{$index}}].logPath" field-path="pastLogsType" bind-errors="bindErrors">
+						<lsf-info-label th:attr="label=#{catlogging.common.log}+':'" for="part[{{$index}}].logPath">
+                            <p> [(#{catlogging.common.compoundLogData.text.3})]</p>
+						</lsf-info-label>
+						<div class="input-group">
+							<select ng-model="part.logPath" name="part[{{$index}}].logPath" id="part[{{$index}}].logPath"
+								ng-options="log.path as log.name for log in logs[part.sourceId]" class="form-control">
+								<option value="">- [[#{catlogging.common.all}]] -</option>
+							</select>
+							<div class="input-group-btn">
+								<button class="btn btn-default btn-sm" type="button" ng-click="deleteInstance($index)"
+									title="Delete this log instance"><i class="glyphicon glyphicon-trash"></i></button>
+							</div>
+						</div>
+					</lsf-form-group>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</html>

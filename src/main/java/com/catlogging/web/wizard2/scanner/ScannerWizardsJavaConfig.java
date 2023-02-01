@@ -41,14 +41,14 @@ public class ScannerWizardsJavaConfig {
 		final RegexPatternScanner template = new RegexPatternScanner();
 		template.getGrokBean().setSubStringSearch(true);
 		return new SimpleBeanWizard<RegexPatternScanner>("catlogging.wizard.scanner.regexPattern",
-				"/ng/wizards/scanner/regexPattern.html", RegexPatternScanner.class, template);
+				"templates/wizards/scanner/regexPattern", RegexPatternScanner.class, template);
 	}
 
 	@Bean
 	public ConfigBeanWizard<EntriesFieldsDumper> entriesFieldsDumperWizard() {
 		final EntriesFieldsDumper template = new EntriesFieldsDumper();
 		return new SimpleBeanWizard<EntriesFieldsDumper>("catlogging.wizard.scanner.filter.entriesFieldsDumper",
-				"/ng/wizards/scanner/filter/entriesFieldsDumper.html", EntriesFieldsDumper.class, template,
+				"templates/wizards/scanner/filter/entriesFieldsDumper", EntriesFieldsDumper.class, template,
 				EventFilter.class);
 	}
 }

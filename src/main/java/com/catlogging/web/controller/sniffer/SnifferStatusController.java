@@ -119,7 +119,7 @@ public class SnifferStatusController extends SniffersBaseController {
 		model.addAttribute("scheduleInfo", snifferScheduler.getScheduleInfo(snifferId));
 		model.addAttribute("logsStatus", logsStatus);
 		model.addAttribute("source", logSource);
-		return "sniffers/status";
+		return "templates/sniffers/status";
 	}
 
 	@RequestMapping(value = "/sniffers/{snifferId}/stopForm", method = RequestMethod.POST)

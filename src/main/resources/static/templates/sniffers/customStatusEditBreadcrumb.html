@@ -1,0 +1,49 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<th:block th:fragment="breadcrumb" th:with="url=@{/c/sniffers}">
+	<form th:action="@{${url}+'/'+${activeSniffer.id}+'/delete'}" method="post" id="delete-sniffer"></form>
+	<ul class="breadcrumb" th:attr="ng-init=|nlsOn='#{catlogging.sniffers.scheduled.true}';nlsOff='#{catlogging.sniffers.scheduled.false}'|">
+		<li><a th:href="@{${url}}">[[#{catlogging.breadcrumb.sniffers}]]</a></li>
+		<li><a th:href="@{${url}+'/'+${activeSniffer.id}+'/events'}">[[${activeSniffer.name}]]</a></li>
+		<li class="dropdown">
+			<button data-toggle="dropdown" href="#" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-cog"></i> <span class="caret"></span></button>
+
+			<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+				<li><a th:href="@{${url}+'/'+${activeSniffer.id}+'/events'}"><i class="glyphicon glyphicon-bullhorn"></i> [[#{catlogging.nav.events}]]</a></li>
+				<li><a th:href="@{${url}+'/'+${activeSniffer.id}}"><i class="glyphicon glyphicon-edit"></i> [[#{catlogging.common.form.edit}]]</a></li>
+				<li><a th:href="@{${url}+'/'+${activeSniffer.id}+'/status'}"><i class="glyphicon glyphicon-play-circle"></i> [[#{catlogging.common.form.control}]]</a></li>
+				<li class="divider"></li>
+				<li role="presentation" ng-class="{'disabled':scheduleInfo.scheduled}">
+					<a role="menuitem" href="#" ng-if="!scheduleInfo.scheduled" onclick="if (confirm('[[#{catlogging.confirms.delete}]]')) {$('form#delete-sniffer').submit()}">
+						<i class="glyphicon glyphicon-trash"></i> [[#{catlogging.common.delete}]] [[#{catlogging.common.sniffer}]]</a>
+					<a href="#" ng-if="scheduleInfo.scheduled"><i class="glyphicon glyphicon-trash"></i> [[#{catlogging.common.delete}]] [[#{catlogging.common.sniffer}]]</a>
+				</li>
+			</ul>
+			<sup>
+				<span class="label label-success" ng-if="scheduleInfo.scheduled">[[#{catlogging.sniffers.scheduled.true}]]</span>
+				<span class="label label-default" ng-if="!scheduleInfo.scheduled">[[#{catlogging.sniffers.scheduled.false}]]</span>
+			</sup>
+		</li>
+		<li class="active">[[${context}]]</li>
+	</ul>
+</th:block>
+</html>
+

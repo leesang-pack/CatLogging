@@ -16,40 +16,53 @@
 <!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
 <!--*******************************************************************************/-->
 
+<!--로그 출력 페이지에서 정보페이지-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	  layout:decorate="templates/layouts/layout"
-	  th:with="title=#{catlogging.common.new} + ' ' + #{catlogging.type.com.catlogging.model.LogSource},
-      activeNavbar='sources',
-      ngModules='SourceEditorModule',
-      submitLabel=#{catlogging.common.form.create},
-      isAuth=${catloggingProps['catlogging.enable.auth'] == 'true' ? true : false}"
+	  th:with="title=#{activeSniffer.name} + ' - ' + #{catlogging.common.form.edit},
+      activeNavbar='sniffers',
+      ngModules='SnifferEditorModule',
+      isAuth=${catloggingProps['catlogging.enable.auth'] == 'true' ? true : false},
+      context=#{catlogging.common.form.edit}"
 >
 
 <!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
-<head th:insert="templates/sources/custumNewHeadHtml::htmlHead"></head>
+<head th:insert="templates/sniffers/custumEditHeadHtml::htmlHead"></head>
 
 <!-- 삽입될 각 개별적인 영역을 작성 -->
 <th:block layout:fragment="content" >
 	<div class="row">
 		<div class="main">
-
 			<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
-			<th:block th:replace="templates/sources/customNewBreadcrumb::breadcrumb"></th:block>
+			<th:block th:replace="templates/sniffers/customStatusEditBreadcrumb::breadcrumb"></th:block>
+			<div ng-controller="SnifferEditController" ng-cloak >
 
-			<!-- 해당 기능에서 커스텀 insert. -->
-			<form id="refresh" method="post"></form>
-			<form ng-controller="SourceEditController" name="form" method="post" action="/c/sources/new" th:field="*{errorForm.value}" id="sourceForm"
-				  role="form" novalidate="novalidate">
+				<th:block th:if="${created}">
+					<div class="alert alert-success">
+						<button type="button" class="close" data-dismiss="alert">&times;</button>
+						<h4>Successfully created</h4>
+						Complete the settings if not yet happened and then start monitoring.
+					</div>
+				</th:block>
 
-				<!-- 해당 기능에서 공통 커스텀 body insert. -->
-				<th:block th:replace="templates/sources/customEditNewFormBody::formbody"></th:block>
-			</form>
+				<form id="refresh" method="post"></form>
+				<form name="form" method="post" th:action="@{/c/sniffers/${activeSniffer.id}}"  th:field="*{errorForm.value}" id="snifferForm"
+					  role="form" novalidate="novalidate">
 
+					<!-- 해당 기능에서 공통 커스텀 body insert. -->
+					<th:block th:replace="templates/sniffers/customEditNewFormBody::formbody"></th:block>
+
+					<hr>
+					<div class="row">
+						<div class="col-md-12" us-spinner spinner-key="update">
+							<button type="button" class="btn btn-primary btn-sm" th:attr="ng-disabled=|${scheduled} |+'||'+| form.$invalid|" ng-click="submit(form)">Save</button>
+						</div>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
 </th:block>
-
-
 </html>

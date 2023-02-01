@@ -17,6 +17,7 @@
 <!--*******************************************************************************/-->
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" >
+<!--없는 element 가져다 쓰면 에러-->
 <th:block th:fragment="ngnotebinderrorsmessage">
 	<div class="alert alert-danger" th:attr="ng-if=${ngIf}">
 		<button type="button" class="close" data-dismiss="alert">&times;</button>

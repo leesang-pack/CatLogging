@@ -20,6 +20,7 @@ package com.catlogging.web.controller.sniffer;
 
 import java.util.Locale;
 
+import com.catlogging.model.ErrorForm;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -57,7 +58,7 @@ public class SnifferManageController extends SniffersBaseController {
 
 	@RequestMapping(value = "/sniffers", method = RequestMethod.GET)
 	ModelAndView listSniffers() {
-		final ModelAndView mv = new ModelAndView("sniffers/list");
+		final ModelAndView mv = new ModelAndView("templates/sniffers/list");
 		final PageableResult<AspectSniffer> result = snifferPersistence.getSnifferListBuilder()
 				.withEventsCounter(eventPersistence.getEventsCounter())
 				.withScheduleInfo(snifferScheduler.getScheduleInfoAspectAdaptor()).list();
@@ -67,15 +68,17 @@ public class SnifferManageController extends SniffersBaseController {
 	}
 
 	@RequestMapping(value = "/sniffers/new", method = RequestMethod.GET)
-	String newSnifferForm() throws ResourceNotFoundException, SchedulerException {
-		return "sniffers/new";
+	String newSnifferForm(final Model model) throws ResourceNotFoundException, SchedulerException {
+		model.addAttribute(new ErrorForm());
+		return "templates/sniffers/new";
 	}
 
 	@RequestMapping(value = "/sniffers/{snifferId}", method = RequestMethod.GET)
 	String editSniffer(@PathVariable("snifferId") final long snifferId, final Model model)
 			throws ResourceNotFoundException, SchedulerException {
+		model.addAttribute(new ErrorForm());
 		getAndBindActiveSniffer(model, snifferId);
-		return "sniffers/edit";
+		return "templates/sniffers/edit";
 	}
 
 	@RequestMapping(value = "/sniffers/{snifferId}", method = RequestMethod.POST)

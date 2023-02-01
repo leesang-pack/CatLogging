@@ -1,0 +1,170 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="htmlHead">
+    <!-- NG Sni Status page -->
+    <script th:inline="javascript">
+        angular.module('catloggingStatuswModule', [])
+            .controller(
+                "catloggingStatusController",
+                function($scope, $location, $log, $http, $uibModal, lsfAlerts) {
+                    $scope.alerts = lsfAlerts.create();
+                    $scope.source = [(${@jstlFunctionsLibraryBean.jsonify(source)})];
+                    $scope.status = [(${@jstlFunctionsLibraryBean.jsonify(logsStatus)})];
+                    $scope.scheduleInfo = [(${@jstlFunctionsLibraryBean.jsonify(scheduleInfo)})];
+                    $scope.snifferPath = $scope.contextPath + "/c/sniffers/[(${activeSniffer.id})]";
+
+                    for(var i=0;i<$scope.status.length;i++) {
+                        $scope.status[i].startFromHead = false;
+                        $scope.status[i].startFromTail = false;
+                    }
+
+                    $scope.resetAllTo = function (head, tail) {
+                        for(var i=0;i<$scope.status.length;i++) {
+                            $scope.resetTo(i, head, tail);
+                        }
+                    };
+
+                    $scope.resetTo = function (index, head, tail) {
+                        $scope.status[index].startFromHead = head;
+                        $scope.status[index].startFromTail = tail;
+                        $scope.status[index].currentPointer = null;
+                    };
+
+                    $scope.reposition = function (statusIndex) {
+                        var status = $scope.status[statusIndex];
+                        var modalInstance = $uibModal.open({
+                            templateUrl: $scope.contextPath + '/ng/sniffer/statusReposition.html',
+                            controller: 'SnifferStatusRepositionCtrl',
+                            size: 'lg',
+                            scope: $scope,
+                            resolve: {
+                                source: function () {
+                                    return $scope.source;
+                                },
+                                status: function () {
+                                    return status;
+                                }
+                            }
+                        });
+                        modalInstance.result.then(function (pointer) {
+                            if (pointer) {
+                                $log.debug("Refreshing pointer status for log:", statusIndex, pointer);
+                                $scope.status[statusIndex].busy = true;
+                                $http({
+                                    url: $scope.snifferPath + "/status/pointerOffset?log="+encodeURIComponent(status.log.path),
+                                    method: "POST",
+                                    data: pointer
+                                }).success(function(data, status, headers, config) {
+                                    $log.debug("Retrieved pointer offset", pointer, data);
+                                    $scope.status[statusIndex] = data;
+                                    $scope.status[statusIndex].startFromTail = false;
+                                    $scope.status[statusIndex].startFromHead = false;
+                                }).error(function(data, status, headers, config, statusText) {
+                                    $scope.status[statusIndex].busy = false;
+                                    $scope.alerts.httpError("Failed to update log position", data, status, headers, config, statusText);
+                                });
+                            }
+                        });
+                    };
+
+                    $scope.start = function () {
+                        var startFrom = [];
+                        for(var i=0;i<$scope.status.length;i++) {
+                            var s = $scope.status[i];
+                            startFrom.push({
+                                logPath: s.log.path,
+                                startFromHead: s.startFromHead == true,
+                                startFromTail: s.startFromTail == true,
+                                startFromPointer: s.currentPointer
+                            });
+                        }
+                        $log.debug("Starting sniffer from:", startFrom);
+                        $scope.busy = true;
+                        $http({
+                            url: $scope.snifferPath + "/status/startFrom",
+                            method: "POST",
+                            data: startFrom
+                        }).success(function(data, status, headers, config) {
+                            $scope.busy = false;
+                            $scope.scheduleInfo.scheduled = true;
+                            $log.debug("Started sniffer");
+                        }).error(function(data, status, headers, config, statusText) {
+                            $scope.busy = false;
+                            $scope.alerts.httpError("Failed to start sniffer", data, status, headers, config, statusText);
+                        });
+                    };
+
+                    $scope.stop = function() {
+                        $log.info("Stopping sniffer");
+                        $scope.busy = true;
+                        $http({
+                            url: $scope.snifferPath + "/stop",
+                            method: "POST"
+                        }).success(function(data, status, headers, config) {
+                            $scope.busy = false;
+                            $log.info("Stopped sniffer");
+                            $scope.scheduleInfo.scheduled = false;
+                            $scope.reload();
+                        }).error(function(data, status, headers, config, statusText) {
+                            $scope.busy = false;
+                            $scope.alerts.httpError("Failed to stop sniffer. Try to reload first.", data, status, headers, config, statusText);
+                        });
+                    };
+
+                    $scope.reload = function() {
+                        $log.info("Reloading schedule and status info");
+                        $scope.busy = true;
+                        $http({
+                            url: $scope.snifferPath + "/status/summary",
+                            method: "GET"
+                        }).success(function(data, status, headers, config) {
+                            $scope.busy = false;
+                            $log.info("Got schedule and status info", data);
+                            $scope.scheduleInfo = data.scheduleInfo;
+                            $scope.status = data.logsStatus;
+                        }).error(function(data, status, headers, config, statusText) {
+                            $scope.busy = false;
+                            $scope.alerts.httpError("Failed to reload sniffer status information. Try to reload the page.", data, status, headers, config, statusText);
+                        });
+                    };
+                })
+            .controller(
+                "SnifferStatusRepositionCtrl",
+                function($scope, $location, $log, $http, $uibModalInstance, source, status) {
+                    $scope.scannerWizards =
+                    /*<![CDATA[*/
+                    /*[+ [(${@jstlFunctionsLibraryBean.jsonify(@jstlFunctionsLibraryBean.getWizardsInfo('com.catlogging.event.Scanner', #locale))})];  +]*/
+                    /*]]>*/
+                    $log.info("Openning log viewer to reposition for", source, status);
+                    $scope.source = source;
+                    $scope.log = status.log;
+                    $scope.pointer = status.currentPointer ? angular.copy(status.currentPointer.json) : {};
+                    $scope.$on("snifferReposition", function(event, pointer) {
+                        $log.debug("Setting position for log ", status, pointer);
+                        $uibModalInstance.close(pointer);
+                    });
+                    $scope.close = function() {
+                        $uibModalInstance.close();
+                    };
+                });
+    </script>
+</th:block>
+</html>

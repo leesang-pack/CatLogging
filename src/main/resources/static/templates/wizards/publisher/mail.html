@@ -1,0 +1,62 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<div class="row">
+	<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::to},'form-group col-md-6 required','to')">
+		<th:block th:fragment="to">
+			<label class="control-label">Recipients:</label>
+			<input type="text" name="to" ng-model="bean.to" id="publisher.mail.to" class="form-control" placeholder="Comma separated mail addresses"
+				   required="required">
+		</th:block>
+	</th:block>
+	<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::from},'form-group col-md-6 required','from')">
+		<th:block th:fragment="from">
+			<label class="control-label">From:</label>
+			<input type="text" name="from" ng-model="bean.from" class="form-control" placeholder="Email from address"
+				   required="required">
+		</th:block>
+	</th:block>
+</div>
+
+<div class="row">
+	<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::subject},'form-group col-md-6 required','subject')">
+		<th:block th:fragment="subject">
+			<lsf-info-label label="Subject:" for="subject">The mail subject is rendered using Velocity template engine and enables to include event data passed
+				in attribute <code>event</code>.
+				<div ng-include="contextPath + '/ng/help/velocity4events.html?v='+version"></div>
+			</lsf-info-label>
+			<input type="text" name="subject" id="subject" ng-model="bean.subject" class="form-control" placeholder="Mail subject"
+				   required="required">
+		</th:block>
+	</th:block>
+</div>
+
+<div class="row">
+	<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::textMessage},'form-group col-md-12','textMessage')">
+		<th:block th:fragment="textMessage">
+			<lsf-info-label label="Text:" for="textMessage">The mail text is rendered using Velocity template engine and enables to include event data passed
+				in attribute <code>event</code>.
+				<div ng-include="contextPath + '/ng/help/velocity4events.html?v='+version"></div>
+			</lsf-info-label>
+			<textarea class="form-control" id="textMessage" rows="8" name="textMessage" ng-model="bean.textMessage" placeholder="Mail text"></textarea>
+		</th:block>
+	</th:block>
+</div>
+</html>

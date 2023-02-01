@@ -1,0 +1,76 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="htmlHead">
+    <!-- NG Sni Edit page -->
+    <script th:inline="javascript">
+        var SnifferEditorModule = angular.module('SnifferEditorModule', ['ui.bootstrap', 'angularSpinner', 'lsfSnifferTestModule']);
+        SnifferEditorModule.controller(
+            "SnifferEditController", ['$scope', '$http', '$location', '$anchorScroll', 'usSpinnerService', 'messageCenterService',
+                function($scope, $http, $location, $anchorScroll, usSpinnerService, messageCenterService) {
+                    $scope.catlogging = catlogging;
+                    $scope.bindErrors=
+                        /*<![CDATA[*/
+                        /*[+ [#th:block th:if="${#fields.hasErrors('*{errorForm.value}')}"] +]*/
+                        /*[+    [#th:block th:each="err : ${#fields.errors('errorForm.value')}"] +]*/
+                        /*[+    "[[${err.field}]]":"[[#{${err.code}}]]", +]*/
+                        /*[+    [/th:block] +]*/
+                        /*[+ [/th:block] +]*/
+                        /*]]>*/
+                    $scope.bean = [(${@jstlFunctionsLibraryBean.jsonify(activeSniffer)})];
+                    $scope.beanWrapper = [$scope.bean];
+                    $scope.scheduleInfo = {
+                        scheduled: [(${scheduled})]
+                    };
+
+                    $scope.submit = function(form) {
+                        $(".backdrop-overlay").show();
+                        usSpinnerService.spin('update');
+                        form.$setPristine();
+                        var data=$scope.beanWrapper[0];
+                        var always = function() {
+                            $(".backdrop-overlay").hide();
+                            $location.hash('top');
+                            $anchorScroll();
+                            usSpinnerService.stop('update');
+                        };
+                        $(".alert-success").hide();
+                        $http({
+                            url: "/c/sniffers/[(${activeSniffer.id})]",
+                            method: "PUT",
+                            data: data
+                        }).success(function(data, status, headers, config) {
+                            $("form#refresh").submit();
+                        }).error(function(data, status, headers, config) {
+                            always();
+                            if (data && data.bindErrors) {
+                                $scope.bindErrors = data.bindErrors;
+                            } else {
+                                messageCenterService.add('danger', 'Failed to save changes: ' + status);
+                            }
+                        });
+                    };
+                }
+            ]);
+    </script>
+    <script type="text/javascript" th:src="@{/ng/sniffer/snifferTest.js(v=${catloggingProps['catlogging.version']})}"></script>
+
+</th:block>
+</html>

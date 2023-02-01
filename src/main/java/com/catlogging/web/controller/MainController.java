@@ -1,6 +1,5 @@
 package com.catlogging.web.controller;
 
-import antlr.ASTNULLType;
 import com.catlogging.event.h2.jpa.MemberRepository;
 import com.catlogging.model.auth.Member;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,7 @@ public class MainController {
 //
 //		}
 
-        return "index";
+        return "forward:/sources";
 	}
 
 	@GetMapping("/login")
@@ -38,6 +37,6 @@ public class MainController {
 		List<Member> members = memberRepository.findAll();
 		model.put("members", members);
 
-		return "th/login/loginForm5";
+		return "templates/login/loginForm5";
 	}
 }

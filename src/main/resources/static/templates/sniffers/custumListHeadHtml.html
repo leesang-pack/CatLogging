@@ -1,0 +1,72 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="htmlHead">
+    <!-- NG Sni List page -->
+    <script th:inline="javascript">
+
+        var SnifferListModule = angular.module('SnifferListModule', ['ui.bootstrap', 'angularSpinner', 'MessageCenterModule']);
+        SnifferListModule.controller(
+            "SnifferListController", ['$scope', '$http', '$location', '$anchorScroll', 'usSpinnerService', 'lsfAlerts',
+                function($scope, $http, $location, $anchorScroll, usSpinnerService, lsfAlerts) {
+                    $scope.alerts = lsfAlerts.create();
+                    $scope.result = [(${@jstlFunctionsLibraryBean.jsonify(result)})];
+                    $scope.alerts.buildFromMessages($scope.result.messages);
+                    $scope.nls = {
+                        on:'[(#{catlogging.sniffers.scheduled.true})]',
+                        off:'[(#{catlogging.sniffers.scheduled.false})]'
+                    };
+                }
+            ]
+        );
+        SnifferListModule.controller(
+            "SnifferController", ['$scope', '$http', '$log', 'messageCenterService',
+                function($scope, $http, $log, messageCenterService) {
+                    $scope.snifferPath = $scope.contextPath + "/c/sniffers/" + $scope.sniffer.id;
+                    $scope.start = function() {
+                        $log.info("Starting sniffer", $scope.sniffer);
+                        $http({
+                            url: $scope.snifferPath + "/start",
+                            method: "POST"
+                        }).success(function(data, status, headers, config) {
+                            $log.info("Started sniffer", $scope.sniffer);
+                            $scope.sniffer.aspects.scheduleInfo.scheduled=true;
+                        }).error(function() {
+                            messageCenterService.add('danger', 'Failed to start');
+                        });
+                    };
+                    $scope.stop = function() {
+                        $log.info("Stopping sniffer", $scope.sniffer);
+                        $http({
+                            url: $scope.snifferPath + "/stop",
+                            method: "POST"
+                        }).success(function(data, status, headers, config) {
+                            $log.info("Stopped sniffer", $scope.sniffer);
+                            $scope.sniffer.aspects.scheduleInfo.scheduled = false;
+                        }).error(function() {
+                            messageCenterService.add('danger', 'Failed to stop');
+                        });
+                    };
+                }
+            ]
+        );
+    </script>
+</th:block>
+</html>

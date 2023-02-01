@@ -15,22 +15,18 @@
 <!--* You should have received a copy of the GNU General Public License-->
 <!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
 <!--*******************************************************************************/-->
-
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" >
-<th:block th:fragment="sidebar">
-	<ul class="nav nav-sidebar">
-		<th:block th:each="source: ${logSources}" th:with="url=@{/c/sources} ">
-			<li th:class="${source.id==activeSource?.id ? 'active' : ''}"><a th:href="|${url}/${source.id}/logs|">[[${source.name}]]</a>
-				<ul>
-					<th:block th:each="log : ${source.logs}" th:with="logpath=${log.path},logLink=@{${url}+'/'+${source.id} +'/show'(log=${log.path})}">
-						<li th:class="${log eq activeLog ? 'active' : ''}"><a th:href="${logLink}" th:title="${log.path}">
-							[[${T(org.apache.commons.io.FilenameUtils).getName(logpath)}]]</a>
-						</li>
-					</th:block>
-				</ul>
-			</li>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!--이벤트 등록 시 Log reader strategy-->
+<div class="row">
+	<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::minBytesAmount},'form-group col-md-6 required','minBytesAmount')">
+		<th:block th:fragment="minBytesAmount">
+			<label for="minBytesAmount" class="control-label">Amount of bytes to process at least:</label>
+			<div class="controls controls-row input-group">
+				<input type="text" class="form-control minBytesAmount" ng-model="bean.minBytesAmount" name="minBytesAmount" id="minBytesAmount" required>
+				<div class="input-group-addon"><div class="text-muted" style="width:6em" id="humanMinBytesAmount">{{bean.minBytesAmount | bytesToSize:1}}</div></div>
+			</div>
 		</th:block>
-	</ul>
-</th:block>
-</html>
+	</th:block>
+</div>

@@ -37,7 +37,7 @@ public class PublisherWizardsAppConfig {
 	@Bean
 	public ConfigBeanWizard<MailPublisher> mailPublisherWizard() {
 		return new SimpleBeanWizard<MailPublisher>(
-				"catlogging.wizard.publisher.mail", "wizards/publisher/mail",
+				"catlogging.wizard.publisher.mail", "templates/wizards/publisher/mail",
 				MailPublisher.class, new MailPublisher());
 	}
 

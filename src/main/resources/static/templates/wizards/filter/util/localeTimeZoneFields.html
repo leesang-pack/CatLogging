@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="wrapper">
+<script type="text/javascript">
+catloggingNgApp.controllerProvider.register(
+	"LocaleTimeZoneFieldsController", ['$scope', '$http', 'lsfAlerts', '$log',
+	function ($scope, $http, lsfAlerts, $log) {
+		$scope.alerts = lsfAlerts.create();
+		$scope.busy = false;
+		$scope.locales = [];
+		$scope.timezones = [];
+		
+		$log.info("Resolving locales and timezones");
+		$http({
+        		url : $scope.contextPath + "/c/utils/i18n/localesAndTimezones",
+        		method : "GET"
+        	})
+       	.success(
+       		function(data, status, headers, config) {
+       		    $scope.busy = false;
+       		    $scope.locales = data.locales;
+       		    $scope.timezones = data.timezones;
+       		    $log.info("Loaded Locales and timezones: ", data);
+       		})
+       	.error(
+       		function(data, status, headers, config, statusText) {
+       		    $scope.busy = false;
+       		    $scope.alerts.httpError("Failed to load available locales/timezones", data, status, headers, config, statusText);
+       		}
+       	);
+
+}]);
+</script>
+
+<div ng-controller="LocaleTimeZoneFieldsController">
+	<div lsf-alerts alerts="alerts"></div>
+	<div lsf-busy-container busy="busy">
+		<div class="col-md-3">
+			<lsf-form-group class="form-group" field-name="locale" field-path="locale" bind-errors="bindErrors">
+				<lsf-info-label-key label-key="catlogging.common.timestampLocale" label=":" for="locale">
+					<p>[[#{catlogging.common.timestampLocale.text.1}]]</p>
+				</lsf-info-label-key>
+				<select ng-model="bean.locale" name="locale" id="locale"
+					ng-options="locale for locale in locales | orderBy : locale" class="form-control">
+					<option value="">[[#{catlogging.common.defaultLocale}]]</option>
+				</select>
+			</lsf-form-group>
+		</div>
+		<div class="col-md-3">
+			<lsf-form-group class="form-group" field-name="timeZone" field-path="timeZone" bind-errors="bindErrors">
+				<lsf-info-label-key label-key="catlogging.common.timestampLocale" label=":" for="timeZone">
+					<p>[[#{catlogging.common.timeZone.text.1}]]</p>
+				</lsf-info-label-key>
+				<select ng-model="bean.timeZone" name="timeZone" id="timeZone"
+					ng-options="timezone for timezone in timezones | orderBy : timezone" class="form-control">
+					<option value="" ng-controller="LocaleMessageController" >[[#{catlogging.common.deriveInput}]]</option>
+				</select>
+			</lsf-form-group>
+		</div>
+	</div>
+</div>
+</th:block>
+</html>

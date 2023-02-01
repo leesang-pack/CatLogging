@@ -1,0 +1,51 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<div id="source-wildcard-file-wizard">
+	<span class="text-muted">[[#{catlogging.common.fileWildcard.text.1}]]</span>
+	<div class="row">
+<!--		<%&#45;&#45;-->
+<!--			ngFormFieldWrapper에서 필수 인자 fieldName이 필요하다.-->
+<!--			그것을 가지고 validation을 확인 후에 div에 has-error를 넣을지 말지 결정-->
+<!--        &#45;&#45;%>-->
+		<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(
+		content=~{this::pattern},
+		cssClass='form-group col-md-12 required',
+		fieldName='pattern',
+		isValidationPath=true)">
+			<th:block th:fragment="pattern">
+
+				<!--		<%&#45;&#45;-->
+				<!--			툴팁-->
+				<!--        &#45;&#45;%>-->
+				<lsf-info-label th:attr="label=#{catlogging.common.fileWildcard.text.2}+':'" for="pattern">
+					<p> [(#{catlogging.common.fileWildcard.text.3})]</p>
+				</lsf-info-label>
+
+				<!--		<%&#45;&#45;-->
+				<!--			NG-model은 객체의 고유이름 인듯-->
+				<!--			NG의 fieldName은 input의 name에 해당 된다.-->
+				<!--			input에 의해 regex 검사를 ngFormFieldWrapper의 fieldName에 의해 하고 스타일 체인지-->
+				<!--		&#45;&#45;%>-->
+				<input type="text" ng-model="bean.pattern" name="pattern" id="pattern" th:attr="ng-pattern='/'+${@catloggingProps['catlogging.validationPath']}+'/'" class="form-control pattern" required>
+			</th:block>
+		</th:block>
+	</div>
+</div>
+</html>

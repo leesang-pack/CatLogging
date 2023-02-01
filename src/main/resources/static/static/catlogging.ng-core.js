@@ -338,10 +338,10 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 	      	'<lsf-model-editor model="bean" exclude="modelExclude()" name="{{beanTypeLabel}}"></lsf-model-editor>' +
 		    '<div class="row">' +
 	      	'<div class="col-md-6 form-group required" ng-class="{\'has-error\': form.selectedWizard.$invalid && !form.selectedWizard.$pristine}">' +
-			'<label class="control-label" ng-controller="LocaleMessageController" ng-init="localeMessageKey=\'catlogging.common.type\'">{{beanTypeLabel}} {{localeMessage}}</label>' +
+			'<label>{{beanTypeLabel}} '+externalTypeMessage+'</label>' +
 			'<div class="controls">' +
 				'<select ng-model="selectedWizard" name="selectedWizard" ng-change="wizardTypeChanged()" class="form-control" ng-options="w.label for w in wizards" required>' +
-					'<option value="" ng-controller="LocaleMessageController" ng-init="localeMessageKey=\'catlogging.common.pleaseSelect\'">{{localeMessage}}</option>' +
+					'<option value="">'+externalSelectMessage+'</option>' +
 				'</select>' +
 			'</div>' +
 		 '</div>' +

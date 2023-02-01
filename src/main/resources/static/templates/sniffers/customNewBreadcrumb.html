@@ -17,20 +17,12 @@
 <!--*******************************************************************************/-->
 
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" >
-<th:block th:fragment="sidebar">
-	<ul class="nav nav-sidebar">
-		<th:block th:each="source: ${logSources}" th:with="url=@{/c/sources} ">
-			<li th:class="${source.id==activeSource?.id ? 'active' : ''}"><a th:href="|${url}/${source.id}/logs|">[[${source.name}]]</a>
-				<ul>
-					<th:block th:each="log : ${source.logs}" th:with="logpath=${log.path},logLink=@{${url}+'/'+${source.id} +'/show'(log=${log.path})}">
-						<li th:class="${log eq activeLog ? 'active' : ''}"><a th:href="${logLink}" th:title="${log.path}">
-							[[${T(org.apache.commons.io.FilenameUtils).getName(logpath)}]]</a>
-						</li>
-					</th:block>
-				</ul>
-			</li>
-		</th:block>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<th:block th:fragment="breadcrumb" th:with="url=@{/c/sniffers}">
+	<ul class="breadcrumb" >
+		<li><a th:href="@{${url}}">[[#{catlogging.breadcrumb.eventObserver}]]</a> </li>
+		<li class="active">[[#{catlogging.common.new}]]</li>
 	</ul>
 </th:block>
 </html>
+

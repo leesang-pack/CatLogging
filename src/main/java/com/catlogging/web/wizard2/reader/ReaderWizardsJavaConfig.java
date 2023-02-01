@@ -35,7 +35,8 @@ import com.catlogging.web.wizard2.SimpleBeanWizard;
 public class ReaderWizardsJavaConfig {
 	@Bean
 	public ConfigBeanWizard<Log4jTextReader> log4jTextReaderWizard() {
-		return new SimpleBeanWizard<Log4jTextReader>("catlogging.wizard.reader.log4j", "wizards/readers/log4j",
+		return new SimpleBeanWizard<Log4jTextReader>("catlogging.wizard.reader.log4j",
+				"templates/wizards/readers/log4j",
 				Log4jTextReader.class, new Log4jTextReader());
 	}
 

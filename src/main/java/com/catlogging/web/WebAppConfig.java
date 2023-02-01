@@ -63,7 +63,7 @@ public class WebAppConfig implements WebMvcConfigurer {
 	/**
 	 * static 말고 view 딴에서 추가적인 url이 필요 시에 다음과 같이 설정해야함
 	 * sources/*.jsp
-	 * index.jsp
+	 * index.html
 	 * ...
 	 * 뷰들이 /c/sources/* 로 접근할 수 있다.
 	 * @return
@@ -90,16 +90,16 @@ public class WebAppConfig implements WebMvcConfigurer {
 	 * jsp파일 보는 뷰
 	 * @return
 	 */
-	@Bean
-	public ViewResolver jspViewResolver() {
-		log.debug("INIT [jspViewResolver] Start.");
-		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-		resolver.setPrefix("/WEB-INF/views/");
-		resolver.setSuffix(".jsp");
-		resolver.setOrder(1);
-
-		return resolver;
-	}
+//	@Bean
+//	public ViewResolver jspViewResolver() {
+//		log.debug("INIT [jspViewResolver] Start.");
+//		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+//		resolver.setPrefix("/WEB-INF/views/");
+//		resolver.setSuffix(".jsp");
+//		resolver.setOrder(1);
+//
+//		return resolver;
+//	}
 
 	/**
 	 * Thymeleaf 뷰 리졸버 설정

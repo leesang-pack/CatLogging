@@ -15,22 +15,30 @@
 <!--* You should have received a copy of the GNU General Public License-->
 <!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
 <!--*******************************************************************************/-->
-
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" >
-<th:block th:fragment="sidebar">
-	<ul class="nav nav-sidebar">
-		<th:block th:each="source: ${logSources}" th:with="url=@{/c/sources} ">
-			<li th:class="${source.id==activeSource?.id ? 'active' : ''}"><a th:href="|${url}/${source.id}/logs|">[[${source.name}]]</a>
-				<ul>
-					<th:block th:each="log : ${source.logs}" th:with="logpath=${log.path},logLink=@{${url}+'/'+${source.id} +'/show'(log=${log.path})}">
-						<li th:class="${log eq activeLog ? 'active' : ''}"><a th:href="${logLink}" th:title="${log.path}">
-							[[${T(org.apache.commons.io.FilenameUtils).getName(logpath)}]]</a>
-						</li>
-					</th:block>
-				</ul>
-			</li>
-		</th:block>
-	</ul>
-</th:block>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<div>
+	<lsf-info-label label="Copies fields of entries to event fields">
+		This filter copies fields from the first entry of the processed event directly to the event fields. 
+		The typical used cases for doing that are:
+		<ul>
+			<li>To access nested log entry fields by subsequent filters</li>
+			<li>To reduce the amount of indexed event data. Select for this purpose the deletion flag and exclude the raw log message from copying.</li>
+		</ul>
+		
+	</lsf-info-label>
+	<div class="row">
+		<div class="col-md-4">
+			<label for="deleteEntries" class="control-label">
+				<input type="checkbox" id="deleteEntries" ng-model="bean.deleteEntries"> Delete entries afterwards
+			</label>
+		</div>
+		<div class="col-md-4">
+			<label for="excludeRaw" class="control-label">
+				<input type="checkbox" id="excludeRaw" ng-model="bean.excludeRaw"> Exclude copying raw log message
+			</label>
+		</div>
+	</div>
+</div>
 </html>

@@ -286,20 +286,20 @@ INSERT INTO LANGUAGES (LOCALE, MESSAGEKEY,MESSAGECONTENT) VALUES
 ('ko', 'catlogging.wizard.reader.conversion','패턴 전환'),
 ('zh', 'catlogging.wizard.reader.conversion','模式转换'),
 
-('en','catlogging.wizard.reader.conversion.text.1','In your log4j configuration the &lt;i&gt;ConversionPattern&lt;/i&gt; parameter of the desired appender controls the contents of each line of output inside the log file.
-				 In order to parse the content attributes correctly please insert the used &lt;i&gt;ConversionPattern&lt;/i&gt; into this field. For example:
-				 &lt;code&gt;%d %-5p [%c] (%t) %m%n&lt;/code&gt;.
-				 For more detail about the syntax, see the &lt;a href=''http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html'' target=''_blank''&gt;ConversionPattern&lt;/a&gt;
+('en','catlogging.wizard.reader.conversion.text.1','In your log4j configuration the <i>ConversionPattern</i> parameter of the desired appender controls the contents of each line of output inside the log file.
+				 In order to parse the content attributes correctly please insert the used <i>ConversionPattern</i> into this field. For example:
+				 <code>%d %-5p [%c] (%t) %m%n</code>.
+				 For more detail about the syntax, see the <a href=''http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html'' target=''_blank''>ConversionPattern</a>
 				 API documentation.'),
-('ko','catlogging.wizard.reader.conversion.text.1','log4j 구성에서 &lt;i&gt;ConversionPattern&lt;/i&gt; 원하는 추가 매개변수는 로그 파일 내의 각 출력 라인의 내용을 제어합니다.
-콘텐츠 속성을 올바르게 구문 분석하려면 사용된 &lt;i&gt;ConversionPattern&lt;/i&gt; 이 부분에. 예를 들어:
-&lt;code&gt;%d %-5p [%c] (%t) %m%n&lt;/code&gt;.
-구문에 대한 자세한 내용은 &lt;a href=''http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html'' target=''_blank''&gt;ConversionPattern&lt;/a&gt;
+('ko','catlogging.wizard.reader.conversion.text.1','log4j 구성에서 <i>ConversionPattern</i> 원하는 추가 매개변수는 로그 파일 내의 각 출력 라인의 내용을 제어합니다.
+콘텐츠 속성을 올바르게 구문 분석하려면 사용된 <i>ConversionPattern</i> 이 부분에. 예를 들어:
+<code>%d %-5p [%c] (%t) %m%n</code>.
+구문에 대한 자세한 내용은 <a href=''http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html'' target=''_blank''>ConversionPattern</a>
 API 문서 참고.'),
-('zh','catlogging.wizard.reader.conversion.text.1','在 log4j 配置中,&lt;i&gt;ConversionPattern&lt;/i&gt; 您想要控制日志文件中每个输出行的内容的附加参数.
-要正确解析内容属性,请使用 &lt;i&gt;ConversionPattern&lt;/i&gt; 在这部分. 例如：
-&lt;code&gt;%d %-5p [%c] (%t) %m%n&lt;/code&gt;.
-语法细节参见 &lt;a href=''http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html'' target=''_blank''&gt;ConversionPattern&lt;/a&gt
+('zh','catlogging.wizard.reader.conversion.text.1','在 log4j 配置中,<i>ConversionPattern</i> 您想要控制日志文件中每个输出行的内容的附加参数.
+要正确解析内容属性,请使用 <i>ConversionPattern</i> 在这部分. 例如：
+<code>%d %-5p [%c] (%t) %m%n</code>.
+语法细节参见 <a href=''http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html'' target=''_blank''>ConversionPattern</a&gt
 请参阅 API 文档.'),
 
 ('en','catlogging.wizard.reader.conversion.label.1','Log4j Conversion Pattern'),
@@ -311,23 +311,23 @@ API 문서 참고.'),
 ('zh', 'catlogging.wizard.reader.conversion.mapping','字段说明符映射'),
 
 ('en','catlogging.wizard.reader.conversion.mapping.text.1','To assign the extracted log parts to fields with legible names define for each used log4j conversion specifier
-					a mapping to the desired field name. For example: &lt;br/&gt;&lt;code&gt;%c=category&lt;/code&gt;&lt;br/&gt;
-					&lt;code&gt;%t=thread&lt;/code&gt;&lt;br/&gt;
-					&lt;small&gt;Note: The specifier &lt;code&gt;%d&lt;/code&gt; and &lt;code&gt;%p&lt;/code&gt; are parsed and
-					mapped additionally to the internal fields &lt;code&gt;lf_timestamp&lt;/code&gt; and &lt;code&gt;lf_severity&lt;/code&gt;
-					by default.&lt;/small&gt;'),
+					a mapping to the desired field name. For example: <br/><code>%c=category</code><br/>
+					<code>%t=thread</code><br/>
+					<small>Note: The specifier <code>%d</code> and <code>%p</code> are parsed and
+					mapped additionally to the internal fields <code>lf_timestamp</code> and <code>lf_severity</code>
+					by default.</small>'),
 ('ko','catlogging.wizard.reader.conversion.mapping.text.1','추출된 로그 부분을 읽기 쉬운 이름을 가진 필드에 할당하려면 사용된 각 log4j 변환 지정자에 대해 정의하십시오.
-원하는 필드 이름에 대한 매핑. 예: &lt;br/&gt;&lt;code&gt;%c=category&lt;/code&gt;&lt;br/&gt;
-&lt;code&gt;%t=thread&lt;/code&gt;&lt;br/&gt;
-&lt;small&gt;참고: 지정자 &lt;code&gt;%d&lt;/code&gt; 및 &lt;code&gt;%p&lt;/code&gt; 구문 분석되고
-내부 필드 &lt;code&gt;lf_timestamp&lt;/code&gt;에 추가로 매핑됨 및 &lt;code&gt;lf_severity&lt;/code&gt;
-기본적으로.&lt;/small&gt;'),
+원하는 필드 이름에 대한 매핑. 예: <br/><code>%c=category</code><br/>
+<code>%t=thread</code><br/>
+<small>참고: 지정자 <code>%d</code> 및 <code>%p</code> 구문 분석되고
+내부 필드 <code>lf_timestamp</code>에 추가로 매핑됨 및 <code>lf_severity</code>
+기본적으로.</small>'),
 ('zh','catlogging.wizard.reader.conversion.mapping.text.1','要将提取的日志部分分配给具有清晰名称的字段,请为每个使用的 log4j 转换说明符定义
-到所需字段名称的映射. 例如:&lt;br/&gt;&lt;code&gt;%c=category&lt;/code&gt;&lt;br/&gt;
-&lt;code&gt;%t=thread&lt;/code&gt;&lt;br/&gt;
-&lt;small&gt;注意:说明符&lt;code&gt;%d&lt;/code&gt; 和&lt;code&gt;%p&lt;/code&gt; 被解析和
-另外映射到内部字段<code>lf_timestamp</code>; 和&lt;code&gt;lf_severity&lt;/code&gt;
-默认情况下.&lt;/small&gt;'),
+到所需字段名称的映射. 例如:<br/><code>%c=category</code><br/>
+<code>%t=thread</code><br/>
+<small>注意:说明符<code>%d</code> 和<code>%p</code> 被解析和
+另外映射到内部字段<code>lf_timestamp</code>; 和<code>lf_severity</code>
+默认情况下.</small>'),
 
 ('en','catlogging.wizard.reader.conversion.mapping.label.1','Conversion Specifier Mapping'),
 ('ko','catlogging.wizard.reader.conversion.mapping.label.1','변환할 지정자 맵'),

@@ -1,0 +1,96 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="templates/layouts/layout"
+	  th:with="title=#{catlogging.breadcrumb.sniffers},
+      activeNavbar='sniffers',
+      ngModules='SnifferListModule',
+      isAuth=${catloggingProps['catlogging.enable.auth'] == 'true' ? true : false}"
+>
+
+<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+<head th:insert="templates/sniffers/custumListHeadHtml::htmlHead"></head>
+
+<!-- 삽입될 각 개별적인 영역을 작성 -->
+<th:block layout:fragment="content" >
+	<div class="row">
+		<div class="col-sm-3 col-md-2 sidebar">
+			<th:block th:replace="templates/sniffers/customListSidebar :: sidebar"></th:block>
+		</div>
+		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+			<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+			<th:block th:replace="templates/sniffers/customListBreadcrumb::breadcrumb"></th:block>
+
+			<!-- 공통 alert-->
+			<th:block th:replace="templates/utils/messages::messages"></th:block>
+
+			<!-- 커스텀 alert-->
+			<th:block th:if="${#lists.isEmpty(sniffers)}">
+				<div class="alert alert-info">
+					<i class="glyphicon glyphicon-exclamation-sign"></i> [[#{catlogging.common.list.text.1}]]
+				</div>
+			</th:block>
+			<!-- 해당 기능에서 커스텀 insert. -->
+			<th:block th:unless="${#lists.isEmpty(sniffers)}">
+				<div ng-controller="SnifferListController">
+					<div lsf-alerts alerts="alerts"></div>
+					<div mc-messages></div>
+					<ul class="bordered-list sniffers">
+						<li ng-repeat="sniffer in result.items">
+							<div ng-controller="SnifferController">
+								<h4>
+									<a href="{{contextPath}}/c/sniffers/{{sniffer.id}}/events">{{sniffer.name}}</a>
+								</h4>
+								<div class="row">
+									<div class="col-md-12">
+										<span class="label label-success" ng-if="sniffer.aspects.scheduleInfo.scheduled">{{nls.on}}</span>
+										<span class="label label-default" ng-if="!sniffer.aspects.scheduleInfo.scheduled">{{nls.off}}</span>
+										|
+										Last run:
+										<span ng-if="sniffer.aspects.scheduleInfo.lastFireTime">{{sniffer.aspects.scheduleInfo.lastFireTime | date:'medium'}}</span>
+										<span ng-if="!sniffer.aspects.scheduleInfo.lastFireTime"> - never -</span>
+										|
+										<i class="glyphicon glyphicon-bullhorn"></i> Events:
+										<a href="{{contextPath}}/c/sniffers/{{sniffer.id}}/events">
+											<span class="badge" ng-class="{'badge-warning': sniffer.aspects.eventsCount!=0}">{{sniffer.aspects.eventsCount}}</span>
+										</a>
+										<div class="pull-right">
+											<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
+												<a href="#" class="btn btn-sm btn-default" ng-if="!sniffer.aspects.scheduleInfo.scheduled"
+												   ng-click="start()"><i class="glyphicon glyphicon-play"></i>[[#{catlogging.common.form.start}]]</a>
+												<a href="#" class="btn btn-sm btn-default" ng-if="sniffer.aspects.scheduleInfo.scheduled"
+												   ng-click="stop()"><i class="glyphicon glyphicon-pause"></i>[[#{catlogging.common.form.pause}]]</a>
+												<a href="{{contextPath}}/c/sniffers/{{sniffer.id}}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-edit"></i> [[#{catlogging.common.form.edit}]]</a>
+												<a href="{{contextPath}}/c/sniffers/{{sniffer.id}}/status" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-play-circle"></i> [[#{catlogging.common.form.control}]]</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</th:block>
+		</div>
+	</div>
+</th:block>
+</html>

@@ -50,6 +50,10 @@
         <link th:href="@{/static/fontawesome/css/font-awesome.min.css(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}" rel="stylesheet" />
         <script th:src="@{/static/date.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
         <script th:src="@{/static/catlogging.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <script type="text/javascript" th:inline="javascript">
+            var externalTypeMessage = $.parseJSON('[[#{catlogging.common.type}]]');
+            var externalSelectMessage = $.parseJSON('[[#{catlogging.common.pleaseSelect}]]');
+        </script>
         <script th:src="@{/static/catlogging.ng-core.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
         <link th:href="@{/static/catlogging.css(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}" rel="stylesheet" />
         <script type="text/javascript">

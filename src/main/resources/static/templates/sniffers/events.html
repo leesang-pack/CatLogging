@@ -16,21 +16,28 @@
 <!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
 <!--*******************************************************************************/-->
 
+<!--로그 출력 페이지에서 정보페이지-->
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" >
-<th:block th:fragment="sidebar">
-	<ul class="nav nav-sidebar">
-		<th:block th:each="source: ${logSources}" th:with="url=@{/c/sources} ">
-			<li th:class="${source.id==activeSource?.id ? 'active' : ''}"><a th:href="|${url}/${source.id}/logs|">[[${source.name}]]</a>
-				<ul>
-					<th:block th:each="log : ${source.logs}" th:with="logpath=${log.path},logLink=@{${url}+'/'+${source.id} +'/show'(log=${log.path})}">
-						<li th:class="${log eq activeLog ? 'active' : ''}"><a th:href="${logLink}" th:title="${log.path}">
-							[[${T(org.apache.commons.io.FilenameUtils).getName(logpath)}]]</a>
-						</li>
-					</th:block>
-				</ul>
-			</li>
-		</th:block>
-	</ul>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="templates/layouts/layout"
+	  th:with="title=#{activeSniffer.name} + ' - Events',
+      activeNavbar='sniffers',
+      ngModules=|EventsRootModule','EventsModule|,
+      isAuth=${catloggingProps['catlogging.enable.auth'] == 'true' ? true : false}"
+>
+
+<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+<head th:insert="templates/sniffers/custumEventsHeadHtml::htmlHead"></head>
+
+<!-- 삽입될 각 개별적인 영역을 작성 -->
+<th:block layout:fragment="content" >
+	<div class="row">
+		<div class="main">
+			<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+			<div ng-controller="EventsRootController">
+				<div ng-view></div>
+			</div>
+		</div>
+	</div>
 </th:block>
-</html>

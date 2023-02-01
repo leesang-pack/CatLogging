@@ -1,0 +1,133 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!--로그 출력 페이지에서 정보페이지-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="templates/layouts/layout"
+	  th:with="title=${activeSniffer.name} + ' - Control',
+      activeNavbar='sniffers',
+      ngModules='catloggingStatuswModule',
+      isAuth=${catloggingProps['catlogging.enable.auth'] == 'true' ? true : false},
+	  context=#{catlogging.common.form.control}"
+>
+
+<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+<head th:insert="templates/sniffers/custumStatusHeadHtml::htmlHead"></head>
+
+<!-- 삽입될 각 개별적인 영역을 작성 -->
+<th:block layout:fragment="content" >
+	<div class="row">
+		<div class="main">
+
+			<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+			<th:block th:replace="templates/sniffers/customStatusEditBreadcrumb::breadcrumb"></th:block>
+
+			<!-- 해당 기능에서 커스텀 insert. -->
+			<div ng-controller="catloggingStatusController">
+				<div lsf-busy-container busy="busy">
+					<div class="clearfix">
+						<div class="pull-right">
+							Last run:
+							<span ng-if="scheduleInfo.lastFireTime">{{scheduleInfo.lastFireTime | date:'medium'}}</span>
+							<span ng-if="!scheduleInfo.lastFireTime"> - never -</span>
+						</div>
+						<div class="btn-toolbar">
+							<div class="btn-group">
+								<button class="btn btn-default dropdown-toggle btn-sm"
+										ng-disabled="scheduleInfo.scheduled" data-toggle="dropdown">Reset all positions
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu">
+									<li><a href ng-click="resetAllTo(true, false)">
+										<i class="glyphicon glyphicon-fast-backward"></i> All to start</a></li>
+									<li><a href ng-click="resetAllTo(false, true)">
+										<i class="glyphicon glyphicon-fast-forward"></i> All to end</a></li>
+								</ul>
+							</div>
+							<button class="btn btn-default btn-sm" ng-disabled="scheduleInfo.scheduled" type="button" ng-click="start()">
+								<i class="glyphicon glyphicon-play"></i> Start</button>
+							<button class="btn btn-default btn-sm" ng-disabled="!scheduleInfo.scheduled" type="button" ng-click="stop()">
+								<i class="glyphicon glyphicon-pause"></i> Pause</button>
+							<button class="btn btn-default btn-sm" type="button" ng-click="reload()">
+								<i class="glyphicon glyphicon-repeat"></i> Reload</button>
+						</div>
+
+					</div>
+					<th:block th:if="${started}">
+						<div class="alert alert-success">
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+							Monitoring started!
+						</div>
+					</th:block>
+					<th:block th:if="${stopped}">
+						<div class="alert alert-success">
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+							Monitoring stopped!
+						</div>
+					</th:block>
+
+					<div lsf-alerts alerts="alerts"></div>
+					<h3>Positioning
+						<small ng-if="scheduleInfo.scheduled">[[#{catlogging.sniffers.positioning.show}]]</small>
+						<small ng-if="!scheduleInfo.scheduled">[[#{catlogging.sniffers.positioning.set}]]</small>
+					</h3>
+					<div class="well well-sm" ng-repeat="s in status" lsf-busy-container busy="s.busy">
+						<h4>{{s.log.path!='default'?s.log.path:s.log.name}}</h4>
+						<div class="row">
+							<div class="col-md-2">Current position:</div>
+							<div class="col-md-7">
+							<span ng-if="source.navigationType=='DATE'">
+								<i ng-if="s.currentPointer" class="glyphicon glyphicon-time"></i> {{s.currentPointer.json.d | date: 'medium'}}<br>
+							</span>
+								<uib-progressbar ng-if="s.startFromHead || s.startFromTail"
+												 max="1" value="s.startFromHead?0:1" type="success" ng-class="{'progress-striped active':scheduleInfo.scheduled}"
+												 animate="true" style="margin-bottom:5px"></uib-progressbar>
+								<uib-progressbar ng-if="!(s.startFromHead || s.startFromTail)"
+												 max="s.log.size" value="s.currentOffset" type="success" ng-class="{'progress-striped active':scheduleInfo.scheduled}"
+												 animate="true" style="margin-bottom:5px"></uib-progressbar>
+							</div>
+							<div class="col-md-3">
+								<span ng-if="source.navigationType=='DATE'"><br></span>
+								<span ng-if="(!s.currentPointer && !s.startFromTail) || s.currentPointer.sof || s.startFromHead">Start</span>
+								<span ng-if="s.currentPointer.eof || s.startFromTail">End</span>
+								<span ng-if="s.currentPointer && !s.currentPointer.sof && !s.currentPointer.eof">{{s.currentOffset | bytesToSize:2}}</span>
+								of {{s.log.size | bytesToSize:2}}
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-2">Reset position:</div>
+							<div class="col-md-10">
+								<div class="btn-group btn-group-xs">
+									<button class="btn btn-xs btn-default" ng-click="resetTo($index, true, false)" type="button" ng-disabled="scheduleInfo.scheduled">
+										<i class="glyphicon glyphicon-fast-backward"></i> To start</button>
+									<button class="btn btn-xs btn-default" ng-click="reposition($index)" type="button" ng-disabled="scheduleInfo.scheduled">
+										<i class="glyphicon glyphicon-screenshot"></i> Select...</button>
+									<button class="btn btn-xs btn-default" ng-click="resetTo($index, false, true)" type="button" ng-disabled="scheduleInfo.scheduled">
+										<i class="glyphicon glyphicon-fast-forward"></i> To end</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</th:block>
+</html>

@@ -34,7 +34,7 @@ public class LevelScannerWizard implements ConfigBeanWizard<LevelScanner> {
 
 	@Override
 	public String getWizardView() {
-		return "wizards/scanner/level";
+		return "templates/wizards/scanner/level";
 	}
 
 	@Override

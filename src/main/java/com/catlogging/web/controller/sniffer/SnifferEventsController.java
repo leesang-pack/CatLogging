@@ -47,7 +47,7 @@ public class SnifferEventsController extends SniffersBaseController {
 			@PathVariable("snifferId") final long snifferId)
 			throws ResourceNotFoundException, SchedulerException {
 		getAndBindActiveSniffer(model, snifferId);
-		return "sniffers/events";
+		return "templates/sniffers/events";
 	}
 
 	@RequestMapping(value = "/sniffers/{snifferId}/events/{eventId}", method = RequestMethod.GET)
