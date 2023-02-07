@@ -3,12 +3,12 @@
 - Default Current Path
 
 ```
-    > java -jar catlogging.war
+    > java -jar catlogging.jar
 ```
 
 2. Option Start (recommend)
 ```
-    > nohup java -Dfile.encoding=UTF-8 -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Xms2048M -Xmx2096M -server -XX:+UseParallelGC -Dcatlogging.validationPath=/etc/ -Dcatlogging.home=/home/XXX -jar catlogging.war > /dev/null 2>&1 &
+    > nohup java -Dfile.encoding=UTF-8 -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Xms2048M -Xmx2096M -server -XX:+UseParallelGC -Dcatlogging.validationPath=/etc/ -Dcatlogging.home=/home/XXX -jar catlogging.jar > /dev/null 2>&1 &
 ``` 
 
 ## Documentation
