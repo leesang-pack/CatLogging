@@ -6,7 +6,7 @@ import com.catlogging.event.SnifferPersistence;
 import com.catlogging.event.SnifferScheduler;
 import com.catlogging.model.*;
 import com.catlogging.model.support.JsonLogPointer;
-import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import com.catlogging.util.excption.ResourceNotFoundException;
 import com.catlogging.web.controller.sniffer.SnifferStatusController.LogSniffingStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;

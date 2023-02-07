@@ -1,7 +1,6 @@
 /*******************************************************************************
  * catlogging, open source tool for viewing, monitoring and analysing log data.
  * Copyright (c) 2021 xzpluszone, www.catlogging.com
- * Copyright (c) 2015 Scaleborn UG, www.scaleborn.com
  *
  * catlogging is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +17,19 @@
  *******************************************************************************/
 package com.catlogging.app;
 
-import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.exception.VelocityException;
-import org.apache.velocity.runtime.log.NullLogChute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-//import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import com.catlogging.util.value.ConfigValue;
 import com.catlogging.util.value.Configured;
 
 /**
- * Defines a {@link VelocityEngine} bean and a {@link JavaMailSenderImpl} bean
+ *
  * for mail support.
  * 
  * @author Tester
@@ -106,24 +100,6 @@ public class MailAppConfig {
 	private MailSettings mailSettings;
 
 	private JavaMailSenderImpl mailSender;
-
-	@Bean
-	public VelocityEngine velocityEngine() throws VelocityException,
-			IOException {
-//		VelocityEngineFactory factory = new VelocityEngineFactory();
-//		Properties props = new Properties();
-//		props.put("resource.loader", "class");
-//		props.put("class.resource.loader.class",
-//				"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-//		factory.setVelocityProperties(props);
-
-		Properties properties = new Properties();
-		properties.setProperty("runtime.log.logsystem.class", NullLogChute.class.getName());
-		properties.setProperty("resource.loader", "class");
-		properties.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-		VelocityEngine velocityEngine = new VelocityEngine(properties);
-		return velocityEngine;
-	}
 
 	@Bean
 	public JavaMailSenderImpl mailSender() {

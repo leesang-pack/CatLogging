@@ -45,24 +45,58 @@
                         $http({
                             url: $scope.snifferPath + "/start",
                             method: "POST"
-                        }).success(function(data, status, headers, config) {
+                        })
+                            .then(successCallback,errorCallback);
+                        function successCallback(response){
+                            //success code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
                             $log.info("Started sniffer", $scope.sniffer);
                             $scope.sniffer.aspects.scheduleInfo.scheduled=true;
-                        }).error(function() {
+                        }
+                        function errorCallback(response){
+                            //error code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
                             messageCenterService.add('danger', 'Failed to start');
-                        });
+                        }
                     };
                     $scope.stop = function() {
                         $log.info("Stopping sniffer", $scope.sniffer);
                         $http({
                             url: $scope.snifferPath + "/stop",
                             method: "POST"
-                        }).success(function(data, status, headers, config) {
+                        })
+                            .then(successCallback,errorCallback);
+                        function successCallback(response){
+                            //success code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
                             $log.info("Stopped sniffer", $scope.sniffer);
                             $scope.sniffer.aspects.scheduleInfo.scheduled = false;
-                        }).error(function() {
+                        }
+                        function errorCallback(response){
+                            //error code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
                             messageCenterService.add('danger', 'Failed to stop');
-                        });
+                        }
                     };
                 }
             ]

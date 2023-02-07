@@ -1,7 +1,6 @@
 /*******************************************************************************
  * catlogging, open source tool for viewing, monitoring and analysing log data.
  * Copyright (c) 2021 xzpluszone, www.catlogging.com
- * Copyright (c) 2015 Scaleborn UG, www.scaleborn.com
  *
  * catlogging is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +20,8 @@ package com.catlogging.web.tags;
 import com.catlogging.app.ContextProvider;
 import com.catlogging.aspect.AspectHost;
 import com.catlogging.model.RollingLog;
-import com.catlogging.web.wizard2.WizardInfo;
-import com.catlogging.web.wizard2.WizardInfoController;
+import com.catlogging.web.wizard.WizardInfo;
+import com.catlogging.web.wizard.WizardInfoController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;

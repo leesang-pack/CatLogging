@@ -21,10 +21,9 @@ package com.catlogging.event.publisher.http;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.catlogging.config.BeanConfigFactoryManager;
 import com.catlogging.config.BeanPostConstructor;
 import com.catlogging.config.ConfigException;
-import com.catlogging.event.publisher.VelocityEventRenderer;
+import com.catlogging.event.publisher.EventRenderer;
 import com.catlogging.settings.http.HttpSettings;
 
 @Component
@@ -33,12 +32,11 @@ public class HttpPublisherConfigurer implements BeanPostConstructor<HttpPublishe
 	private HttpSettings httpSettings;
 
 	@Autowired
-	private VelocityEventRenderer velocityRenderer;
+	private EventRenderer renderer;
 
-//	final BeanConfigFactoryManager configManager)
 	@Override
 	public void postConstruct(final HttpPublisher bean) throws ConfigException {
-		bean.init(velocityRenderer, httpSettings.createHttpClientBuilder().build());
+		bean.init(renderer, httpSettings.createHttpClientBuilder().build());
 	}
 
 }

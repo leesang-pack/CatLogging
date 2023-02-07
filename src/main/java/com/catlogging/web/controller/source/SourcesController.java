@@ -43,9 +43,9 @@ import com.catlogging.model.LogSourceProvider;
 import com.catlogging.user.UserTokenProvider;
 import com.catlogging.user.profile.ProfileSettingsStorage;
 import com.catlogging.web.ViewController;
-import com.catlogging.web.controller.exception.ResourceNotFoundException;
-import com.catlogging.web.wizard2.WizardInfo;
-import com.catlogging.web.wizard2.WizardInfoController;
+import com.catlogging.util.excption.ResourceNotFoundException;
+import com.catlogging.web.wizard.WizardInfo;
+import com.catlogging.web.wizard.WizardInfoController;
 
 @ViewController
 public class SourcesController {

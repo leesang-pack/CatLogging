@@ -30,14 +30,5 @@
         </th:block>
         <li class="active" th:text="#{${activeNode.title}}"></li>
     </ul>
-
-    <div ng-controller="SystemAbstractController">
-        <th:block th:if="${isNgPage}">
-            <div th:attr="ng-controller=${activeNode.pageContext.controller},ng-include=|'@{${activeNode.pageContext.template}(v=${catloggingProps['catlogging.version']})}'|"></div>
-        </th:block>
-        <th:block th:if="${isNgTemplate}">
-            <div th:attr="ng-include=|'@{${activeNode.pageContext.template}(v=${catloggingProps['catlogging.version']})}'|"></div>
-        </th:block>
-    </div>
 </th:block>
 </html>

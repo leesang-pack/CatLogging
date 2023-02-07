@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<script type="text/javascript">
+catloggingNgApp.controllerProvider.register(
+	"SnifferStatusSetPositionController", ['$scope', '$http', '$log',
+	function ($scope, $http, $log) {
+		$scope.setPosition = function(start) {
+			var pointer = start ? $scope.entry.lf_startOffset : $scope.entry.lf_endOffset;
+			$log.info("Set sniffing position:", pointer);
+			$scope.$root.$broadcast('snifferReposition', pointer);
+		};
+	}
+]);
+</script>
+<span ng-controller="SnifferStatusSetPositionController">
+	<button class="btn btn-default btn-sm" ng-click="setPosition(true);close()"
+		title="Set position before this log entry to start sniffing">
+			<i class="glyphicon glyphicon-hand-left"></i> [[#{catlogging.sniffers.zoom.before}]]</button>
+	<button class="btn btn-default btn-sm" ng-click="setPosition(false);close()"
+		title="Set position after this log entry to start sniffing">
+			<i class="glyphicon glyphicon-hand-right"></i> [[#{catlogging.sniffers.zoom.after}]]</button>
+</span>
+</html>

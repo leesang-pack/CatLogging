@@ -48,24 +48,35 @@
                             url : childScope.settingsRessource,
                             method : "GET"
                         })
-                            .success(
-                                function(data, status, headers, config) {
-                                    $log.info("Settings loaded from", $scope.settingsRessource, data);
-                                    childScope.state.busy = false;
-                                    if (callbacks.success) {
-                                        callbacks.success(data, status, headers, config);
-                                    }
-                                }
-                            )
-                            .error(
-                                function(data, status, headers, config, statusText) {
-                                    childScope.state.busy = false;
-                                    childScope.alerts.httpError("Failed to load settings", data, status, headers, config, statusText);
-                                    if (callbacks.error) {
-                                        callbacks.error(data, status, headers, config, statusText);
-                                    }
-                                }
-                            );
+                            .then(successCallback,errorCallback);
+                        function successCallback(response){
+                            //success code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
+                            $log.info("Settings loaded from", $scope.settingsRessource, data);
+                            childScope.state.busy = false;
+                            if (callbacks.success) {
+                                callbacks.success(data, status, headers, config);
+                            }
+                        }
+                        function errorCallback(response){
+                            //error code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
+                            childScope.state.busy = false;
+                            childScope.alerts.httpError("Failed to load settings", data, status, headers, config, statusText);
+                            if (callbacks.error) {
+                                callbacks.error(data, status, headers, config, statusText);
+                            }
+                        }
 
                         return {
                             success: function(callback) {
@@ -87,28 +98,39 @@
                             method : "POST",
                             data: settings
                         })
-                            .success(
-                                function(data, status, headers, config) {
-                                    $log.info("Settings saved", childScope.settingsRessource);
-                                    childScope.state.busy = false;
-                                    childScope.alerts.success("Changes applied successfully");
-                                    if (callbacks.success) {
-                                        callbacks.success(data, status, headers, config);
-                                    }
-                                }
-                            )
-                            .error(
-                                function(data, status, headers, config, statusText) {
-                                    childScope.state.busy = false;
-                                    childScope.alerts.httpError("Failed to save settings", data, status, headers, config, statusText);
-                                    if (data && data.bindErrors) {
-                                        childScope.bindErrors = data.bindErrors;
-                                    }
-                                    if (callbacks.error) {
-                                        callbacks.error(data, status, headers, config, statusText);
-                                    }
-                                }
-                            );
+                            .then(successCallback,errorCallback);
+                        function successCallback(response){
+                            //success code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
+                            $log.info("Settings saved", childScope.settingsRessource);
+                            childScope.state.busy = false;
+                            childScope.alerts.success("Changes applied successfully");
+                            if (callbacks.success) {
+                                callbacks.success(data, status, headers, config);
+                            }
+                        }
+                        function errorCallback(response){
+                            //error code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
+                            childScope.state.busy = false;
+                            childScope.alerts.httpError("Failed to save settings", data, status, headers, config, statusText);
+                            if (data && data.bindErrors) {
+                                childScope.bindErrors = data.bindErrors;
+                            }
+                            if (callbacks.error) {
+                                callbacks.error(data, status, headers, config, statusText);
+                            }
+                        }
                         return {
                             success: function(callback) {
                                 callbacks.success = callback;

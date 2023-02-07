@@ -85,22 +85,26 @@
                         url: $scope.contextPath + "/c/sources/logs",
                         method: "POST",
                         data: testSource
-                    }).success(function(data, status, headers, config) {
-                        $log.info("Got resolved logs: ", data);
+                    }).then(successCallback,errorCallback);
+                    function successCallback(response){
+                        //success code
+                        $log.info("Got resolved logs: ", response.data);
                         $scope.resolvingTestLogsInProgress = false;
-                        $scope.resolvedTestLogs = data;
-                    }).error(function(data, status, headers, config, statusText) {
+                        $scope.resolvedTestLogs = response.data;
+                    }
+                    function errorCallback(response){
+                        //error code
                         $scope.resolvingTestLogsError = true;
                         $scope.resolvingTestLogsInProgress = false;
-                        if (data && data.bindErrors) {
-                            $scope.bindErrors = data.bindErrors;
+                        if (response.data && response.data.bindErrors) {
+                            $scope.bindErrors = response.data.bindErrors;
                         }
-                    });
+                    }
                 };
 
                 $scope.testLogViewing = function () {
                     $uibModal.open({
-                      templateUrl: $scope.contextPath + '/ng/source/readerTest.html',
+                      templateUrl: $scope.contextPath + '/templates/sources/log/readerTest',
                       controller: 'ReaderTestCtrl',
                       size: 'lg',
                       windowClass: 'reader-test-modal',
@@ -165,18 +169,28 @@
                             method : "POST",
                             data: $scope.beanWrapper[0]
                         })
-                        .success(
-                            function(data, status, headers, config) {
-                                $scope.loadingPotentialFields = false;
-                                $scope.potentialFields = data;
-                                $log.info("Potential fields loaded: ", $scope.potentialFields);
-                            })
-                        .error(
-                            function(data, status, headers, config, statusText) {
-                                $scope.loadingPotentialFields = false;
-                                $scope.alerts.httpError("Failed to load known fields, please check the log source configuration", data, status, headers, config, statusText);
-                            }
-                        );
+                        .then(successCallback,errorCallback);
+                    function successCallback(response){
+                        //success code
+                        var data = response.data;
+                        var status = response.status;
+                        var statusText = response.statusText;
+                        var headers = response.headers;
+                        var config = response.config;
+                        $scope.loadingPotentialFields = false;
+                        $scope.potentialFields = data;
+                        $log.info("Potential fields loaded: ", $scope.potentialFields);
+                    }
+                    function errorCallback(response){
+                        //error code
+                        var data = response.data;
+                        var status = response.status;
+                        var statusText = response.statusText;
+                        var headers = response.headers;
+                        var config = response.config;
+                        $scope.loadingPotentialFields = false;
+                        $scope.alerts.httpError("Failed to load known fields, please check the log source configuration", data, status, headers, config, statusText);
+                    }
                 };
 
                 $scope.disableFieldsVisibility = function() {

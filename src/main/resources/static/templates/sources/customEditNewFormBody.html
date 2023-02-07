@@ -24,6 +24,7 @@
 	<th:block th:replace="templates/utils/ngNoteBindErrorsMessage::ngnotebinderrorsmessage"></th:block>
 
 	<!-- 공통 alert-->
+	<!--	message attribute 값을 읽어 보여줌-->
 	<th:block th:replace="templates/utils/messages::messages"></th:block>
 
 	<head th:insert="templates/sources/custumEditNewHead2Html::htmlHead2"></head>
@@ -168,7 +169,7 @@
 			<div class="col-md-12" us-spinner spinner-key="update">
 				<button type="button" class="btn btn-primary btn-sm" ng-disabled="form2.$invalid" ng-click="submit(form2)">[[#{${submitLabel}}]] </button>
 				<button type="button" class="btn btn-default btn-sm" ng-click="testLogViewing()" ng-disabled="form2.$invalid">
-					<i class="glyphicon glyphicon-check"></i> [[#{catlogging.common.form.test.view}]]</text>
+					<i class="glyphicon glyphicon-check"></i> [[#{catlogging.common.form.test.view}]]
 				</button>
 			</div>
 		</div>

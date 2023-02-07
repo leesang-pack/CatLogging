@@ -53,21 +53,18 @@ angular
         		method : "POST",
         		data: $scope.source
         	})
-        	.success(
-        		function(data, status, headers, config) {
-        		    $scope.busy = false;
-        		    $scope.logs = data;
-        		    $log.info("Logs loaded: ", $scope.logs);
-        		})
-        	.error(
-        		function(data, status, headers, config, statusText) {
-        		    $scope.busy = false;
-        		    $scope.alerts.httpError("Failed to resolve logs, please check the log source configuration", data, status, headers, config, statusText);
-        		}
-        	);
+			.then(successCallback, errorCallback);
+			function successCallback(response){
+				$scope.busy = false;
+				$scope.logs =  response.data;
+				$log.info("Logs loaded: ", $scope.logs);
+			}
+			function errorCallback(response){
+				$scope.busy = false;
+				$scope.alerts.httpError("Failed to resolve logs, please check the log source configuration", response.data, response.status, response.headers, response.config, response.statusText);
+			}
 	    };
-
-	    $scope.$watch('settings.testLog', function (newValue, oldValue) {
+		$scope.$watch('settings.testLog', function (newValue, oldValue) {
 		$log.info("Selected new log", newValue);
 		if ($scope.viwerInitialized) {
 		    $scope.settings.logPointer = {};

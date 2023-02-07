@@ -38,8 +38,8 @@ import com.catlogging.util.PageableResult;
 import com.catlogging.web.ViewController;
 import com.catlogging.web.controller.FlashMessage;
 import com.catlogging.web.controller.FlashMessage.MessageType;
-import com.catlogging.web.controller.exception.ActionViolationException;
-import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import com.catlogging.util.excption.ActionViolationException;
+import com.catlogging.util.excption.ResourceNotFoundException;
 
 /**
  * Controller to manage sniffers.
@@ -82,9 +82,12 @@ public class SnifferManageController extends SniffersBaseController {
 	}
 
 	@RequestMapping(value = "/sniffers/{snifferId}", method = RequestMethod.POST)
-	String redirectAfterUpdate(@PathVariable("snifferId") final long snifferId,
+	String redirectAfterUpdate(@PathVariable("snifferId") final long snifferId, final Locale locale,
 			final RedirectAttributes redirectAttrs) {
-		redirectAttrs.addFlashAttribute("message", "Changes applied successfully!");
+		final Sniffer sniffer = snifferPersistence.getSniffer(snifferId);
+		redirectAttrs.addFlashAttribute("message", new FlashMessage(MessageType.SUCCESS,
+				messageSource.getMessage("catlogging.sniffers.edited", new String[] { sniffer.getName() }, locale)));
+
 		return "redirect:{snifferId}";
 	}
 

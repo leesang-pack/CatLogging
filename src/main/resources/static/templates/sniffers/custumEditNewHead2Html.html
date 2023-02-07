@@ -62,7 +62,16 @@
                     $http({
                         url: sourcesUrl,
                         method: "GET"
-                    }).success(function(data, status, headers, config) {
+                    })
+                        .then(successCallback,errorCallback);
+                    function successCallback(response){
+                        //success code
+                        var data = response.data;
+                        var status = response.status;
+                        var statusText = response.statusText;
+                        var headers = response.headers;
+                        var config = response.config;
+
                         $log.info("Got available sources: length=" + data.length);
                         $scope.availableSources = data;
                         for(var i=0;i<$scope.availableSources.length;i++) {
@@ -74,10 +83,18 @@
                         };
                         $scope.sourceHelpInfo=null;
                         $scope.sourcesLoading = false;
-                    }).error(function(data, status, headers, config) {
+                    }
+                    function errorCallback(response){
+                        //error code
+                        var data = response.data;
+                        var status = response.status;
+                        var statusText = response.statusText;
+                        var headers = response.headers;
+                        var config = response.config;
+
                         $scope.sourcesLoading = false;
                         $scope.sourcesLoadingError = true;
-                    });
+                    }
                 };
                 $scope.loadSources();
 
@@ -107,7 +124,7 @@
 
                 $scope.testPublisher = function (publisher) {
                     $uibModal.open({
-                        templateUrl: $scope.contextPath + '/ng/sniffer/snifferTest.html',
+                        templateUrl: $scope.contextPath + '/templates/sniffers/event/snifferTest',
                         controller: 'SnifferTestCtrl',
                         size: 'lg',
                         windowClass: 'sniffer-test-modal',
@@ -141,7 +158,7 @@
 
                 $scope.testScanner = function () {
                     $uibModal.open({
-                        templateUrl: $scope.contextPath + '/ng/sniffer/snifferTest.html',
+                        templateUrl: $scope.contextPath + '/templates/sniffers/event/snifferTest',
                         controller: 'SnifferTestCtrl',
                         size: 'lg',
                         windowClass: 'sniffer-test-modal',

@@ -18,7 +18,6 @@
  *******************************************************************************/
 package com.catlogging.event.publisher;
 
-import com.catlogging.config.BeanConfigFactoryManager;
 import com.catlogging.config.BeanPostConstructor;
 import com.catlogging.config.ConfigException;
 import com.catlogging.config.PostConstructed;
@@ -29,21 +28,18 @@ import com.catlogging.validators.MailListConstraint;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.context.Context;
 
 import javax.validation.constraints.NotNull;
 
 /**
- * Publishes an event by sending a mail. The fields subject and text will be
- * rendered by {@link Velocity} with passed {@link Event} as "event" attribute.
- * 
+ * Publishes an event by sending a mail. The fields subject and text will thy
+ *
  * @author Tester
  * 
  */
@@ -54,15 +50,11 @@ public class MailPublisher implements Publisher, BeanPostConstructor<MailPublish
 
 	@Autowired
 	@JsonIgnore
-	private VelocityEngine velocityEngine;
-
-	@Autowired
-	@JsonIgnore
 	private MailSender mailSender;
 
 	@Autowired
 	@JsonIgnore
-	private VelocityEventRenderer velocityRenderer;
+	private EventRenderer renderer;
 
 	@NotNull
 	@MailListConstraint
@@ -86,11 +78,11 @@ public class MailPublisher implements Publisher, BeanPostConstructor<MailPublish
 	@Override
 	public void publish(final Event event) throws PublishException {
 		try {
-			final VelocityContext context = velocityRenderer.getContext(event);
+			final Context context = renderer.getContext(event);
 			final SimpleMailMessage email = new SimpleMailMessage();
 			email.setFrom(getFrom());
-			email.setSubject(velocityRenderer.render(getSubject(), context));
-			email.setText(velocityRenderer.render(getTextMessage(), context) + " ");
+			email.setSubject(renderer.render(getSubject(), context));
+			email.setText(renderer.render(getTextMessage(), context) + " ");
 			final String to2 = getTo();
 			email.setTo(to2.split(",|\\s"));
 			mailSender.send(email);
@@ -164,8 +156,7 @@ public class MailPublisher implements Publisher, BeanPostConstructor<MailPublish
 	@Override
 	public void postConstruct(final MailPublisher bean) throws ConfigException {
 		bean.mailSender = mailSender;
-		bean.velocityEngine = velocityEngine;
-		bean.velocityRenderer = velocityRenderer;
+		bean.renderer = renderer;
 	}
 
 }

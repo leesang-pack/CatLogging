@@ -58,9 +58,9 @@
                         </sup>
                     </a>
                 </li>
-                <div th:if="${isAuth}">
+                <th:block th:if="${isAuth}">
                     <li><a th:href="@{/logout}" > <i class="fa fa-sign-out"></i> </a></li>
-                </div>
+                </th:block>
             </ul>
         </div><!--/.nav-collapse -->
     </div>

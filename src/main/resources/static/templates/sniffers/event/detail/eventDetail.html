@@ -1,0 +1,61 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" >
+<th:block th:fragment="wrapper" th:with="v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'}">
+
+	<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+	<th:block th:replace="templates/sniffers/event/detail/customEventDetailBreadcrumb::breadcrumb"></th:block>
+
+	<div class="events" lsf-busy-container busy="state.busy">
+		<div mc-messages></div>
+
+		<uib-tabset ng-if="event">
+			<uib-tab heading="Event">
+				<div class="event log" ng-init="logMsgCharLimit=1024">
+					<div>
+						<h4>Fields</h4>
+						<lfs-fields-table fields="event" exclude-fields="['lf_entries']" include="['lf_startOffset']"></lfs-fields-table>
+					</div>
+					<h4>Log entries</h4>
+					<div ng-repeat="entry in event.lf_entries track by $index">
+						<div class="thumbnail desc" ng-if="entry.lf_raw">
+							<div class="text severity sc-{{entry.lf_severity.c}}">{{entry.lf_raw | cut:false:logMsgCharLimit:'...':expanded}}<div ng-show="entry.lf_raw.length>logMsgCharLimit"><a href="#" ng-click="expanded=!expanded" onclick="return false"><i class="glyphicon" ng-class="{'glyphicon-chevron-down':!expanded,'glyphicon-chevron-up':expanded}"></i> <span ng-if="!expanded">show more</span><span ng-if="expanded">show less</span></a></div></div>
+						</div>
+						<div class="well well-sm post-desc">
+							<div class="clearfix">
+								<div class="pull-left" style="position:absolute">
+									<a class="btn btn-default btn-xs" href="#" ng-click="zoomEntry({entry:entry})" onclick="return false"><i class="glyphicon glyphicon-zoom-in"></i> Show entry details</a>
+									<a class="btn btn-default btn-xs" href="{{contextPath}}/c/sources/{{event.lf_logSourceId}}/show?log={{event.lf_logPath | escape}}#?highlight=true&pointer={{entry.lf_startOffset.json | json:0 | escape}}"><i class="glyphicon glyphicon-list"></i> Open in log</a>
+								</div>
+								<div class="pull-right text-muted">
+									{{event.lf_logPath}}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</uib-tab>
+			<uib-tab heading="JSON">
+				<json-formatter json="event" open="2"></json-formatter>
+			</uib-tab>
+		</uib-tabset>
+	</div>
+</th:block>
+</html>

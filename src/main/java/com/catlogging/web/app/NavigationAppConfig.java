@@ -47,31 +47,31 @@ public class NavigationAppConfig {
 	@Bean(name = NAV_NODE_SYSTEM)
 	public NavNode systemNode() {
 
-		final NavNode systemNode = new NavNode("catlogging.nav.system", "static/snippets/system");
+		final NavNode systemNode = new NavNode("catlogging.nav.system", "static/templates/system/settings/general/system");
 
 		final NavNode general = new NavNode("catlogging.nav.generalSet", "general");
 		systemNode.addSubNode(general);
 		general.setPageContext(new NgPage("ng/system/settings/general/app.js",
 				"SystemSettingsGeneralModule",
 				"SystemSettingsGeneralController",
-				"ng/system/settings/general/main.html"));
+				"templates/system/settings/general/main"));
 
 		final NavNode elasticsearch = new NavNode("catlogging.nav.elastic", "elastic");
 		elasticsearch.setPageContext(new NgPage("ng/system/settings/elastic/app.js",
 				"SystemSettingsElasticModule",
 				"SystemSettingsElasticController",
-				"ng/system/settings/elastic/main.html"));
+				"templates/system/settings/elastic/main"));
 		systemNode.addSubNode(elasticsearch);
 
 		final NavNode notifications = new NavNode("catlogging.nav.notice", "notifications");
 		notifications.setPageContext(new NgPage("ng/system/notifications/app.js",
 				"SystemNotificationsModule",
 				"SystemNotificationsController",
-				"ng/system/notifications/main.html"));
+				"templates/system/notifications/main"));
 		systemNode.addSubNode(notifications);
 
 		final NavNode about = new NavNode("catlogging.nav.about", "about");
-		about.setPageContext(new NgTemplate("ng/system/about.html"));
+		about.setPageContext(new NgTemplate("templates/system/about"));
 		systemNode.addSubNode(about);
 
 		if(catloggingEnableAuth) {
@@ -79,7 +79,7 @@ public class NavigationAppConfig {
 			auth.setPageContext(new NgPage("ng/system/auth/app.js",
 					"SystemMemberModule",
 					"SystemMemberController",
-					"ng/system/auth/main.html"));
+					"templates/system/auth/main"));
 			systemNode.addSubNode(auth);
 		}
 		return systemNode;

@@ -24,7 +24,7 @@ import com.catlogging.event.EventPersistence.AspectEvent;
 import com.catlogging.event.EventPersistence.EventQueryBuilder;
 import com.catlogging.event.EventPersistence.NativeQueryBuilder;
 import com.catlogging.util.PageableResult;
-import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import com.catlogging.util.excption.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;

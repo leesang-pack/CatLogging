@@ -21,7 +21,6 @@ package com.catlogging.config;
 import com.catlogging.app.ContextProvider;
 import com.catlogging.config.ConfiguredBean.ConfiguredBeanDeserializer;
 import com.catlogging.util.value.ConfigInjector;
-import com.catlogging.web.wizard2.ConfigBeanWizard;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JsonDeserializer;

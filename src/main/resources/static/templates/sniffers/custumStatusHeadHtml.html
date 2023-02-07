@@ -51,7 +51,7 @@
                     $scope.reposition = function (statusIndex) {
                         var status = $scope.status[statusIndex];
                         var modalInstance = $uibModal.open({
-                            templateUrl: $scope.contextPath + '/ng/sniffer/statusReposition.html',
+                            templateUrl: $scope.contextPath + '/templates/sniffers/event/statusReposition',
                             controller: 'SnifferStatusRepositionCtrl',
                             size: 'lg',
                             scope: $scope,
@@ -72,15 +72,31 @@
                                     url: $scope.snifferPath + "/status/pointerOffset?log="+encodeURIComponent(status.log.path),
                                     method: "POST",
                                     data: pointer
-                                }).success(function(data, status, headers, config) {
+                                }).then(successCallback,errorCallback);
+                                function successCallback(response){
+                                    //success code
+                                    var data = response.data;
+                                    var status = response.status;
+                                    var statusText = response.statusText;
+                                    var headers = response.headers;
+                                    var config = response.config;
                                     $log.debug("Retrieved pointer offset", pointer, data);
                                     $scope.status[statusIndex] = data;
                                     $scope.status[statusIndex].startFromTail = false;
                                     $scope.status[statusIndex].startFromHead = false;
-                                }).error(function(data, status, headers, config, statusText) {
+
+                                }
+                                function errorCallback(response){
+                                    //error code
+                                    var data = response.data;
+                                    var status = response.status;
+                                    var statusText = response.statusText;
+                                    var headers = response.headers;
+                                    var config = response.config;
                                     $scope.status[statusIndex].busy = false;
                                     $scope.alerts.httpError("Failed to update log position", data, status, headers, config, statusText);
-                                });
+
+                                }
                             }
                         });
                     };
@@ -102,14 +118,31 @@
                             url: $scope.snifferPath + "/status/startFrom",
                             method: "POST",
                             data: startFrom
-                        }).success(function(data, status, headers, config) {
+                        })
+                            .then(successCallback,errorCallback);
+                        function successCallback(response){
+                            //success code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
                             $scope.busy = false;
                             $scope.scheduleInfo.scheduled = true;
                             $log.debug("Started sniffer");
-                        }).error(function(data, status, headers, config, statusText) {
+                        }
+                        function errorCallback(response){
+                            //error code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
                             $scope.busy = false;
                             $scope.alerts.httpError("Failed to start sniffer", data, status, headers, config, statusText);
-                        });
+                        }
                     };
 
                     $scope.stop = function() {
@@ -118,15 +151,32 @@
                         $http({
                             url: $scope.snifferPath + "/stop",
                             method: "POST"
-                        }).success(function(data, status, headers, config) {
+                        })
+                            .then(successCallback,errorCallback);
+                        function successCallback(response){
+                            //success code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
                             $scope.busy = false;
                             $log.info("Stopped sniffer");
                             $scope.scheduleInfo.scheduled = false;
                             $scope.reload();
-                        }).error(function(data, status, headers, config, statusText) {
+                        }
+                        function errorCallback(response){
+                            //error code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
                             $scope.busy = false;
                             $scope.alerts.httpError("Failed to stop sniffer. Try to reload first.", data, status, headers, config, statusText);
-                        });
+                        }
                     };
 
                     $scope.reload = function() {
@@ -135,15 +185,32 @@
                         $http({
                             url: $scope.snifferPath + "/status/summary",
                             method: "GET"
-                        }).success(function(data, status, headers, config) {
+                        })
+                            .then(successCallback,errorCallback);
+                        function successCallback(response){
+                            //success code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
                             $scope.busy = false;
                             $log.info("Got schedule and status info", data);
                             $scope.scheduleInfo = data.scheduleInfo;
                             $scope.status = data.logsStatus;
-                        }).error(function(data, status, headers, config, statusText) {
+                        }
+                        function errorCallback(response){
+                            //error code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
                             $scope.busy = false;
                             $scope.alerts.httpError("Failed to reload sniffer status information. Try to reload the page.", data, status, headers, config, statusText);
-                        });
+                        }
                     };
                 })
             .controller(

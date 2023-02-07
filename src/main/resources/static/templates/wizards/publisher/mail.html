@@ -38,9 +38,9 @@
 <div class="row">
 	<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::subject},'form-group col-md-6 required','subject')">
 		<th:block th:fragment="subject">
-			<lsf-info-label label="Subject:" for="subject">The mail subject is rendered using Velocity template engine and enables to include event data passed
+			<lsf-info-label label="Subject:" for="subject">The mail subject is rendered using Html template engine and enables to include event data passed
 				in attribute <code>event</code>.
-				<div ng-include="contextPath + '/ng/help/velocity4events.html?v='+version"></div>
+				<span th:replace="templates/help/htmlEngine4events::wrapper"></span>
 			</lsf-info-label>
 			<input type="text" name="subject" id="subject" ng-model="bean.subject" class="form-control" placeholder="Mail subject"
 				   required="required">
@@ -51,9 +51,9 @@
 <div class="row">
 	<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::textMessage},'form-group col-md-12','textMessage')">
 		<th:block th:fragment="textMessage">
-			<lsf-info-label label="Text:" for="textMessage">The mail text is rendered using Velocity template engine and enables to include event data passed
+			<lsf-info-label label="Text:" for="textMessage">The mail text is rendered using Html template engine and enables to include event data passed
 				in attribute <code>event</code>.
-				<div ng-include="contextPath + '/ng/help/velocity4events.html?v='+version"></div>
+				<span th:replace="templates/help/htmlEngine4events::wrapper"></span>
 			</lsf-info-label>
 			<textarea class="form-control" id="textMessage" rows="8" name="textMessage" ng-model="bean.textMessage" placeholder="Mail text"></textarea>
 		</th:block>

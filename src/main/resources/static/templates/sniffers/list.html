@@ -20,7 +20,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	  layout:decorate="templates/layouts/layout"
-	  th:with="title=#{catlogging.breadcrumb.sniffers},
+	  th:with="title=#{catlogging.common.sniffer},
       activeNavbar='sniffers',
       ngModules='SnifferListModule',
       isAuth=${catloggingProps['catlogging.enable.auth'] == 'true' ? true : false}"

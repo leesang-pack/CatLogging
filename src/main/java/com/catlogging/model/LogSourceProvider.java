@@ -20,7 +20,7 @@ package com.catlogging.model;
 
 import java.util.List;
 
-import com.catlogging.util.ReferenceIntegrityException;
+import com.catlogging.util.excption.ReferenceIntegrityException;
 
 /**
  * Provides registered {@link LogSource}s.

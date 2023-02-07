@@ -12,7 +12,6 @@
 	<artifactId>catlogging</artifactId>
 	<version>1.0.0</version>
 	<name>catlogging</name>
-	<packaging>war</packaging>
 	<description>catlogging project for Spring Boot</description>
 
 	<properties>
@@ -26,6 +25,7 @@
 			<properties>
 				<activatedProfile>NONE_QA</activatedProfile>
 				<activatedLog>release-Logback</activatedLog>
+				<activatedRemoteAccess>true</activatedRemoteAccess>
 				<activatedAuth>true</activatedAuth>
 			</properties>
 		</profile>
@@ -76,11 +76,6 @@
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 			<version>1.4.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity</artifactId>
-			<version>1.7</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

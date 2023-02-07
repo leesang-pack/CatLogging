@@ -72,15 +72,26 @@
                                 fields: viewerFields
                             }
                         })
-                        .success(
-                            function(data, status, headers, config) {
-                                $log.info("Viewer fields stored to profile settings");
-                            })
-                        .error(
-                            function(data, status, headers, config, statusText) {
-                                $scope.alerts.httpError("Failed to save viewer fields configuration", data, status, headers, config, statusText);
-                            }
-                        );
+                        .then(successCallback,errorCallback);
+                    function successCallback(response){
+                        //success code
+                        var data = response.data;
+                        var status = response.status;
+                        var statusText = response.statusText;
+                        var headers = response.headers;
+                        var config = response.config;
+                        $log.info("Viewer fields stored to profile settings");
+
+                    }
+                    function errorCallback(response){
+                        //error code
+                        var data = response.data;
+                        var status = response.status;
+                        var statusText = response.statusText;
+                        var headers = response.headers;
+                        var config = response.config;
+                        $scope.alerts.httpError("Failed to save viewer fields configuration", data, status, headers, config, statusText);
+                    }
                 });
             }
         );

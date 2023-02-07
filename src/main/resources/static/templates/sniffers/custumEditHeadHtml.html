@@ -26,7 +26,7 @@
             "SnifferEditController", ['$scope', '$http', '$location', '$anchorScroll', 'usSpinnerService', 'messageCenterService',
                 function($scope, $http, $location, $anchorScroll, usSpinnerService, messageCenterService) {
                     $scope.catlogging = catlogging;
-                    $scope.bindErrors=
+                    $scope.bindErrors= {
                         /*<![CDATA[*/
                         /*[+ [#th:block th:if="${#fields.hasErrors('*{errorForm.value}')}"] +]*/
                         /*[+    [#th:block th:each="err : ${#fields.errors('errorForm.value')}"] +]*/
@@ -34,6 +34,7 @@
                         /*[+    [/th:block] +]*/
                         /*[+ [/th:block] +]*/
                         /*]]>*/
+                    };
                     $scope.bean = [(${@jstlFunctionsLibraryBean.jsonify(activeSniffer)})];
                     $scope.beanWrapper = [$scope.bean];
                     $scope.scheduleInfo = {
@@ -56,21 +57,38 @@
                             url: "/c/sniffers/[(${activeSniffer.id})]",
                             method: "PUT",
                             data: data
-                        }).success(function(data, status, headers, config) {
+                        })
+                            .then(successCallback,errorCallback);
+                        function successCallback(response){
+                            //success code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
                             $("form#refresh").submit();
-                        }).error(function(data, status, headers, config) {
+                        }
+                        function errorCallback(response){
+                            //error code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
                             always();
                             if (data && data.bindErrors) {
                                 $scope.bindErrors = data.bindErrors;
                             } else {
                                 messageCenterService.add('danger', 'Failed to save changes: ' + status);
                             }
-                        });
+                        }
                     };
                 }
             ]);
     </script>
-    <script type="text/javascript" th:src="@{/ng/sniffer/snifferTest.js(v=${catloggingProps['catlogging.version']})}"></script>
+    <script type="text/javascript" th:src="@{/ng/sniffer/snifferTest.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
 
 </th:block>
 </html>

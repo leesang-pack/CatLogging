@@ -21,6 +21,7 @@ package com.catlogging.util.grok;
 import com.catlogging.fields.FieldBaseTypes;
 import com.catlogging.fields.FieldsHost;
 import com.catlogging.reader.FormatException;
+import com.catlogging.util.excption.GrokException;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonProperty;

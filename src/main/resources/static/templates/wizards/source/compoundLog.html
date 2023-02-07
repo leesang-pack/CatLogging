@@ -58,19 +58,28 @@ catloggingNgApp.controllerProvider.register(
 				$http({
 		        		url : $scope.contextPath + "/c/sources/"+sourceId+"/logs",
 		        		method : "GET"
-		        	})
-		       	.success(
-		       		function(data, status, headers, config) {
-		       		    $scope.busy = false;
-		       		 	$scope.logs[sourceId] = data;
-		       		    $log.info("Loaded logs for source: ", sourceId, data);
-		       		})
-		       	.error(
-		       		function(data, status, headers, config, statusText) {
-		       		    $scope.busy = false;
-		       		    $scope.alerts.httpError("Failed to load logs for source " + sourceId, data, status, headers, config, statusText);
-		       		}
-		       	);
+		        	}).then(successCallback,errorCallback);
+				function successCallback(response){
+					//success code
+					var data = response.data;
+					var status = response.status;
+					var statusText = response.statusText;
+					var headers = response.headers;
+					var config = response.config;
+					$scope.busy = false;
+					$scope.logs[sourceId] = data;
+					$log.info("Loaded logs for source: ", sourceId, data);
+				}
+				function errorCallback(response){
+					//error code
+					var data = response.data;
+					var status = response.status;
+					var statusText = response.statusText;
+					var headers = response.headers;
+					var config = response.config;
+					$scope.busy = false;
+					$scope.alerts.httpError("Failed to load logs for source " + sourceId, data, status, headers, config, statusText);
+				}
 			}
 		};
 
@@ -78,33 +87,44 @@ catloggingNgApp.controllerProvider.register(
 		$http({
         		url : $scope.contextPath + "/c/sources",
         		method : "GET"
-        	})
-       	.success(
-       		function(data, status, headers, config) {
-       		    $scope.busy = false;
-       		    $scope.sources = [];
-       		    for(var i=0;i<data.length;i++) {
-       		    	if (data[i].id == $scope.bean.id) {
-       		    		// Filter out current source
-       		    		continue;
-       		    	}
-       		    	var tmstField = catlogging.get(data[i], 'reader.fieldTypes.lf_timestamp');
-       		    	if (tmstField != "DATE") {
-       		    		// Filter out sources without timestamp field
-	       		    	$log.info("Source "+data[i].id+" is filtered out, because it has not a lf_timestamp field of type DATE: ", tmstField);
-       		    		continue;
-       		    	}
-       		    	$scope.sources.push(data[i]);
-       		    }
-       		    $log.info("Sources loaded: ", $scope.sources);
-       		})
-       	.error(
-       		function(data, status, headers, config, statusText) {
-       		    $scope.busy = false;
-       		    $scope.alerts.httpError("Failed to load log sources", data, status, headers, config, statusText);
-       		}
-       	);
-}]);
+        	}).then(successCallback,errorCallback);
+		function successCallback(response){
+			//success code
+			var data = response.data;
+			var status = response.status;
+			var statusText = response.statusText;
+			var headers = response.headers;
+			var config = response.config;
+			$scope.busy = false;
+			$scope.sources = [];
+			for(var i=0;i<data.length;i++) {
+				if (data[i].id == $scope.bean.id) {
+					// Filter out current source
+					continue;
+				}
+				var tmstField = catlogging.get(data[i], 'reader.fieldTypes.lf_timestamp');
+				if (tmstField != "DATE") {
+					// Filter out sources without timestamp field
+					$log.info("Source "+data[i].id+" is filtered out, because it has not a lf_timestamp field of type DATE: ", tmstField);
+					continue;
+				}
+				$scope.sources.push(data[i]);
+			}
+			$log.info("Sources loaded: ", $scope.sources);
+
+		}
+		function errorCallback(response){
+			//error code
+			var data = response.data;
+			var status = response.status;
+			var statusText = response.statusText;
+			var headers = response.headers;
+			var config = response.config;
+			$scope.busy = false;
+			$scope.alerts.httpError("Failed to load log sources", data, status, headers, config, statusText);
+
+		}
+	}]);
 catloggingNgApp.controllerProvider.register(
 	"CompoundSourcePartController", ['$scope', '$http', '$log',
 	function ($scope, $http, $log) {

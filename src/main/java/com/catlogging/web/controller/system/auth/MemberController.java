@@ -30,7 +30,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.util.ListUtils;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 
 @AllArgsConstructor
@@ -120,5 +122,21 @@ public class MemberController {
 
         Optional<Member> members = memberRepository.findByMemberId(member);
         return members.isPresent() ? Collections.singletonList(members.get()) : Collections.emptyList();
+    }
+
+    @PostConstruct
+    public void init(){
+        if(ListUtils.isEmpty(getMember("admin"))) {
+
+            log.info("[INIT] User setting... NotExist admin..");
+            Member member = Member.builder()
+                    .isAdmin(true)
+                    .password("admin")
+                    .memberId("admin")
+                    .build();
+            member.setPassword(passwordEncoder.encode(member.getPassword()));
+            memberRepository.save(member);
+        }
+
     }
 }

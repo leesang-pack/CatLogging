@@ -22,7 +22,7 @@ import com.catlogging.fields.FieldBaseTypes;
 import com.catlogging.model.*;
 import com.catlogging.model.support.BaseLogsSource;
 import com.catlogging.util.json.Views;
-import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import com.catlogging.util.excption.ResourceNotFoundException;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;

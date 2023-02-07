@@ -27,10 +27,10 @@
         <link th:href="@{/static/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
         <link th:href="@{/static/bootstrap/3.3.6/css/bootstrap-theme.min.css}" rel="stylesheet" />
         <script th:src="@{/static/jquery/jquery-1.9.1.min.js}"></script>
-        <script type="text/javascript" th:src="@{/static/angular/1.5.3/angular.min.js}"></script>
-        <script type="text/javascript" th:src="@{/static/angular/1.5.3/angular-route.min.js}"></script>
-        <script type="text/javascript" th:src="@{/static/angular/1.5.3/angular-animate.min.js}"></script>
-        <script type="text/javascript" th:src="@{/static/angular/1.5.3/angular-sanitize.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/angular/1.8.2/angular.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/angular/1.8.2/angular-route.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/angular/1.8.2/angular-animate.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/angular/1.8.2/angular-sanitize.min.js}"></script>
         <script type="text/javascript" th:src="@{/static/angular/1.3.2/angular-idle.min.js}"></script>
         <script th:src="@{/static/angular-ui/ui-bootstrap-tpls-1.3.2.min.js}"></script>
         <script type="text/javascript" th:src="@{/static/angular/message-center-master/message-center.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
@@ -73,24 +73,6 @@
                 /*[+ [/th:block] +]*/
                 /*]]>*/
                 ,'ngRoute', 'ngIdle']);
-
-            // catloggingNgApp.controller('controller', function($scope, $window, $http) {
-            //     $scope.countries = [];
-            //     $scope.getAllCC = function(){
-            //         $http({
-            //             method: 'GET',
-            //             url: 'http://localhost:8080/getAll'
-            //         }).then(function (success){
-            //             $scope.countries = success.data;
-            //             $scope.tablea = false;
-            //         },function (error){
-            //
-            //         });
-            //     }
-            //     $scope.download = function(){
-            //         $window.open("http://localhost:8080/downloadCsv");
-            //     }
-            // });
 
             catloggingNgApp.config(function($controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, IdleProvider, KeepaliveProvider)
             {
@@ -232,7 +214,7 @@
                 catlogging.ng.dateFilter = angular.injector(["ng"]).get("$filter")("date");
                 $scope.zoomEntry = function (context) {
                     $uibModal.open({
-                        templateUrl: $scope.contextPath + '/ng/entry/zoomEntry.html',
+                        templateUrl: $scope.contextPath + '/templates/entry/zoomEntry',
                         controller: 'ZoomLogEntryCtrl',
                         size: 'lg',
                         windowClass: 'zoom-entry-modal',

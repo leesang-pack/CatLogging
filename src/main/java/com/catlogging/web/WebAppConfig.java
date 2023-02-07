@@ -28,27 +28,23 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.type.MapType;
 import lombok.extern.slf4j.Slf4j;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ITemplateResolver;
 
 /**
  * Main web app config.
@@ -59,6 +55,37 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 @Slf4j
 @Configuration
 public class WebAppConfig implements WebMvcConfigurer {
+
+	/**
+	 * anglerjs에서 route사용 시 html말고 binding된 템플릿을 사용 시
+	 * 해당 html을 view에 등록해줘야함.
+	 * viewName으로 angler에서 접근함.
+	 * @return
+	 */
+	@Override
+	public void addViewControllers(ViewControllerRegistry registry) {
+		registry.addViewController("/templates/sniffers/event/detail/**").setViewName("templates/sniffers/event/detail/eventDetail"); //At here, you mapping the nick name and indicate the template is actually located under templates/pages
+		registry.addViewController("/templates/sniffers/event/list/**").setViewName("templates/sniffers/event/list/eventsList"); //At here, you mapping the nick name and indicate the template is actually located under templates/pages
+
+		//angler 1.5.3 route를 쓰지 않으면 단순 html load만됨.. angular 안태우고 직접호출 시에는 binding됨.
+		//1.8.2 bugfix
+		registry.addViewController("/templates/entry/logNavigationByDate").setViewName("templates/entry/logNavigationByDate");
+		registry.addViewController("/templates/entry/logPosition").setViewName("templates/entry/logPosition");
+		registry.addViewController("/templates/entry/logViewer").setViewName("templates/entry/logViewer");
+
+
+		// AE 'M' 이아닌 view들.. M은 코멘트 포함
+		registry.addViewController("/templates/utils/modelEditor").setViewName("templates/utils/modelEditor");
+		registry.addViewController("/templates/entry/viewerFieldsConfig").setViewName("templates/entry/viewerFieldsConfig");
+		registry.addViewController("/templates/entry/zoomEntry").setViewName("templates/entry/zoomEntry");
+		registry.addViewController("/templates/help/listGroks").setViewName("templates/help/listGroks");
+		registry.addViewController("/templates/sources/log/readerTest").setViewName("templates/sources/log/readerTest");
+		registry.addViewController("/templates/sniffers/event/snifferTest").setViewName("templates/sniffers/event/snifferTest");
+		registry.addViewController("/templates/sniffers/event/statusReposition").setViewName("templates/sniffers/event/statusReposition");
+		registry.addViewController("/templates/sniffers/event/statusRepositionZoomBottomBar").setViewName("templates/sniffers/event/statusRepositionZoomBottomBar");
+
+		registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+	}
 
 	/**
 	 * static 말고 view 딴에서 추가적인 url이 필요 시에 다음과 같이 설정해야함

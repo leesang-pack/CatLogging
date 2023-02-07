@@ -412,6 +412,38 @@ you should explictly set the time zone it’s meant to refer to.'),
 ('ko','catlogging.common.sniffer','감시'),
 ('zh','catlogging.common.sniffer','观察者'),
 
+('en','catlogging.common.forward','forward'),
+('ko','catlogging.common.forward','앞부터'),
+('zh','catlogging.common.forward','向前'),
+
+('en','catlogging.common.backward','backward'),
+('ko','catlogging.common.backward','뒤부터'),
+('zh','catlogging.common.backward','落后'),
+
+('en','catlogging.common.Logposition','Log position'),
+('ko','catlogging.common.Logposition','로그 위치'),
+('zh','catlogging.common.Logposition','日志位置'),
+
+('en','catlogging.common.Time','Time'),
+('ko','catlogging.common.Time','시간'),
+('zh','catlogging.common.Time','时间'),
+
+('en','catlogging.common.Date','Date'),
+('ko','catlogging.common.Date','날짜'),
+('zh','catlogging.common.Date','日期'),
+
+('en','catlogging.common.Apply','Apply'),
+('ko','catlogging.common.Apply','적용'),
+('zh','catlogging.common.Apply','申请'),
+
+('en','catlogging.common.Fields','Fields'),
+('ko','catlogging.common.Fields','메세지 필드'),
+('zh','catlogging.common.Fields','消息字段'),
+
+('en','catlogging.common.Close','Close'),
+('ko','catlogging.common.Close','닫기'),
+('zh','catlogging.common.Close','关闭'),
+
 ('en','catlogging.common.list.text.1','You have not created any observer'),
 ('ko','catlogging.common.list.text.1','이벤트 감시자를 만들지 않았습니다.'),
 ('zh','catlogging.common.list.text.1','我没有创建事件观察者.'),
@@ -602,6 +634,10 @@ field (e.g. using the timestamp filter).'),
 ('ko','catlogging.source.deleted','로그 소스 "{0}" 성공적으로 삭제되었습니다!'),
 ('zh','catlogging.source.deleted','日志源 "{0}" 删除成功！'),
 
+('en','catlogging.source.edited','Log source "{0}" edited successfully!'),
+('ko','catlogging.source.edited','로그 소스 "{0}" 성공적으로 수정되었습니다!'),
+('zh','catlogging.source.edited','日志源 "{0}" 修复成功！'),
+
 -- # Sniffers
 ('en','catlogging.sniffers.positioning.show','Shows the current monitoring position in the logs'),
 ('ko','catlogging.sniffers.positioning.show','로그에서 현재 모니터링 위치를 보여줍니다'),
@@ -619,9 +655,21 @@ field (e.g. using the timestamp filter).'),
 ('ko','catlogging.sniffers.scheduled.false','비활성화'),
 ('zh','catlogging.sniffers.scheduled.false','停止'),
 
-('en','catlogging.sniffers.deleted','Logger "{0}" deleted successfully!'),
-('ko','catlogging.sniffers.deleted','로거 "{0}" 성공적으로 삭제되었습니다!'),
-('zh','catlogging.sniffers.deleted','记录器 "{0}" 删除成功！'),
+('en','catlogging.sniffers.zoom.before','set position before'),
+('ko','catlogging.sniffers.zoom.before','뒤로 오프셋이동'),
+('zh','catlogging.sniffers.zoom.before','设置位置之前'),
+
+('en','catlogging.sniffers.zoom.after','set position after'),
+('ko','catlogging.sniffers.zoom.after','앞으로 오프셋이동'),
+('zh','catlogging.sniffers.zoom.after','设置位置之后'),
+
+('en','catlogging.sniffers.deleted','Observer "{0}" deleted successfully!'),
+('ko','catlogging.sniffers.deleted','감시 "{0}" 성공적으로 삭제되었습니다!'),
+('zh','catlogging.sniffers.deleted','观察者 "{0}" 删除成功！'),
+
+('en','catlogging.sniffers.edited','Observer "{0}" edited successfully!'),
+('ko','catlogging.sniffers.edited','감시 "{0}" 성공적으로 수정되었습니다!'),
+('zh','catlogging.sniffers.edited','观察者 "{0}" 修复成功！'),
 
 -- # Labels
 ('en','catlogging.type.com.catlogging.event.Event','Event'),
@@ -647,7 +695,9 @@ field (e.g. using the timestamp filter).'),
 ('zh','catlogging.exception.refintg.short','删除错误'),
 
 ('en','catlogging.exception.refintg.detail','{0} couldn''t be deleted due to references. To continue you have first to check for references and to remove these.'),
-('ko','catlogging.exception.refintg.detail','{0} 은(는) 참조로 인해 삭제할 수 없습니다. 계속하려면 먼저 참조를 확인하고 제거해야 합니다.'),
+('ko','catlogging.exception.refintg.detail','{0} 은(는) 참조로 인해 삭제할 수 없습니다. 계속하려면 먼저 참조를 확인하고 제거해야 합니다.
+{1}
+'),
 ('zh','catlogging.exception.refintg.detail','{0} 由于引用无法删除. 要继续，您必须先检查引用并删除它们.'),
 
 -- # Breadcrumb
@@ -658,10 +708,6 @@ field (e.g. using the timestamp filter).'),
 ('en','catlogging.breadcrumb.sources','Log sources'),
 ('ko','catlogging.breadcrumb.sources','로그 소스'),
 ('zh','catlogging.breadcrumb.sources','日志源'),
-
-('en','catlogging.breadcrumb.sniffers','Logger'),
-('ko','catlogging.breadcrumb.sniffers','로거'),
-('zh','catlogging.breadcrumb.sniffers','记录器'),
 
 ('en','catlogging.breadcrumb.reports','Dashboards'),
 ('ko','catlogging.breadcrumb.reports','대시보드'),

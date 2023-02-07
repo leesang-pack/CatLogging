@@ -18,6 +18,7 @@
  *******************************************************************************/
 package com.catlogging.util.grok;
 
+import com.catlogging.util.excption.GrokException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

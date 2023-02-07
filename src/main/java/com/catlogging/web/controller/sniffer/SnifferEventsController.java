@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.catlogging.event.Event;
 import com.catlogging.event.EventPersistence;
 import com.catlogging.web.ViewController;
-import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import com.catlogging.util.excption.ResourceNotFoundException;
 
 /**
  * Events controller for a sniffer.

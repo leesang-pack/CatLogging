@@ -64,22 +64,33 @@ angular
 				 method : "POST",
 				 data: $scope.members[$index]
 			 })
-				 .success(
-					 function(data, status, headers, config) {
-						 $scope.state.busy = false;
-                         if(data.type == 'success') {
-                             $scope.alerts.success(data.message);
-                         }else{
-                             $scope.alerts.warn(data.message);
-                         }
-					 }
-				 )
-				 .error(
-					 function(data, status, headers, config, statusText) {
-						 $scope.state.busy = false;
-						 $scope.alerts.httpError("Failed to Delete Member", data, status, headers, config, statusText);
-					 }
-				 );
+				 .then(successCallback,errorCallback);
+			 function successCallback(response){
+				 //success code
+				 var data = response.data;
+				 var status = response.status;
+				 var statusText = response.statusText;
+				 var headers = response.headers;
+				 var config = response.config;
+				 $scope.state.busy = false;
+				 if(data.type == 'success') {
+					 $scope.alerts.success(data.message);
+				 }else{
+					 $scope.alerts.warn(data.message);
+				 }
+
+			 }
+			 function errorCallback(response){
+				 //error code
+				 var data = response.data;
+				 var status = response.status;
+				 var statusText = response.statusText;
+				 var headers = response.headers;
+				 var config = response.config;
+
+				 $scope.state.busy = false;
+				 $scope.alerts.httpError("Failed to Delete Member", data, status, headers, config, statusText);
+			 }
 
 			 $scope.members.splice($index, 1);
 		 }
@@ -102,22 +113,33 @@ angular
 				 method : "POST",
 				 data: $scope.members[$index]
 			 })
-				 .success(
-					 function(data, status, headers, config) {
-						 $scope.state.busy = false;
-                         if(data.type == 'success') {
-                             $scope.alerts.success(data.message);
-                         }else{
-                             $scope.alerts.warn(data.message);
-                         }
-					 }
-				 )
-				 .error(
-					 function(data, status, headers, config, statusText) {
-						 $scope.state.busy = false;
-						 $scope.alerts.httpError("Failed to Add Member", data, status, headers, config, statusText);
-					 }
-				 );
+				 .then(successCallback,errorCallback);
+			 function successCallback(response){
+				 //success code
+				 var data = response.data;
+				 var status = response.status;
+				 var statusText = response.statusText;
+				 var headers = response.headers;
+				 var config = response.config;
+				 $scope.state.busy = false;
+				 if(data.type == 'success') {
+					 $scope.alerts.success(data.message);
+				 }else{
+					 $scope.alerts.warn(data.message);
+				 }
+
+			 }
+			 function errorCallback(response){
+				 //error code
+				 var data = response.data;
+				 var status = response.status;
+				 var statusText = response.statusText;
+				 var headers = response.headers;
+				 var config = response.config;
+
+				 $scope.state.busy = false;
+				 $scope.alerts.httpError("Failed to Add Member", data, status, headers, config, statusText);
+			 }
 		 };
 
 	 }]

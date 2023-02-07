@@ -28,7 +28,7 @@ import com.catlogging.event.SnifferPersistence;
 import com.catlogging.event.SnifferScheduler;
 import com.catlogging.model.LogSource;
 import com.catlogging.model.LogSourceProvider;
-import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import com.catlogging.util.excption.ResourceNotFoundException;
 
 /**
  * Base class for sniffer related controllers.

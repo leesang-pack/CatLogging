@@ -48,78 +48,102 @@ angular
         		url : $scope.contextPath + "/c/sources/" + $scope.source.id + "/logs",
         		method : "GET"
         	})
-        	.success(
-        		function(data, status, headers, config) {
-        		    $scope.logs = data;
-        		    $log.info("Log loaded: ", $scope.logs);
-        		    // always();
-        		})
-        	.error(
-        		function(data, status, headers, config) {
-        		    // TODO
-        		}
-        	);
-	    };
-	    $scope.$watch('settings.testLog', function (newValue, oldValue) {
-		$log.info("Selected new log", newValue);
-		if ($scope.viwerInitialized) {
-		    $scope.settings.logPointer = {};
-		}
-		if (newValue) {
-		    if ($scope.viwerInitialized) {
-			$timeout(function() { $scope.$broadcast('resetLogViewer'); });
-		    }
-		    $scope.viwerInitialized = true;
-		}
-	    });
-
-	    $scope.searchFound = function(searchResult) {
-		$log.info("Found event: ", searchResult.event);
-		$scope.event = searchResult.event;
-	    };
-	    
-	    $scope.publish = function() {
-		$scope.publishing = true;
-		$scope.publishingTabActive = true;
-		$scope.publishingResult = null;
-		if ($scope.event) {
-		    $log.info("Testing publisher for event: ", publisher, $scope.event);
-		    $http({
-	        	url : $scope.contextPath + "/c/publishers/test",
-	        	method : "POST",
-	        	data : {
-	        	    publisher: publisher,
-	        	    event: $scope.event,
-	        	    snifferId: sniffer && sniffer.id ? sniffer.id : 'not-saved',
-	                    logSourceId: source.id,
-	                    logPath: $scope.settings.testLog.path
-	        	}
-		    })
-		    .success(
-			    function(data, status, headers, config) {
-				$scope.publishing = false;
+			.then(successCallback,errorCallback);
+			function successCallback(response){
+				//success code
+				var data = response.data;
+				var status = response.status;
+				var statusText = response.statusText;
+				var headers = response.headers;
+				var config = response.config;
+				$scope.logs = data;
 				$log.info("Log loaded: ", $scope.logs);
-				$scope.publishingResult = {
-					status : 'success'
-				};
-			    })
-		    .error(
-			    function(data, status, headers, config) {
-				$scope.publishing = false;
-				$scope.publishingResult = {
-					status : 'error'
-				};
-	        		if (status == 409) {
-	        		    $log.warn("Failed to publish", data);
-	        		    $scope.publishingResult.message = data;
-	        		} else {
-	        		    $scope.publishingResult.message = "Error: " + status;
-	        		}
-			    }
-		    );
-		}
-	    };
+				// always();
 
-	    $scope.loadLogs();
+			}
+			function errorCallback(response){
+				//error code
+				var data = response.data;
+				var status = response.status;
+				var statusText = response.statusText;
+				var headers = response.headers;
+				var config = response.config;
+
+				// TODO
+			}
+		};
+		$scope.$watch('settings.testLog', function (newValue, oldValue) {
+			$log.info("Selected new log", newValue);
+			if ($scope.viwerInitialized) {
+				$scope.settings.logPointer = {};
+			}
+			if (newValue) {
+				if ($scope.viwerInitialized) {
+					$timeout(function() { $scope.$broadcast('resetLogViewer'); });
+				}
+				$scope.viwerInitialized = true;
+			}
+		});
+
+		$scope.searchFound = function(searchResult) {
+			$log.info("Found event: ", searchResult.event);
+			$scope.event = searchResult.event;
+		};
+
+		$scope.publish = function() {
+			$scope.publishing = true;
+			$scope.publishingTabActive = true;
+			$scope.publishingResult = null;
+			if ($scope.event) {
+				$log.info("Testing publisher for event: ", publisher, $scope.event);
+				$http({
+					url : $scope.contextPath + "/c/publishers/test",
+					method : "POST",
+					data : {
+						publisher: publisher,
+						event: $scope.event,
+						snifferId: sniffer && sniffer.id ? sniffer.id : 'not-saved',
+						logSourceId: source.id,
+						logPath: $scope.settings.testLog.path
+					}
+				})
+					.then(successCallback,errorCallback);
+				function successCallback(response){
+					//success code
+					var data = response.data;
+					var status = response.status;
+					var statusText = response.statusText;
+					var headers = response.headers;
+					var config = response.config;
+					$scope.publishing = false;
+					$log.info("Log loaded: ", $scope.logs);
+					$scope.publishingResult = {
+						status : 'success'
+					};
+
+				}
+				function errorCallback(response){
+					//error code
+					var data = response.data;
+					var status = response.status;
+					var statusText = response.statusText;
+					var headers = response.headers;
+					var config = response.config;
+					$scope.publishing = false;
+					$scope.publishingResult = {
+						status : 'error'
+					};
+					if (status == 409) {
+						$log.warn("Failed to publish", data);
+						$scope.publishingResult.message = data;
+					} else {
+						$scope.publishingResult.message = "Error: " + status;
+					}
+
+				}
+			}
+		};
+
+		$scope.loadLogs();
 	}]
 );

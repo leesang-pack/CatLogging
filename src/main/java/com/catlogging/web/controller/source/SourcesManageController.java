@@ -35,11 +35,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.catlogging.util.ReferenceIntegrityException;
+import com.catlogging.util.excption.ReferenceIntegrityException;
 import com.catlogging.web.ViewController;
 import com.catlogging.web.controller.FlashMessage;
 import com.catlogging.web.controller.FlashMessage.MessageType;
-import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import com.catlogging.util.excption.ResourceNotFoundException;
 
 @Slf4j
 @ViewController
@@ -73,9 +73,12 @@ public class SourcesManageController {
 	}
 
 	@RequestMapping(value = "/sources/{logSource}", method = RequestMethod.POST)
-	String redirectAfterUpdate(@PathVariable("logSource") final long logSourceId,
-			final RedirectAttributes redirectAttrs) {
-		redirectAttrs.addFlashAttribute("message", "Changes applied successfully!");
+	String redirectAfterUpdate(@PathVariable("logSource") final long logSourceId, final Locale locale,
+			final RedirectAttributes redirectAttrs) throws ResourceNotFoundException {
+
+		final LogSource<?> source = getAndBindActiveSource(logSourceId, null);
+		redirectAttrs.addFlashAttribute("message", new FlashMessage(MessageType.SUCCESS,
+				messageSource.getMessage("catlogging.source.edited", new String[] { source.getName() }, locale)));
 		return "redirect:{logSource}";
 	}
 

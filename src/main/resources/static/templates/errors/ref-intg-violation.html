@@ -16,16 +16,17 @@
 <!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
 <!--*******************************************************************************/-->
 
+<!--액션 시 조건에 부합되지 않을경우(디비의 관계중 먼저삭제해야할것일 있을경우) -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	  layout:decorate="templates/layouts/layout"
-	  th:with="title=#{catlogging.exception.404.short(#{catlogging.type.__${ex.resourceType.name}__})},
+	  th:with="title=#{catlogging.exception.refintg.short(#{catlogging.type.__${ex.resourceType.name}__})},
       activeNavbar='',
       ngModules='',
       isAuth=${not #maps.isEmpty(catloggingProps) and catloggingProps['catlogging.enable.auth'] == 'true' ? true : false},
-      errorShort=#{catlogging.exception.404.short(#{catlogging.type.__${ex.resourceType.name}__})},
-      errorDetail=#{catlogging.exception.404.detail(#{catlogging.type.__${ex.resourceType.name}__},${ex.id})}"
+      errorShort=#{catlogging.exception.refintg.short(#{catlogging.type.__${ex.resourceType.name}__})},
+      errorDetail=#{catlogging.exception.refintg.detail(#{catlogging.type.__${ex.resourceType.name}__})}"
 >
 
 <!-- 삽입될 각 개별적인 영역을 작성 -->

@@ -25,7 +25,7 @@ import com.catlogging.model.LogPointer;
 import com.catlogging.model.LogRawAccess;
 import com.catlogging.model.LogSource;
 import com.catlogging.web.ViewController;
-import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import com.catlogging.util.excption.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.springframework.ui.Model;

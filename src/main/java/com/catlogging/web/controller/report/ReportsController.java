@@ -39,7 +39,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.catlogging.web.ViewController;
-import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import com.catlogging.util.excption.ResourceNotFoundException;
 
 @ViewController
 public class ReportsController {

@@ -21,7 +21,7 @@ package com.catlogging.event.publisher.http;
 import com.catlogging.config.PostConstructed;
 import com.catlogging.event.Event;
 import com.catlogging.event.Publisher;
-import com.catlogging.event.publisher.VelocityEventRenderer;
+import com.catlogging.event.publisher.EventRenderer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.extern.slf4j.Slf4j;
@@ -37,9 +37,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.message.AbstractHttpMessage;
 import org.apache.http.protocol.HttpContext;
-import org.apache.velocity.VelocityContext;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.http.HttpMethod;
+import org.thymeleaf.context.Context;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -50,7 +50,7 @@ import java.util.Map;
 @PostConstructed(constructor = HttpPublisherConfigurer.class)
 public class HttpPublisher implements Publisher {
 	@JsonIgnore
-	private VelocityEventRenderer velocityRenderer;
+	private EventRenderer renderer;
 
 	@JsonIgnore
 	private HttpClient httpClient;
@@ -83,8 +83,8 @@ public class HttpPublisher implements Publisher {
 
 	@Override
 	public void publish(final Event event) throws PublishException {
-		VelocityContext vCtx = velocityRenderer.getContext(event);
-		String eventUrl = velocityRenderer.render(url, vCtx);
+		Context context = renderer.getContext(event);
+		String eventUrl = renderer.render(url, context);
 		HttpRequestBase request = null;
 		switch (method) {
 		case GET:
@@ -92,11 +92,11 @@ public class HttpPublisher implements Publisher {
 			break;
 		case POST:
 			request = new HttpPost(eventUrl);
-			addBody((HttpPost) request, vCtx);
+			addBody((HttpPost) request, context);
 			break;
 		case PUT:
 			request = new HttpPut(eventUrl);
-			addBody((HttpPut) request, vCtx);
+			addBody((HttpPut) request, context);
 			break;
 		case DELETE:
 			request = new HttpDelete(eventUrl);
@@ -116,41 +116,38 @@ public class HttpPublisher implements Publisher {
 		}
 		httpAddons(request, event);
 		try {
-			log.debug("Publishing event {} via HTTP '{}'", event.getId(),
-					request);
+			log.debug("Publishing event {} via HTTP '{}'", event.getId(), request);
 			HttpResponse response = httpClient.execute(request, httpContext);
 			if (response.getStatusLine().getStatusCode() >= 200
 					&& response.getStatusLine().getStatusCode() < 300) {
-				log.debug(
-						"Published event {} successfuly via HTTP '{}' with status: {}",
-						event.getId(), request, response.getStatusLine()
-								.getStatusCode());
+				log.debug("Published event {} successfuly via HTTP '{}' with status: {}",
+						event.getId(), request, response.getStatusLine().getStatusCode());
 
 			} else {
 				log.warn(
 						"Failed to publish event {} via HTTP '{}' due to status: {} - {}",
-						event.getId(), request, response.getStatusLine()
-								.getStatusCode(), response.getStatusLine()
-								.getReasonPhrase());
+						event.getId(),
+						request,
+						response.getStatusLine().getStatusCode(),
+						response.getStatusLine().getReasonPhrase());
 				throw new PublishException(
-						"Got errornuous HTTP status for pubslihed event: "
-								+ response.getStatusLine().getStatusCode());
+						"Got errornuous HTTP status for pubslihed event: " + response.getStatusLine().getStatusCode());
 			}
 		} catch (Exception e) {
-			throw new PublishException("Failed to publish event "
-					+ event.getId() + " via HTTP", e);
+			throw new PublishException("Failed to publish event " + event.getId() + " via HTTP", e);
 		}
 	}
 
-	protected void addBody(final HttpEntityEnclosingRequestBase request,
-			final VelocityContext vCtx) {
-		request.setEntity(new StringEntity(body != null ? velocityRenderer
-				.render(body, vCtx) : "", ContentType.create(bodyMimeType,
-				"UTF-8")));
+	protected void addBody(final HttpEntityEnclosingRequestBase request, final Context vCtx) {
+		request.setEntity(new StringEntity(
+				body != null ?
+						renderer.render(body, vCtx)
+						:
+						"",
+				ContentType.create(bodyMimeType, "UTF-8")));
 	}
 
-	protected void httpAddons(final AbstractHttpMessage httpMessage,
-			final Event event) {
+	protected void httpAddons(final AbstractHttpMessage httpMessage, final Event event) {
 		if (headers != null) {
 			for (String headerKey : headers.keySet()) {
 				httpMessage.addHeader(headerKey, headers.get(headerKey));
@@ -221,14 +218,13 @@ public class HttpPublisher implements Publisher {
 	/**
 	 * Init method for this publisher.
 	 * 
-	 * @param velocityRenderer
-	 *            the velocityRenderer to set
+	 * @param renderer
+	 *            the renderer to set
 	 * @param httpClient
 	 *            http client
 	 */
-	protected void init(final VelocityEventRenderer velocityRenderer,
-			final HttpClient httpClient) {
-		this.velocityRenderer = velocityRenderer;
+	protected void init(final EventRenderer renderer, final HttpClient httpClient) {
+		this.renderer = renderer;
 		this.httpClient = httpClient;
 		if (getHttpAuthentication() != null) {
 			CredentialsProvider credsProvider = new BasicCredentialsProvider();

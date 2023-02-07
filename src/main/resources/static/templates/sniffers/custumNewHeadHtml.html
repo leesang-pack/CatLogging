@@ -26,7 +26,7 @@
             "SnifferEditController", ['$scope', '$http', '$location', '$anchorScroll', 'usSpinnerService', '$window',
                 function($scope, $http, $location, $anchorScroll, usSpinnerService, $window) {
                     $scope.catlogging = catlogging;
-                    $scope.bindErrors=
+                    $scope.bindErrors= {
                         /*<![CDATA[*/
                         /*[+ [#th:block th:if="${#fields.hasErrors('*{errorForm.value}')}"] +]*/
                         /*[+    [#th:block th:each="err : ${#fields.errors('errorForm.value')}"] +]*/
@@ -34,6 +34,7 @@
                         /*[+    [/th:block] +]*/
                         /*[+ [/th:block] +]*/
                         /*]]>*/
+                    };
                     $scope.bean = {
                         "@type": "sniffer",
                         "scanner": {
@@ -41,8 +42,6 @@
                             "filters": []
                         }
                     };
-                    // $scope.bean = [(${@jstlFunctionsLibraryBean.jsonify(activeSniffer)})];
-                    $scope.beanWrapper = [$scope.bean];
 
                     $scope.submit = function(form) {
                         $(".backdrop-overlay").show();
@@ -59,14 +58,31 @@
                             url: "/c/sniffers",
                             method: "POST",
                             data: data
-                        }).success(function(data, status, headers, config) {
+                        })
+                            .then(successCallback,errorCallback);
+                        function successCallback(response){
+                            //success code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
                             $window.location = "/c/sniffers/" + data + "?created=true";
-                        }).error(function(data, status, headers, config) {
+                        }
+                        function errorCallback(response){
+                            //error code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+
                             always();
                             if (data && data.bindErrors) {
                                 $scope.bindErrors = data.bindErrors;
                             }
-                        });
+                        }
                     };
                 }
             ]);

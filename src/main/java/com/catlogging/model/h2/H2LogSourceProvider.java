@@ -26,7 +26,7 @@ import com.catlogging.model.LogSource;
 import com.catlogging.model.LogSource.LogSourceWrapper;
 import com.catlogging.model.LogSourceProvider;
 import com.catlogging.model.support.BaseLogsSource;
-import com.catlogging.util.ReferenceIntegrityException;
+import com.catlogging.util.excption.ReferenceIntegrityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;

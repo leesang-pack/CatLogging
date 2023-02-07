@@ -39,26 +39,37 @@ angular
 				 url : $scope.contextPath + "/c/system/settings/general",
 				 method : "GET"
 			 })
-			 .success(
-				 function(data, status, headers, config) {
-					 $scope.settings = data;
-					 $log.info("Settings loaded", data);
-					 if (!$scope.settings.httpProxy || !$scope.settings.httpProxy.host) {
-						 $scope.settings.httpProxy = null;
-						 $scope.state.httpProxyEnabled = false;
-					 } else {
-						 $scope.state.httpProxyEnabled = true;
-					 }
-					 $scope.state.busy = false;
+				 .then(successCallback,errorCallback);
+			 function successCallback(response){
+				 //success code
+				 var data = response.data;
+				 var status = response.status;
+				 var statusText = response.statusText;
+				 var headers = response.headers;
+				 var config = response.config;
+
+				 $scope.settings = data;
+				 $log.info("Settings loaded", data);
+				 if (!$scope.settings.httpProxy || !$scope.settings.httpProxy.host) {
+					 $scope.settings.httpProxy = null;
+					 $scope.state.httpProxyEnabled = false;
+				 } else {
+					 $scope.state.httpProxyEnabled = true;
 				 }
-			 )
-			 .error(
-				 function(data, status, headers, config, statusText) {
-					 $scope.state.busy = false;
-					 $scope.alerts.httpError("Failed to load settings", data, status, headers, config, statusText);
-				 }
-			 );
-	     };
+				 $scope.state.busy = false;
+			 }
+			 function errorCallback(response){
+				 //error code
+				 var data = response.data;
+				 var status = response.status;
+				 var statusText = response.statusText;
+				 var headers = response.headers;
+				 var config = response.config;
+
+				 $scope.state.busy = false;
+				 $scope.alerts.httpError("Failed to load settings", data, status, headers, config, statusText);
+			 }
+		 };
 	     
 	     $scope.save = function() {
 			 $scope.state.busy = true;
@@ -72,22 +83,33 @@ angular
 				 method : "POST",
 				 data: $scope.settings
 			 })
-			 .success(
-				 function(data, status, headers, config) {
-					 $log.info("Settings saved");
-					 $scope.state.busy = false;
-					 $scope.alerts.success("Changes applied successfully");
+				 .then(successCallback,errorCallback);
+			 function successCallback(response){
+				 //success code
+				 var data = response.data;
+				 var status = response.status;
+				 var statusText = response.statusText;
+				 var headers = response.headers;
+				 var config = response.config;
+				 $log.info("Settings saved");
+				 $scope.state.busy = false;
+				 $scope.alerts.success("Changes applied successfully");
+
+			 }
+			 function errorCallback(response){
+				 //error code
+				 var data = response.data;
+				 var status = response.status;
+				 var statusText = response.statusText;
+				 var headers = response.headers;
+				 var config = response.config;
+
+				 $scope.state.busy = false;
+				 $scope.alerts.httpError("Failed to save settings", data, status, headers, config, statusText);
+				 if (data && data.bindErrors) {
+					 $scope.bindErrors = data.bindErrors;
 				 }
-			 )
-			 .error(
-				 function(data, status, headers, config, statusText) {
-					 $scope.state.busy = false;
-					 $scope.alerts.httpError("Failed to save settings", data, status, headers, config, statusText);
-					 if (data && data.bindErrors) {
-						 $scope.bindErrors = data.bindErrors;
-					 }
-				 }
-			 );
+			 }
 	     };
 	     
 	     // Init

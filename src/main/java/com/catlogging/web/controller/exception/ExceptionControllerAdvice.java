@@ -1,7 +1,6 @@
 /*******************************************************************************
  * catlogging, open source tool for viewing, monitoring and analysing log data.
  * Copyright (c) 2021 xzpluszone, www.catlogging.com
- * Copyright (c) 2015 Scaleborn UG, www.scaleborn.com
  *
  * catlogging is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +17,9 @@
  *******************************************************************************/
 package com.catlogging.web.controller.exception;
 
-import com.catlogging.util.ReferenceIntegrityException;
+import com.catlogging.util.excption.ActionViolationException;
+import com.catlogging.util.excption.ReferenceIntegrityException;
+import com.catlogging.util.excption.ResourceNotFoundException;
 import com.catlogging.web.ViewController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
