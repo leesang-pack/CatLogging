@@ -45,22 +45,33 @@ angular
 			     url : $scope.settingsRessource+"?id="+encodeURIComponent(id),
 			     method : "POST"
 			 })
-			.success(
-				function(data, status, headers, config) {
-					if (data) {
-						$scope.$emit('systemNotificationSummaryChanged', data);
-					}
-				    $log.info("Acknowledged notification", id);
-				    $scope.state.busy = false;
-				    $scope.loadSettings($scope).success(initResponse);
-				}
-			)
-			.error(
-				function(data, status, headers, config, statusText) {
-					$scope.state.busy = false;
-					$scope.alerts.httpError("Failed to acknowledge notification", data, status, headers, config, statusText);
-				}
-			);
+				 .then(successCallback,errorCallback);
+			 function successCallback(response){
+				 //success code
+				 var data = response.data;
+				 var status = response.status;
+				 var statusText = response.statusText;
+				 var headers = response.headers;
+				 var config = response.config;
+
+				 if (data) {
+					 $scope.$emit('systemNotificationSummaryChanged', data);
+				 }
+				 $log.info("Acknowledged notification", id);
+				 $scope.state.busy = false;
+				 $scope.loadSettings($scope).success(initResponse);
+			 }
+			 function errorCallback(response){
+				 //error code
+				 var data = response.data;
+				 var status = response.status;
+				 var statusText = response.statusText;
+				 var headers = response.headers;
+				 var config = response.config;
+
+				 $scope.state.busy = false;
+				 $scope.alerts.httpError("Failed to acknowledge notification", data, status, headers, config, statusText);
+			 }
 		 };
 		 
 		 $scope.sanitizeMessage = function(n) {

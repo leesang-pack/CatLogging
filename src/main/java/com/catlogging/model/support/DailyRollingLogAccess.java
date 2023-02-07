@@ -72,8 +72,11 @@ public class DailyRollingLogAccess implements ByteLogAccess {
 		private String json;
 		private int allLogsHash;
 
-		public RollingLogPointer(final String path, final String[] allLogPathes, final LogPointer filePointer,
-				final boolean firstFile, final boolean liveFile) {
+		public RollingLogPointer(final String path,
+								 final String[] allLogPathes,
+								 final LogPointer filePointer,
+								 final boolean firstFile,
+								 final boolean liveFile) {
 			super();
 			this.path = path;
 			this.liveNext = liveFile && allLogPathes.length > 1 ? allLogPathes[1] : null;
@@ -427,9 +430,15 @@ public class DailyRollingLogAccess implements ByteLogAccess {
 	public LogPointer getFromJSON(final String data) throws IOException {
 		try {
 			final JSONObject json = JSONObject.fromObject(data);
+			log.debug("GetJson ====>[{}]", json.toString());
 			if (json.size() > 0) {
-				final RollingLogPointer rlp = new RollingLogPointer(json.getString("p"), new String[] {},
-						new DefaultPointer(0, 0), json.getBoolean("f"), json.getBoolean("l"));
+				log.debug("GetJson2 ====>[{}]", json.getOrDefault("p","Not...[P]"));
+				final RollingLogPointer rlp = new RollingLogPointer(
+						json.getString("p"),
+						new String[] {},
+						new DefaultPointer(0, 0),
+						json.getBoolean("f"),
+						json.getBoolean("l"));
 				rlp.allLogsHash = json.getInt("h");
 				rlp.liveNext = json.optString("n", null);
 				final PointerData spd = getLogIndex(rlp);
@@ -442,7 +451,7 @@ public class DailyRollingLogAccess implements ByteLogAccess {
 				return createRelative(null, 0);
 			}
 		} catch (final JSONException e) {
-			log.warn("Invalid JSON pointer: " + data, e);
+			log.warn("Invalid JSON pointer: " + data , e);
 			return createRelative(null, 0);
 		}
 	}

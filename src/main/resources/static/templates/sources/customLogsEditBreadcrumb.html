@@ -1,0 +1,42 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<th:block th:fragment="breadcrumb" th:with="url=@{/c/sources}">
+	<form th:action="@{${url}+'/'+${activeSource.id}+'/delete'}" th:method="post">
+	<ul class="breadcrumb">
+		<li><a th:href="@{${url}}">[[#{catlogging.breadcrumb.sources}]]</a></li>
+		<li class="active"><a th:href="@{${url}+'/'+${activeSource.id}+'/logs'}">[[${activeSource.name}]]</a></li>
+		<li class="dropdown">
+			<button data-toggle="dropdown" href="#" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-cog"></i> <span class="caret"></span></button>
+			<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+				<li><a th:href="@{${url}+'/'+${activeSource.id}+'/logs'}"><i class="glyphicon glyphicon-list"></i> [[#{catlogging.nav.logs}]]</a></li>
+				<li><a th:href="@{${url}+'/'+${activeSource.id}}"><i class="glyphicon glyphicon-edit"></i> [[#{catlogging.common.form.edit}]]</a></li>
+				<li class="divider"></li>
+				<li role="presentation">
+					<a role="menuitem" href="#" th:onclick="|if (confirm('#{catlogging.confirms.delete}')) {$(this).parents('form').submit()}|">
+						<i class="glyphicon glyphicon-trash"></i> [[#{catlogging.common.delete}]] [[#{catlogging.type.com.catlogging.model.LogSource}]]
+					</a>
+				</li>
+			</ul>
+		</li>
+	</ul>
+	</form>
+</th:block>
+</html>

@@ -1,0 +1,214 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="htmlHead2">
+    <!-- NG Edit New 2 page -->
+    <script th:inline="javascript">
+    	catloggingNgApp.controller(
+            "SourceBeanWizardControllerWrapper",
+            function($scope, $http, $log, $uibModal, lsfAlerts) {
+                $scope.alerts = lsfAlerts.create();
+                $scope.sourceWizards=
+                    /*<![CDATA[*/
+                    /*[+ [#th:block th:utext="|${@jstlFunctionsLibraryBean.jsonify(@jstlFunctionsLibraryBean.getWizardsInfo('com.catlogging.model.LogSource', #locale))};|" /] +]*/
+                    /*]]>*/
+                $scope.readerWizards=
+                    /*<![CDATA[*/
+                    /*[+ [(${@jstlFunctionsLibraryBean.jsonify(@jstlFunctionsLibraryBean.getWizardsInfo('com.catlogging.reader.LogEntryReader', #locale))})];  +]*/
+                    /*]]>*/
+
+                $scope.readerFilterWizards=
+                    /*<![CDATA[*/
+                    /*[+ [(${@jstlFunctionsLibraryBean.jsonify(@jstlFunctionsLibraryBean.getWizardsInfo('com.catlogging.fields.filter.FieldsFilter', #locale))})];  +]*/
+                    /*]]>*/
+
+                $scope.readerTestSession = {};
+                $scope.resolvedTestLogs = null;
+                $scope.dummy = {
+                    statefullName: $scope.beanWrapper[0]?$scope.beanWrapper[0].name:null
+                };
+                $scope.formValidation = {
+                    main: false,
+                    reader: false,
+                    filters: false,
+                    ui: false,
+                };
+
+                $scope.$watch('beanWrapper[0]', function(newValue, oldValue) {
+                    if (newValue) {
+                        newValue.name = $scope.dummy.statefullName;
+                    }
+                    if (oldValue && oldValue.reader && newValue) {
+                        newValue.reader = oldValue.reader;
+                    }
+                });
+                $scope.nameChanged = function() {
+                    if ($scope.beanWrapper[0]) {
+                        $scope.beanWrapper[0].name = $scope.dummy.statefullName;
+                    }
+                };
+                $scope.$watch('beanWrapper[0].name', function(newValue, oldValue) {
+                    $scope.dummy.statefullName = newValue;
+                });
+
+                $scope.$watch('bindErrors', function(newValue, oldValue) {
+                    $scope.formValidation.main = !catlogging.hasKeysExpectOf(newValue, "reader", true);
+                    $scope.formValidation.reader = !catlogging.containsKey(newValue, ["reader.targetReader"], true);
+                    $scope.formValidation.filters = !catlogging.containsKey(newValue, ["reader.filters"], true);
+                });
+
+                $scope.testResolvingLogs = function () {
+                    $scope.resolvingTestLogsError = false;
+                    $scope.resolvingTestLogsInProgress = true;
+                    $scope.resolvedTestLogs = null;
+                    var testSource = angular.copy($scope.beanWrapper[0]);
+                    testSource.reader = null;
+                    $log.info("Resolving logs for source: ", testSource);
+                    $http({
+                        url: $scope.contextPath + "/c/sources/logs",
+                        method: "POST",
+                        data: testSource
+                    }).then(successCallback,errorCallback);
+                    function successCallback(response){
+                        //success code
+                        $log.info("Got resolved logs: ", response.data);
+                        $scope.resolvingTestLogsInProgress = false;
+                        $scope.resolvedTestLogs = response.data;
+                    }
+                    function errorCallback(response){
+                        //error code
+                        $scope.resolvingTestLogsError = true;
+                        $scope.resolvingTestLogsInProgress = false;
+                        if (response.data && response.data.bindErrors) {
+                            $scope.bindErrors = response.data.bindErrors;
+                        }
+                    }
+                };
+
+                $scope.testLogViewing = function () {
+                    $uibModal.open({
+                      templateUrl: $scope.contextPath + '/templates/sources/log/readerTest',
+                      controller: 'ReaderTestCtrl',
+                      size: 'lg',
+                      windowClass: 'reader-test-modal',
+                      scope: $scope,
+                      resolve: {
+                        source: function () {
+                            $log.info("Inject to reader test the source: ", $scope.beanWrapper[0]);
+                            return $scope.beanWrapper[0];
+                        },
+                        reader: function () {
+                            $log.info("Inject to reader test the reader: ", $scope.beanWrapper[0].reader);
+                            return $scope.beanWrapper[0].reader;
+                        },
+                        title: function () {
+                            return "Test log viewing";
+                        },
+                        testSession: function () {
+                            return $scope.readerTestSession;
+                        }
+                      }
+                    });
+                };
+
+                $scope.addReaderFilter = function() {
+                    if (!angular.isArray($scope.beanWrapper[0].reader.filters)) {
+                        $scope.beanWrapper[0].reader.filters = [];
+                    }
+                    $scope.beanWrapper[0].reader.filters.push({});
+                };
+
+                $scope.deleteReaderFilter = function(index) {
+                    $scope.beanWrapper[0].reader.filters.splice(index, 1);
+                };
+
+                $scope.mainFormValid = function(form, valid) {
+                    $scope.formValidation.main = valid;
+                };
+                $scope.readerFormValid = function(form, valid) {
+                    $scope.formValidation.reader = valid;
+                };
+                $scope.filtersFormValid = function(form, valid) {
+                    $scope.formValidation.filters = valid;
+                };
+                $scope.uiFormValid = function(form, valid) {
+                    $scope.formValidation.ui = valid;
+                };
+
+
+                $scope.enableFieldsVisibility = function() {
+                    if (!$scope.beanWrapper[0].uiSettings) {
+                        $scope.beanWrapper[0].uiSettings = {};
+                    }
+                    $scope.beanWrapper[0].uiSettings.viewerFields = [];
+                    $scope.reloadPotentialFields();
+                };
+
+                $scope.reloadPotentialFields = function() {
+                    $log.info("Resolving potential fields for source: ", $scope.beanWrapper[0]);
+                    $scope.loadingPotentialFields = true;
+                    $http({
+                            url : $scope.contextPath + "/c/sources/potentialFields",
+                            method : "POST",
+                            data: $scope.beanWrapper[0]
+                        })
+                        .then(successCallback,errorCallback);
+                    function successCallback(response){
+                        //success code
+                        var data = response.data;
+                        var status = response.status;
+                        var statusText = response.statusText;
+                        var headers = response.headers;
+                        var config = response.config;
+                        $scope.loadingPotentialFields = false;
+                        $scope.potentialFields = data;
+                        $log.info("Potential fields loaded: ", $scope.potentialFields);
+                    }
+                    function errorCallback(response){
+                        //error code
+                        var data = response.data;
+                        var status = response.status;
+                        var statusText = response.statusText;
+                        var headers = response.headers;
+                        var config = response.config;
+                        $scope.loadingPotentialFields = false;
+                        $scope.alerts.httpError("Failed to load known fields, please check the log source configuration", data, status, headers, config, statusText);
+                    }
+                };
+
+                $scope.disableFieldsVisibility = function() {
+                    $scope.beanWrapper[0].uiSettings.viewerFields = null;
+                };
+            });
+    </script>
+    <script type="text/javascript">
+        catloggingNgApp.controller(
+            "SourceReaderFilterHelpController",
+            function($scope, $http, $log) {
+                $scope.index = $scope.$index;
+                $scope.$watch('filter', function(newValue, oldValue) {
+                    $scope.beanWrapper[0].reader.filters[$scope.index] = newValue;
+                    $log.info("Update filter", $scope.index, newValue);
+                }, true);
+            }
+        );
+    </script>
+</th:block>
+</html>

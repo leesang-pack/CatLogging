@@ -1,7 +1,6 @@
 /*******************************************************************************
  * catlogging, open source tool for viewing, monitoring and analysing log data.
  * Copyright (c) 2021 xzpluszone, www.catlogging.com
- * Copyright (c) 2015 Scaleborn UG, www.scaleborn.com
  *
  * catlogging is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +17,9 @@
  *******************************************************************************/
 package com.catlogging.web.controller.exception;
 
-import com.catlogging.util.ReferenceIntegrityException;
+import com.catlogging.util.excption.ActionViolationException;
+import com.catlogging.util.excption.ReferenceIntegrityException;
+import com.catlogging.util.excption.ResourceNotFoundException;
 import com.catlogging.web.ViewController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -46,7 +47,7 @@ public class ExceptionControllerAdvice {
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ModelAndView handleResourceNotFound(final ResourceNotFoundException ex) {
 		log.info("Catched resource not found exception", ex);
-		final ModelAndView mv = new ModelAndView("errors/404");
+		final ModelAndView mv = new ModelAndView("templates/errors/404");
 		mv.addObject("ex", ex);
 		return mv;
 	}
@@ -54,7 +55,7 @@ public class ExceptionControllerAdvice {
 	@ExceptionHandler(ActionViolationException.class)
 	public ModelAndView handleActionViolation(final ActionViolationException ex) {
 		log.info("Catched action violation exception", ex);
-		final ModelAndView mv = new ModelAndView("errors/action-violation");
+		final ModelAndView mv = new ModelAndView("templates/errors/action-violation");
 		mv.addObject("ex", ex);
 		return mv;
 	}
@@ -62,7 +63,7 @@ public class ExceptionControllerAdvice {
 	@ExceptionHandler(ReferenceIntegrityException.class)
 	public ModelAndView handleActionViolation(final ReferenceIntegrityException ex) {
 		log.info("Catched reference integrity violation exception", ex);
-		final ModelAndView mv = new ModelAndView("errors/ref-intg-violation");
+		final ModelAndView mv = new ModelAndView("templates/errors/ref-intg-violation");
 		mv.addObject("ex", ex);
 		return mv;
 	}
@@ -70,7 +71,7 @@ public class ExceptionControllerAdvice {
 	@ExceptionHandler(Throwable.class)
 	public ModelAndView processAllExceptions(final Throwable ex) throws IOException {
 		log.error("Catched untyped exception", ex);
-		final ModelAndView mv = new ModelAndView("errors/ups");
+		final ModelAndView mv = new ModelAndView("templates/errors/ups");
 		mv.addObject("ex", ex);
 		return mv;
 	}

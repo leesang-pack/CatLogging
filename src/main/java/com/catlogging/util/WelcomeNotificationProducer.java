@@ -5,15 +5,14 @@ import com.catlogging.system.notification.Notification.Level;
 import com.catlogging.system.notification.Notification.Type;
 import com.catlogging.system.notification.NotificationProvider;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
+import java.io.*;
+import java.util.Locale;
 
 /**
  * Produces a {@link Notification} for liking catlogging.
@@ -29,29 +28,25 @@ public class WelcomeNotificationProducer {
 	private NotificationProvider provider;
 
 	@Autowired
-	private VelocityEngine velocityEngine;
+	private ITemplateEngine templateEngine;
 
 	@PostConstruct
-	public void storeNotification() {
-		try {
-			Notification likeMe = new Notification();
-			likeMe.setId("/static/snippets/system/welcome");
-			likeMe.setTitle("Welcome and thank you for trying out catlogging!");
+	public void storeNotification() throws IOException {
+		Notification likeMe = new Notification();
 
-			final VelocityContext vcontext = new VelocityContext();
-			final StringWriter bodyWriter = new StringWriter();
-			velocityEngine.evaluate(vcontext, bodyWriter, "TemplateName",
-					new InputStreamReader(
-							getClass().getResourceAsStream("/static/snippets/system/contactsShareTeaser.html"),
-							"UTF-8"));
+		likeMe.setId("welcome");
+		likeMe.setTitle("Welcome and thank you for trying out catlogging!");
 
-			likeMe.setMessage(bodyWriter.toString());
-			likeMe.setLevel(Level.INFO);
-			likeMe.setType(Type.TOPIC);
-			provider.store(likeMe, false);
-		} catch (IOException e) {
-			log.info("Failed to store welcome notification", e);
-		}
+		final Context ctx = new Context(Locale.getDefault());
+		// 앞에 '/' 주의
+		// static/.. 로 찾기 때문에
+		// static// 되면 에러발생.
+		String process = templateEngine.process("templates/system/utils/contactsShareTeaser", ctx);
+
+		likeMe.setMessage(process);
+		likeMe.setLevel(Level.INFO);
+		likeMe.setType(Type.TOPIC);
+		provider.store(likeMe, false);
 	}
 
 }

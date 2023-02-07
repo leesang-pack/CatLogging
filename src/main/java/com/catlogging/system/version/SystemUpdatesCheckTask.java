@@ -8,18 +8,17 @@ import com.catlogging.system.version.UpdatesInfoProvider.UpdatesInfoContext;
 import com.catlogging.util.value.ConfigValue;
 import com.catlogging.util.value.Configured;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Checks for updates and creates a notification periodically.
@@ -44,7 +43,7 @@ public class SystemUpdatesCheckTask {
 	private NotificationProvider notificationProvider;
 
 	@Autowired
-	private VelocityEngine velocityEngine;
+	private ITemplateEngine templateEngine;
 
 	@Value(value = "${catlogging.version}")
 	private String currentVersion;
@@ -52,7 +51,7 @@ public class SystemUpdatesCheckTask {
 	@PostConstruct
 	public void deleteNotificationForCurrentVersion() {
 		try {
-			notificationProvider.delete("/static/snippets/system/updateAvailable/" + currentVersion);
+			notificationProvider.delete("updateAvailable/" + currentVersion);
 		} catch (final Exception e) {
 			log.warn("Failed to delete obsolete notification for current version", e);
 		}
@@ -75,23 +74,17 @@ public class SystemUpdatesCheckTask {
 			final VersionInfo latestStableVersion = updatesProvider.getLatestStableVersion(context);
 			if (latestStableVersion.compareTo(new VersionInfo(context.getCurrentVersion())) > 0) {
 				log.debug("System update available: {}", latestStableVersion);
-				final VelocityContext vcontext = new VelocityContext();
-				vcontext.put("version", latestStableVersion);
-				vcontext.put("context", context);
-				final StringWriter titleWriter = new StringWriter();
-				velocityEngine.evaluate(vcontext, titleWriter, "TemplateName",
-						new InputStreamReader(
-								getClass().getResourceAsStream("/static/snippets/system/systemUpdatesNotificationTitle.html"),
-								"UTF-8"));
-				final StringWriter bodyWriter = new StringWriter();
-				velocityEngine.evaluate(vcontext, bodyWriter, "TemplateName",
-						new InputStreamReader(
-								getClass().getResourceAsStream("/static/snippets/system/systemUpdatesNotificationBody.html"),
-								"UTF-8"));
+
+				final Context ctx = new Context(Locale.getDefault());
+				ctx.setVariable("version", latestStableVersion);
+				ctx.setVariable("context", context);
+				String processTitle = templateEngine.process("templates/system/utils/systemUpdatesNotificationTitle", ctx);
+				String processBody = templateEngine.process("templates/system/utils/systemUpdatesNotificationBody", ctx);
+
 				final Notification n = new Notification();
-				n.setId("/static/snippets/system/updateAvailable/" + latestStableVersion.getName());
-				n.setTitle(titleWriter.toString());
-				n.setMessage(bodyWriter.toString());
+				n.setId("updateAvailable/" + latestStableVersion.getName());
+				n.setTitle(processTitle);
+				n.setMessage(processBody);
 				n.setLevel(Level.INFO);
 				n.setType(Type.TOPIC);
 				n.setExpirationDate(new Date(new Date().getTime() + FREQUENCY));

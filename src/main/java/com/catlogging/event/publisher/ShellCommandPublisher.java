@@ -1,7 +1,6 @@
 /*******************************************************************************
  * catlogging, open source tool for viewing, monitoring and analysing log data.
  * Copyright (c) 2021 xzpluszone, www.catlogging.com
- * Copyright (c) 2015 Scaleborn UG, www.scaleborn.com
  *
  * catlogging is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +17,6 @@
  *******************************************************************************/
 package com.catlogging.event.publisher;
 
-import com.catlogging.config.BeanConfigFactoryManager;
 import com.catlogging.config.BeanPostConstructor;
 import com.catlogging.config.ConfigException;
 import com.catlogging.config.PostConstructed;
@@ -27,16 +25,16 @@ import com.catlogging.event.Publisher;
 import com.catlogging.event.publisher.ShellCommandPublisher.ShellPublisherConstructor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.velocity.VelocityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.context.Context;
 
 import javax.validation.constraints.NotNull;
 
 @PostConstructed(constructor = ShellPublisherConstructor.class)
 public class ShellCommandPublisher implements Publisher {
 	@JsonIgnore
-	private VelocityEventRenderer velocityRenderer;
+	private EventRenderer renderer;
 
 	@NotNull
 	@JsonProperty
@@ -48,20 +46,18 @@ public class ShellCommandPublisher implements Publisher {
 	@Component
 	public static class ShellPublisherConstructor implements BeanPostConstructor<ShellCommandPublisher> {
 		@Autowired
-		private VelocityEventRenderer velocityRenderer;
+		private EventRenderer renderer;
 
-//		public void postConstruct(final ShellCommandPublisher bean,
-//								  final BeanConfigFactoryManager configManager)
 		@Override
 		public void postConstruct(final ShellCommandPublisher bean) throws ConfigException {
-			bean.velocityRenderer = velocityRenderer;
+			bean.renderer = renderer;
 		}
 
 	}
 
 	@Override
 	public void publish(final Event event) throws PublishException {
-		VelocityContext velocityContext = velocityRenderer.getContext(event);
+		Context context = renderer.getContext(event);
 
 	}
 

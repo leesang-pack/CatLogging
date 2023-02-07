@@ -19,6 +19,7 @@
 package com.catlogging.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.h2.jdbcx.JdbcDataSource;
 import org.h2.tools.Server;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,7 +45,7 @@ public class DataSourceProducer {
     private String url;
 
     @Value(value = "${catlogging.h2.remoteAccess:false}")
-    private boolean isRemoteAccess;
+    private String isRemoteAccess;
 
     @PostConstruct
     public DataSource getDataSource() {
@@ -55,7 +56,7 @@ public class DataSourceProducer {
         dataSource.setUser(user);
         dataSource.setPassword(password);
 
-        if(isRemoteAccess)
+        if(StringUtils.equals(isRemoteAccess,"true"))
             initServer();
 
         return dataSource;
@@ -65,7 +66,10 @@ public class DataSourceProducer {
 
         // start the server
         try {
-            server = Server.createTcpServer("-tcpAllowOthers").start();
+            server = Server.createTcpServer(
+                    "-tcpAllowOthers",
+                    "-tcpPort","9095")
+                    .start();
             return true;
         } catch (Exception e) {
             e.printStackTrace();

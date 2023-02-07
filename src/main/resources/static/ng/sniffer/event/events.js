@@ -29,14 +29,14 @@ angular
 					    '/',
 					    {
 						templateUrl : catlogging.config.contextPath
-							+ '/ng/sniffer/event/eventsList.html?v=' + catlogging.config.version,
+							+ '/templates/sniffers/event/list/eventsList',
 						controller : "EventsListController"
 					    })
 				    .when(
 					    '/:eventId',
 					    {
 						templateUrl : catlogging.config.contextPath
-							+ '/ng/sniffer/event/eventDetail.html?v=' + catlogging.config.version,
+							+ '/templates/sniffers/event/detail/eventDetail',
 						controller : "EventsDetailController"
 					    })
 				    .otherwise({
@@ -63,7 +63,7 @@ angular
 			    $scope.alerts = lsfAlerts.create();
 			    $scope.teaserExcludeFields = ['_id', 'lf_logSourceId', 'lf_snifferId', 'lf_logPath'];
 			    $scope.state = {
-			    	busy: false	
+			    	busy: false
 			    };
 			    $scope.searchForm = {
 			    	basicSearch: $routeParams._nativeQuery ? false: true,
@@ -77,7 +77,7 @@ angular
 			    $scope.pager = {
 			    		currentPage: 1 + Math.floor($scope.searchForm._offset / $scope.searchForm._itemsPerPage)
 			    };
-			    
+
 			    var getBasicEsQuery = function() {
 				var nativeQuery = {
 					"query" : {
@@ -149,28 +149,38 @@ angular
 					    method : "POST",
 					    data : nativeQuery
 					})
-					.success(
-						function(data, status, headers,
-							config) {
-						    $scope.eventsList = data;
-						    // 10.000 scroll limit in ES
-						    $scope.searchForm.maxScrollCount = Math.min(10000, $scope.eventsList.totalCount);
-						    $scope.items = $scope.eventsList.items;
-						    $log.info("Events loaded",
-							    data);
-						    try {
-						    	$scope.updateTrendChart();
-						    } catch(e) {
-						    	$log.error("Failed to update events trend chart", e);
-						    }
-						    loadingStatusStop();
-						})
-					.error(
-					function(data, status, headers,
-						config, statusText) {
-					    loadingStatusStop();
-					    $scope.alerts.httpError("Failed to load events", data, status, headers, config, statusText);
-					});
+					.then(successCallback,errorCallback);
+					function successCallback(response){
+						//success code
+						var data = response.data;
+						var status = response.status;
+						var statusText = response.statusText;
+						var headers = response.headers;
+						var config = response.config;
+						$scope.eventsList = data;
+						// 10.000 scroll limit in ES
+						$scope.searchForm.maxScrollCount = Math.min(10000, $scope.eventsList.totalCount);
+						$scope.items = $scope.eventsList.items;
+						$log.info("Events loaded", data);
+						try {
+							$scope.updateTrendChart();
+						} catch(e) {
+							$log.error("Failed to update events trend chart", e);
+						}
+						loadingStatusStop();
+
+					}
+					function errorCallback(response){
+						//error code
+						var data = response.data;
+						var status = response.status;
+						var statusText = response.statusText;
+						var headers = response.headers;
+						var config = response.config;
+						loadingStatusStop();
+						$scope.alerts.httpError("Failed to load events", data, status, headers, config, statusText);
+
+					}
 			    };
 			    $scope.internalSearch();
 
@@ -282,63 +292,73 @@ angular
 					    "Adjusting the query from graph isn't supported in extended search mode. Please adapt your query manually.");
 				    return;
 				}
-			         var histoEntry = $scope.eventsList.eventsCountHistogram.entries[selectedItem.row];
-			         $log.info("Set occurence filter by chart selection row/entry", selectedItem.row, histoEntry);
-			         $location.search("_from", histoEntry.time);
-			         $location.search("_to", addInterval(new Date(histoEntry.time), $scope.eventsList.eventsCountHistogram.interval, 1).getTime());
-			         $location.search('_nativeQuery', null);
-			         $location.search("_offset", "0"); 
-			    };
-			    
-			    $scope.switchToExtendedSearch = function() {
-				$scope.searchForm.basicSearch = false;
-				if (!$scope.searchForm._nativeQuery) {
-				    $scope.searchForm._nativeQuery = JSON.stringify(getBasicEsQuery(), null, 3);
-				}
-			    };
+					var histoEntry = $scope.eventsList.eventsCountHistogram.entries[selectedItem.row];
+					$log.info("Set occurence filter by chart selection row/entry", selectedItem.row, histoEntry);
+					$location.search("_from", histoEntry.time);
+					$location.search("_to", addInterval(new Date(histoEntry.time), $scope.eventsList.eventsCountHistogram.interval, 1).getTime());
+					$location.search('_nativeQuery', null);
+					$location.search("_offset", "0");
+				};
 
-			    $scope.switchToBasicSearch = function() {
-				$scope.searchForm.basicSearch = true;
-			    };
-			    
-			    $scope.deleteAllEvents = function() {
-				if (confirm("Are you sure you want to delete all events?")) {
-				    loadingStatusStart();
-				    $log.info("Deleting all events");
-				    $http(
-					{
-					    url : $scope.contextPath + "/c/sniffers/" + $scope.sniffer.id + "/events",
-					    method : "DELETE"
-					})
-					.success(
-					function(data, status, headers,
-						config) {
-					    loadingStatusStop();
-					    $scope.eventsList = null;
-					    $log.info("Deleted all events");
-					    messageCenterService.add(
-						    'success',
-						    'Deleted all events.');
-					    
-					})
-					.error(
-					function(data, status, headers,
-						config) {
-					    loadingStatusStop();
-					    messageCenterService.add(
-						    'danger',
-						    'Failed to delete events: '
-							    + status);
-					});
-				}
-			    };
+				$scope.switchToExtendedSearch = function() {
+					$scope.searchForm.basicSearch = false;
+					if (!$scope.searchForm._nativeQuery) {
+						$scope.searchForm._nativeQuery = JSON.stringify(getBasicEsQuery(), null, 3);
+					}
+				};
+
+				$scope.switchToBasicSearch = function() {
+					$scope.searchForm.basicSearch = true;
+				};
+
+				$scope.deleteAllEvents = function() {
+					if (confirm("Are you sure you want to delete all events?")) {
+						loadingStatusStart();
+						$log.info("Deleting all events");
+						$http(
+							{
+								url : $scope.contextPath + "/c/sniffers/" + $scope.sniffer.id + "/events",
+								method : "DELETE"
+							})
+							.then(successCallback,errorCallback);
+						function successCallback(response){
+							//success code
+							var data = response.data;
+							var status = response.status;
+							var statusText = response.statusText;
+							var headers = response.headers;
+							var config = response.config;
+							loadingStatusStop();
+							$scope.eventsList = null;
+							$log.info("Deleted all events");
+							messageCenterService.add(
+								'success',
+								'Deleted all events.');
+
+						}
+						function errorCallback(response){
+							//error code
+							var data = response.data;
+							var status = response.status;
+							var statusText = response.statusText;
+							var headers = response.headers;
+							var config = response.config;
+							loadingStatusStop();
+							messageCenterService.add(
+								'danger',
+								'Failed to delete events: '
+								+ status);
+
+						}
+					}
+				};
 
 
-			    $scope.deleteSniffer = function() {
-				if (!$scope.sniffer.aspects.scheduleInfo.scheduled && confirm("Are you sure you want to delete the sniffer and all saved events?")) {
-				    $("#sniffer-delete-form").attr("action", $scope.contextPath+"/c/sniffers/"+$scope.sniffer.id+"/delete").submit();
-				}
-			    };
+				$scope.deleteSniffer = function() {
+					if (!$scope.sniffer.aspects.scheduleInfo.scheduled && confirm("Are you sure you want to delete the sniffer and all saved events?")) {
+						$("#sniffer-delete-form").attr("action", $scope.contextPath+"/c/sniffers/"+$scope.sniffer.id+"/delete").submit();
+					}
+				};
 			} ])
 			
 	.controller(
@@ -376,59 +396,84 @@ angular
 							    + "/events/" + eventId,
 						    method : "GET"
 						})
-					.success(
-						function(data, status, headers, config) {
-						    $scope.event = data;
-						    $log.info("Event loaded", data);
-						    always();
-						})
-					.error(
-						function(data, status, headers, config) {
-						    always();
-						    if (status==404) {
+						.then(successCallback,errorCallback);
+					function successCallback(response){
+						//success code
+						var data = response.data;
+						var status = response.status;
+						var statusText = response.statusText;
+						var headers = response.headers;
+						var config = response.config;
+
+						$scope.event = data;
+						$log.info("Event loaded", data);
+						always();
+					}
+					function errorCallback(response){
+						//error code
+						var data = response.data;
+						var status = response.status;
+						var statusText = response.statusText;
+						var headers = response.headers;
+						var config = response.config;
+
+						always();
+						if (status==404) {
 							messageCenterService.add('danger', 'Event not found. It doesn\'t longer exist or is deleted.');
-						    } else {
+						} else {
 							messageCenterService.add('danger', 'Failed to load event: ' + status);
-						    }
 						}
-					);
-			    };
+					}
+				};
 			    
 			    $scope.deleteEvent = function () {
-				var eventId = $scope.eventId;
-				if ($scope.event && confirm("Delete really?")) {
-					$log.info("Deleting event for id", eventId);
-					$scope.state.busy = true;
-					var always = function() {
-						$scope.state.busy = false;
-					};
-					$http(
-						{
-						    url : $scope.contextPath
-							    + "/c/sniffers/"
-							    + $scope.sniffer.id
-							    + "/events/" + eventId,
-						    method : "DELETE"
-						})
-					.success(
-						function(data, status, headers, config) {
-						    $scope.event = null;
-						    $log.info("Event deleted");
-						    messageCenterService.add('success', 'Event deleted');
-						    always();
-						})
-					.error(
-						function(data, status, headers, config) {
-						    always();
-						    if (status==404) {
-							messageCenterService.add('danger', 'Event not found. It doesn\'t longer exist or is deleted.');
-						    } else {
-							messageCenterService.add('danger', 'Failed to delete event: ' + status);
-						    }
+					var eventId = $scope.eventId;
+					if ($scope.event && confirm("Delete really?")) {
+						$log.info("Deleting event for id", eventId);
+						$scope.state.busy = true;
+						var always = function() {
+							$scope.state.busy = false;
+						};
+						$http(
+							{
+								url : $scope.contextPath
+									+ "/c/sniffers/"
+									+ $scope.sniffer.id
+									+ "/events/" + eventId,
+								method : "DELETE"
+							})
+							.then(successCallback,errorCallback);
+						function successCallback(response){
+							//success code
+							var data = response.data;
+							var status = response.status;
+							var statusText = response.statusText;
+							var headers = response.headers;
+							var config = response.config;
+
+							$scope.event = null;
+							$log.info("Event deleted");
+							messageCenterService.add('success', 'Event deleted');
+							always();
+
 						}
-					);
-				}
-			    };
+						function errorCallback(response){
+							//error code
+							var data = response.data;
+							var status = response.status;
+							var statusText = response.statusText;
+							var headers = response.headers;
+							var config = response.config;
+
+							always();
+							if (status==404) {
+								messageCenterService.add('danger', 'Event not found. It doesn\'t longer exist or is deleted.');
+							} else {
+								messageCenterService.add('danger', 'Failed to delete event: ' + status);
+							}
+						}
+					}
+				};
 			    
 			    $scope.$on('openLogPointer', function(event, pointer) {				   
 			 		  var url = $scope.contextPath+"/c/sources/"+$scope.event.lf_logSourceId+"/show?log="+encodeURIComponent($scope.event.lf_logPath)+"#?pointer="+JSON.stringify(pointer.json);

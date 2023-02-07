@@ -1,0 +1,243 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="htmlHead2">
+    <!-- NG Sni Edit New 2 page -->
+    <script th:inline="javascript">
+        catloggingNgApp.controller(
+            "SnifferBeanWizardControllerWrapper",
+            function($scope, $http, $log, $uibModal) {
+                $scope.scannerWizards=
+                    /*<![CDATA[*/
+                    /*[+ [#th:block th:utext="|${@jstlFunctionsLibraryBean.jsonify(@jstlFunctionsLibraryBean.getWizardsInfo('com.catlogging.event.Scanner', #locale))};|" /] +]*/
+                    /*]]>*/
+                $scope.readerStrategyWizards=
+                    /*<![CDATA[*/
+                    /*[+ [(${@jstlFunctionsLibraryBean.jsonify(@jstlFunctionsLibraryBean.getWizardsInfo('com.catlogging.event.LogEntryReaderStrategy', #locale))})];  +]*/
+                    /*]]>*/
+
+                $scope.publisherWizards=
+                    /*<![CDATA[*/
+                    /*[+ [(${@jstlFunctionsLibraryBean.jsonify(@jstlFunctionsLibraryBean.getWizardsInfo('com.catlogging.event.Publisher', #locale))})];  +]*/
+                    /*]]>*/
+                $scope.scannerFilterWizards=
+                    /*<![CDATA[*/
+                    /*[+ [(${@jstlFunctionsLibraryBean.jsonify( +]*/
+                    /*[+    @jstlFunctionsLibraryBean.mergeLists( +]*/
+                    /*[+        @jstlFunctionsLibraryBean.getWizardsInfo('com.catlogging.fields.filter.FieldsFilter', #locale), +]*/
+                    /*[+        @jstlFunctionsLibraryBean.getWizardsInfo('com.catlogging.event.filter.EventFilter', #locale)    +]*/
+                    /*[+     )      +]*/
+                    /*[+  )})];     +]*/
+                    /*]]>*/
+                $scope.sharedScope = {};
+                $scope.testSession = {};
+                $scope.formValidation = {
+                    main: false,
+                    scanner: false,
+                    publishers: false
+                };
+
+                var sourcesUrl = '/c/sources';
+                $scope.loadSources = function() {
+                    $scope.availableSources=[];
+                    $scope.sourcesLoading = true;
+                    $scope.sourcesLoadingError = false;
+                    $http({
+                        url: sourcesUrl,
+                        method: "GET"
+                    })
+                        .then(successCallback,errorCallback);
+                    function successCallback(response){
+                        //success code
+                        var data = response.data;
+                        var status = response.status;
+                        var statusText = response.statusText;
+                        var headers = response.headers;
+                        var config = response.config;
+
+                        $log.info("Got available sources: length=" + data.length);
+                        $scope.availableSources = data;
+                        for(var i=0;i<$scope.availableSources.length;i++) {
+                            if ($scope.availableSources[i].id==$scope.bean.logSourceId) {
+                                $scope.source=$scope.availableSources[i];
+                                $scope.sharedScope.source = $scope.source;
+                                break;
+                            }
+                        };
+                        $scope.sourceHelpInfo=null;
+                        $scope.sourcesLoading = false;
+                    }
+                    function errorCallback(response){
+                        //error code
+                        var data = response.data;
+                        var status = response.status;
+                        var statusText = response.statusText;
+                        var headers = response.headers;
+                        var config = response.config;
+
+                        $scope.sourcesLoading = false;
+                        $scope.sourcesLoadingError = true;
+                    }
+                };
+                $scope.loadSources();
+
+                $scope.$watch('bean.logSourceId', function(newValue, oldValue) {
+                    $scope.source=null;
+                    $scope.testSession = {};
+                    $log.info("Exposing new source: " + newValue);
+                    for(var i=0;i<$scope.availableSources.length;i++) {
+                        if ($scope.availableSources[i].id==newValue) {
+                            $scope.source=$scope.availableSources[i];
+                            $scope.sharedScope.source = $scope.source;
+                            break;
+                        }
+                    };
+                });
+
+                $scope.addPublisher = function() {
+                    if (!$scope.bean.publishers) {
+                        $scope.bean.publishers = [];
+                    }
+                    $scope.bean.publishers.push({});
+                };
+
+                $scope.deletePublisher = function(index) {
+                    $scope.bean.publishers.splice(index, 1);
+                };
+
+                $scope.testPublisher = function (publisher) {
+                    $uibModal.open({
+                        templateUrl: $scope.contextPath + '/templates/sniffers/event/snifferTest',
+                        controller: 'SnifferTestCtrl',
+                        size: 'lg',
+                        windowClass: 'sniffer-test-modal',
+                        scope: $scope,
+                        resolve: {
+                            source: function () {
+                                $log.info("Inject to publisher test the source: ", $scope.source);
+                                return $scope.source;
+                            },
+                            scanner: function () {
+                                $log.info("Inject to publisher test the scanner: ", $scope.bean.scanner);
+                                return $scope.bean.scanner;
+                            },
+                            publisher: function () {
+                                $log.info("Inject to publisher for test: ", publisher);
+                                return publisher;
+                            },
+                            sniffer: function () {
+                                $log.info("Inject to publisher the sniffer: ", $scope.bean);
+                                return $scope.bean;
+                            },
+                            title: function () {
+                                return "Publisher test";
+                            },
+                            testSession: function () {
+                                return $scope.testSession;
+                            }
+                        }
+                    });
+                };
+
+                $scope.testScanner = function () {
+                    $uibModal.open({
+                        templateUrl: $scope.contextPath + '/templates/sniffers/event/snifferTest',
+                        controller: 'SnifferTestCtrl',
+                        size: 'lg',
+                        windowClass: 'sniffer-test-modal',
+                        scope: $scope,
+                        resolve: {
+                            source: function () {
+                                $log.info("Inject to sniffer test the source: ", $scope.source);
+                                return $scope.source;
+                            },
+                            scanner: function () {
+                                $log.info("Inject to sniffer test the scanner: ", $scope.bean.scanner);
+                                return $scope.bean.scanner;
+                            },
+                            sniffer: function () {
+                                $log.info("Inject to sniffer test the sniffer: ", $scope.bean);
+                                return $scope.bean;
+                            },
+                            publisher: function () {
+                                return null;
+                            },
+                            title: function () {
+                                return "Scanner test";
+                            },
+                            testSession: function () {
+                                return $scope.testSession;
+                            }
+                        }
+                    });
+                };
+
+
+                $scope.addScannerFilter = function() {
+                    $scope.bean.scanner.filters.push({});
+                };
+
+                $scope.deleteScannerFilter = function(index) {
+                    $scope.bean.scanner.filters.splice(index, 1);
+                };
+
+                $scope.mainFormValid = function(form, valid) {
+                    $scope.formValidation.main = valid;
+                };
+                $scope.scannerFormValid = function(form, valid) {
+                    $scope.formValidation.scanner = valid;
+                };
+                $scope.publishersFormValid = function(form, valid) {
+                    $scope.formValidation.publishers = valid;
+                };
+                $scope.$watch('bindErrors', function(newValue, oldValue) {
+                    $scope.formValidation.main = !catlogging.hasKeysExpectOf(newValue, ["scanner.", "publishers["], true);
+                    $scope.formValidation.scanner = !catlogging.containsKey(newValue, ["scanner."], true);
+                    $scope.formValidation.publishers = !catlogging.containsKey(newValue, ["publishers["], true);
+                });
+
+            });
+
+        SnifferEditorModule.controller(
+            "ScannerFilterHelpController",
+            function($scope, $http, $log) {
+                $scope.index = $scope.$index;
+                $scope.$watch('filter', function(newValue, oldValue) {
+                    $scope.bean.scanner.filters[$scope.index] = newValue;
+                    $log.info("Update filter", $scope.index, newValue);
+                }, true);
+            }
+        );
+    </script>
+    <!-- Publishers -->
+    <script type="text/javascript">
+        SnifferEditorModule.controller(
+            "SnifferPublisherHelpController",
+            function($scope, $http, $log) {
+                $scope.index = $scope.$index;
+                $scope.$watch('publisher', function(newValue, oldValue) {
+                    $scope.$parent.bean.publishers[$scope.index] = newValue;
+                    $log.info("Update publisher", $scope.index, newValue);
+                }, true);
+            }
+        );
+    </script>
+</th:block>
+</html>

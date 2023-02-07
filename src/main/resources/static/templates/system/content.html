@@ -1,0 +1,60 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="templates/layouts/layout"
+      th:with="title=#{${activeNode.title}} + ' - ' + #{${rootNode.title}},
+      activeNavbar='system',
+      ngModules='SystemRootModule',
+      isAuth=${catloggingProps['catlogging.enable.auth'] == 'true' ? true : false},
+      isNgPage=${activeNode.pageContext.typeName=='ngPage'},
+      isNgTemplate=${activeNode.pageContext.typeName=='ngTemplate'}"
+>
+
+<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+<head th:insert="templates/system/custumHeadHtml::htmlHead"></head>
+
+
+<!-- 삽입될 각 개별적인 영역을 작성 -->
+<th:block layout:fragment="content" >
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <th:block th:replace="templates/system/customSidebar :: sidebar"></th:block>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+            <!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+            <th:block th:replace="templates/system/customBreadcrumb::breadcrumb"></th:block>
+
+            <!-- 해당 기능에서 커스텀 insert. -->
+            <div ng-controller="SystemAbstractController">
+                <th:block th:if="${isNgPage}">
+                    <div th:attr="ng-controller=${activeNode.pageContext.controller}" th:include="${activeNode.pageContext.template}::wrapper"></div>
+<!--                    <div th:attr="ng-controller=${activeNode.pageContext.controller},ng-include=|'@{${activeNode.pageContext.template}(v=${catloggingProps['catlogging.version']})}'|"></div>-->
+                </th:block>
+                <th:block th:if="${isNgTemplate}">
+                    <div th:replace="${activeNode.pageContext.template}::wrapper"></div>
+<!--                    <div th:attr="ng-include=|'@{${activeNode.pageContext.template}(v=${catloggingProps['catlogging.version']})}'|"></div>-->
+                </th:block>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>

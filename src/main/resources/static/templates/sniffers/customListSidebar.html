@@ -1,0 +1,34 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" >
+<th:block th:fragment="sidebar">
+	<ul class="nav nav-sidebar">
+		<th:block th:each="sniffer : ${sniffers}" th:with="url=@{/c/sniffers}" >
+			<li th:class="${sniffer==activeSniffer?'active':''}">
+				<a th:href="|${url}/${sniffer.id}/events|" th:title="${sniffer.name}" th:with="count=${@jstlFunctionsLibraryBean.getAspect(sniffer,'eventsCount')}">[[${sniffer.name}]]
+					<th:block th:if="${count > 0}">
+						<span class="badge badge-warning pull-right">[(${count})]</span>
+					</th:block>
+				</a>
+			</li>
+		</th:block>
+	</ul>
+</th:block>
+</html>

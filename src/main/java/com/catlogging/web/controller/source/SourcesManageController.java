@@ -21,6 +21,8 @@ package com.catlogging.web.controller.source;
 import java.util.List;
 import java.util.Locale;
 
+import com.catlogging.model.*;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -33,16 +35,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.catlogging.model.LogInputStream;
-import com.catlogging.model.LogRawAccess;
-import com.catlogging.model.LogSource;
-import com.catlogging.model.LogSourceProvider;
-import com.catlogging.util.ReferenceIntegrityException;
+import com.catlogging.util.excption.ReferenceIntegrityException;
 import com.catlogging.web.ViewController;
 import com.catlogging.web.controller.FlashMessage;
 import com.catlogging.web.controller.FlashMessage.MessageType;
-import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import com.catlogging.util.excption.ResourceNotFoundException;
 
+@Slf4j
 @ViewController
 public class SourcesManageController {
 
@@ -59,7 +58,8 @@ public class SourcesManageController {
 
 	@RequestMapping(value = "/sources/new", method = RequestMethod.GET)
 	String newSnifferForm(final Model model) throws ResourceNotFoundException, SchedulerException {
-		return "sources/new";
+		model.addAttribute(new ErrorForm());
+		return "templates/sources/new";
 	}
 
 	@RequestMapping(value = "/sources/{logSource}", method = RequestMethod.GET)
@@ -67,14 +67,18 @@ public class SourcesManageController {
 			@RequestParam(value = "created", defaultValue = "false") final boolean created, final Model model)
 					throws ResourceNotFoundException, SchedulerException {
 		model.addAttribute("created", created);
+		model.addAttribute(new ErrorForm());
 		getAndBindActiveSource(logSourceId, model);
-		return "sources/edit";
+		return "templates/sources/edit";
 	}
 
 	@RequestMapping(value = "/sources/{logSource}", method = RequestMethod.POST)
-	String redirectAfterUpdate(@PathVariable("logSource") final long logSourceId,
-			final RedirectAttributes redirectAttrs) {
-		redirectAttrs.addFlashAttribute("message", "Changes applied successfully!");
+	String redirectAfterUpdate(@PathVariable("logSource") final long logSourceId, final Locale locale,
+			final RedirectAttributes redirectAttrs) throws ResourceNotFoundException {
+
+		final LogSource<?> source = getAndBindActiveSource(logSourceId, null);
+		redirectAttrs.addFlashAttribute("message", new FlashMessage(MessageType.SUCCESS,
+				messageSource.getMessage("catlogging.source.edited", new String[] { source.getName() }, locale)));
 		return "redirect:{logSource}";
 	}
 

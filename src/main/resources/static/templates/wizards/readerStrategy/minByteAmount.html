@@ -1,0 +1,32 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!--이벤트 등록 시 Log reader strategy-->
+<div class="row">
+	<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::minBytesAmount},'form-group col-md-6 required','minBytesAmount')">
+		<th:block th:fragment="minBytesAmount">
+			<label for="minBytesAmount" class="control-label">Amount of bytes to process at least:</label>
+			<div class="controls controls-row input-group">
+				<input type="text" class="form-control minBytesAmount" ng-model="bean.minBytesAmount" name="minBytesAmount" id="minBytesAmount" required>
+				<div class="input-group-addon"><div class="text-muted" style="width:6em" id="humanMinBytesAmount">{{bean.minBytesAmount | bytesToSize:1}}</div></div>
+			</div>
+		</th:block>
+	</th:block>
+</div>

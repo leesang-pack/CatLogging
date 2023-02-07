@@ -1,0 +1,52 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="htmlHead">
+    <!-- NG Sni Events page -->
+    <script th:src="@{/static/google/loader.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+    <script type="text/javascript">
+        google.load('visualization', '1', {packages: ['corechart']});
+    </script>
+    <script type="text/javascript" th:src="@{/static/angular/ng-google-chart.js}"></script>
+    <script type="text/javascript" th:src="@{/ng/sniffer/event/events.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+
+    <script th:inline="javascript">
+        angular.module('EventsRootModule',[])
+            .controller(
+                "EventsRootController", ['$scope', function($scope) {
+                    $scope.sniffer = [(${@jstlFunctionsLibraryBean.jsonify(activeSniffer)})];
+                    $scope.sniffer.aspects.scheduleInfo = {
+                        scheduled: [(${scheduled})]
+                    };
+                    $scope.nls = {
+                        on:'[(#{catlogging.sniffers.scheduled.true})]',
+                        off:'[(#{catlogging.sniffers.scheduled.false})]'
+                    };
+                }]
+            );
+    </script>
+    <style>
+        .log .text {
+            padding: 9px;
+            overflow-x: auto;
+        }
+    </style>
+</th:block>
+</html>

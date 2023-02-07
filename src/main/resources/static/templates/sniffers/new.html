@@ -1,0 +1,59 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!--로그 출력 페이지에서 정보페이지-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="templates/layouts/layout"
+	  th:with="title=#{catlogging.common.new} + ' - ' + #{catlogging.common.sniffer},
+      activeNavbar='sniffers',
+      ngModules='SnifferEditorModule',
+      isAuth=${catloggingProps['catlogging.enable.auth'] == 'true' ? true : false}"
+>
+
+<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+<head th:insert="templates/sniffers/custumNewHeadHtml::htmlHead"></head>
+
+<!-- 삽입될 각 개별적인 영역을 작성 -->
+<th:block layout:fragment="content" >
+	<div class="row">
+		<div class="main">
+
+			<!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+			<th:block th:replace="templates/sniffers/customNewBreadcrumb::breadcrumb"></th:block>
+
+			<form id="refresh" method="post"></form>
+			<form ng-controller="SnifferEditController" name="form" method="post" action="/c/sniffers/new" th:field="*{errorForm.value}" id="snifferForm"
+				  role="form" novalidate="novalidate">
+
+				<!-- 해당 기능에서 공통 커스텀 body insert. -->
+				<th:block th:replace="templates/sniffers/customEditNewFormBody::formbody"></th:block>
+
+				<hr>
+				<div class="row">
+					<div class="col-md-12" us-spinner spinner-key="update">
+						<button type="button" class="btn btn-primary btn-sm" ng-disabled="form.$invalid" ng-click="submit(form)">[[#{catlogging.common.form.create}]]</button>
+					</div>
+				</div>
+			</form>
+
+		</div>
+	</div>
+</th:block>
+</html>

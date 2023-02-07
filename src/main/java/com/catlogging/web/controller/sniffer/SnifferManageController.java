@@ -20,6 +20,7 @@ package com.catlogging.web.controller.sniffer;
 
 import java.util.Locale;
 
+import com.catlogging.model.ErrorForm;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -37,8 +38,8 @@ import com.catlogging.util.PageableResult;
 import com.catlogging.web.ViewController;
 import com.catlogging.web.controller.FlashMessage;
 import com.catlogging.web.controller.FlashMessage.MessageType;
-import com.catlogging.web.controller.exception.ActionViolationException;
-import com.catlogging.web.controller.exception.ResourceNotFoundException;
+import com.catlogging.util.excption.ActionViolationException;
+import com.catlogging.util.excption.ResourceNotFoundException;
 
 /**
  * Controller to manage sniffers.
@@ -57,7 +58,7 @@ public class SnifferManageController extends SniffersBaseController {
 
 	@RequestMapping(value = "/sniffers", method = RequestMethod.GET)
 	ModelAndView listSniffers() {
-		final ModelAndView mv = new ModelAndView("sniffers/list");
+		final ModelAndView mv = new ModelAndView("templates/sniffers/list");
 		final PageableResult<AspectSniffer> result = snifferPersistence.getSnifferListBuilder()
 				.withEventsCounter(eventPersistence.getEventsCounter())
 				.withScheduleInfo(snifferScheduler.getScheduleInfoAspectAdaptor()).list();
@@ -67,21 +68,26 @@ public class SnifferManageController extends SniffersBaseController {
 	}
 
 	@RequestMapping(value = "/sniffers/new", method = RequestMethod.GET)
-	String newSnifferForm() throws ResourceNotFoundException, SchedulerException {
-		return "sniffers/new";
+	String newSnifferForm(final Model model) throws ResourceNotFoundException, SchedulerException {
+		model.addAttribute(new ErrorForm());
+		return "templates/sniffers/new";
 	}
 
 	@RequestMapping(value = "/sniffers/{snifferId}", method = RequestMethod.GET)
 	String editSniffer(@PathVariable("snifferId") final long snifferId, final Model model)
 			throws ResourceNotFoundException, SchedulerException {
+		model.addAttribute(new ErrorForm());
 		getAndBindActiveSniffer(model, snifferId);
-		return "sniffers/edit";
+		return "templates/sniffers/edit";
 	}
 
 	@RequestMapping(value = "/sniffers/{snifferId}", method = RequestMethod.POST)
-	String redirectAfterUpdate(@PathVariable("snifferId") final long snifferId,
+	String redirectAfterUpdate(@PathVariable("snifferId") final long snifferId, final Locale locale,
 			final RedirectAttributes redirectAttrs) {
-		redirectAttrs.addFlashAttribute("message", "Changes applied successfully!");
+		final Sniffer sniffer = snifferPersistence.getSniffer(snifferId);
+		redirectAttrs.addFlashAttribute("message", new FlashMessage(MessageType.SUCCESS,
+				messageSource.getMessage("catlogging.sniffers.edited", new String[] { sniffer.getName() }, locale)));
+
 		return "redirect:{snifferId}";
 	}
 

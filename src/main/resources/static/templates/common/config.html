@@ -1,0 +1,258 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="configFragment">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title th:text="${title} + ' | catlogging'"></title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link th:href="@{/static/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
+        <link th:href="@{/static/bootstrap/3.3.6/css/bootstrap-theme.min.css}" rel="stylesheet" />
+        <script th:src="@{/static/jquery/jquery-1.9.1.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/angular/1.8.2/angular.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/angular/1.8.2/angular-route.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/angular/1.8.2/angular-animate.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/angular/1.8.2/angular-sanitize.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/angular/1.3.2/angular-idle.min.js}"></script>
+        <script th:src="@{/static/angular-ui/ui-bootstrap-tpls-1.3.2.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/angular/message-center-master/message-center.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <script th:src="@{/static/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+        <script th:src="@{/static/jquery/jquery.endless-scroll.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <script th:src="@{/static/jquery/spin.min.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <script type="text/javascript" th:src="@{/static/angular/angular-spinner.min.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <link th:href="@{/static/slider/css/slider.css(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}" rel="stylesheet" />
+        <script th:src="@{/static/slider/js/bootstrap-slider.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <link th:href="@{/static/json-formatter/json-formatter.min.css(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}" rel="stylesheet" />
+        <script th:src="@{/static/json-formatter/json-formatter.min.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <script th:src="@{/static/screenfull/screenfull.min.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <script th:src="@{/static/screenfull/angular-screenfull.min.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <script th:src="@{/static/ngclipboard/clipboard.min.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <script th:src="@{/static/ngclipboard/ngclipboard.min.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <script th:src="@{/static/scrollintoview/jquery.scrollintoview.min.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <link th:href="@{/static/fontawesome/css/font-awesome.min.css(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}" rel="stylesheet" />
+        <script th:src="@{/static/date.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <script th:src="@{/static/catlogging.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <script type="text/javascript" th:inline="javascript">
+            var externalTypeMessage = $.parseJSON('[[#{catlogging.common.type}]]');
+            var externalSelectMessage = $.parseJSON('[[#{catlogging.common.pleaseSelect}]]');
+        </script>
+        <script th:src="@{/static/catlogging.ng-core.js(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}"></script>
+        <link th:href="@{/static/catlogging.css(v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})}" rel="stylesheet" />
+        <script type="text/javascript">
+            Spinner.defaults={ lines: 8, length: 4, width: 3, radius: 5 };
+
+            $(function() {
+                $(".help-popup").popover({placement:"top"});
+            });
+        </script>
+        <script th:inline="javascript" >
+            catlogging.config.contextPath = '[(${#httpServletRequest.getContextPath()})]';
+            catlogging.config.version = '[(${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'})]';
+            var catloggingNgApp=angular.module('catloggingNgApp', ['catloggingCore','ui.bootstrap','angularSpinner','MessageCenterModule', 'angularScreenfull','ngclipboard',
+                /*<![CDATA[*/
+                /*[+ [#th:block th:if="${not #strings.isEmpty(ngModules)}"] +]*/
+                /*[+    [#th:block th:utext="|'${ngModules}'|" /] +]*/
+                /*[+ [/th:block] +]*/
+                /*]]>*/
+                ,'ngRoute', 'ngIdle']);
+
+            catloggingNgApp.config(function($controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, IdleProvider, KeepaliveProvider)
+            {
+                catloggingNgApp.controllerProvider = $controllerProvider;
+                catloggingNgApp.compileProvider    = $compileProvider;
+                catloggingNgApp.filterProvider     = $filterProvider;
+                catloggingNgApp.provide            = $provide;
+
+                // Ng에서 보내는 async한 http요청에 대해서 spring security에는 모르니
+                // 해더를 포함해서 보내면 해더를 감지하여 Ng에서 보낸요청을 알 수 있다.
+                // 해당 session 에러인지 어떤 에러인지 판별필요.
+                $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+                $provide.factory('notAuthorizedInterceptor', function ($q, $rootScope, $templateCache) {
+                    return {
+                        request: (config)=>{
+                            // 일반적인 url 요청에 대해 idle refresh 함.
+                            // 사용자의 일반적인 입력이 아닌 주기적인 실행일 수도 있으니 idle 상태에서 벗어나기 위함.
+                            if( $templateCache.get(config.url) === undefined && [[${not #maps.isEmpty(catloggingProps) and catloggingProps['catlogging.enable.auth'] == "true" ? true : false}]] ){
+                                // console.log("Interceptor  --> "+ config.url + " -" + $templateCache);
+                                $rootScope.Idle.watch();
+                            }
+                            return config;
+                        },
+                        responseError: function (response) {
+                            // ajax, http 내부 비동기 요청에 의한 인증 실패 시 spring에서 받아 401리턴 한것을 받아 페이지 재로딩 결국
+                            // login 페이지로 보내기위함.
+                            if (response.status === 401) {
+                                console.log("Interceptor 401 already logout.");
+                                location.reload();
+                            }
+                            return $q.reject(response);
+                        }
+                    }
+                });
+                $httpProvider.interceptors.push('notAuthorizedInterceptor');
+
+                // IdleProvider.idle(30); // web 아무반응 없는 판단 주기
+                // IdleProvider.timeout(20); // 팝업창 후 버튼 timeout
+                KeepaliveProvider.interval(5); // keepalive 주기
+
+                // 사용자의 일반적인 입력에 대해 idle상태 아님 간주
+                IdleProvider.interrupt('keydown wheel mousedown touchstart touchmove scroll');
+
+                // 사용자의 입력없으면 창활성화 시 Yes,No 클릭을 위해 움직일 시 idle끝나고 resume 되기 때문에 Countdown이 멈춤다.
+                // 자동 resume을 해제
+                IdleProvider.autoResume("notIdle");
+            });
+
+            // 인터셉터에서 접근가능 하도록.. rootScope로 함.
+            catloggingNgApp.run(function($rootScope, Idle) {
+                if([[${not #maps.isEmpty(catloggingProps) and catloggingProps['catlogging.enable.auth'] == "true" ? true : false}]]) {
+                    $rootScope.Idle = Idle;
+                    $rootScope.Idle.watch();
+                }
+            });
+
+            catloggingNgApp.controller("AppIdleCtrl", ['$scope', '$http', 'Idle', 'Keepalive', function ($scope, $http, Idle) {
+
+                /*[- [()] utext와 비슷함.; -]*/
+
+                /*<![CDATA[*/
+                /*[+ [#th:block th:if="${#maps.isEmpty(catloggingProps)}"] +]*/
+                /*[+    $scope.sessionTime = 60 +]*/
+                /*[+ [/th:block] +]*/
+                /*[+ [#th:block th:unless="${#maps.isEmpty(catloggingProps)}"] +]*/
+                /*[+    [#th:block th:if="${catloggingProps['web.servlet.session.timeout']} < 60"] +]*/
+                /*[+        $scope.sessionTime = 60 +]*/
+                /*[+    [/th:block] +]*/
+                /*[+    [#th:block th:unless="${catloggingProps['web.servlet.session.timeout']} < 60"] +]*/
+                /*[+        $scope.sessionTime = [(${catloggingProps['web.servlet.session.timeout']})] +]*/
+                /*[+    [/th:block] +]*/
+                /*[+ [/th:block] +]*/
+                /*]]>*/
+
+                // sessiontime의 30초 전에 알려줌
+                $scope.idleTime = $scope.sessionTime - 30;
+
+                // 20초 기다려줌
+                $scope.timeout = 20;
+
+                // spring timeout 보다는 작게 셋팅함.
+                // yes 액션 하기전에 spring session timeout 나면 애매함.
+                // idle + timeout < spring timeout을 하는게 맞는듯
+                $scope.idle = $scope.idleTime;
+                $scope.timeout = $scope.timeout;
+
+                $scope.IsVisible = false;
+                $scope.$on('IdleStart', function () {
+                    // the user appears to have gone idle.
+                });
+
+                $scope.$on('IdleEnd', function () {
+                    // the user is doing stuff. if you are warning them, you can use this to hide the dialog.
+                });
+
+                $scope.$on('Keepalive', function () {
+                    // do something to keep the user's session alive.
+                });
+
+                $scope.$on('IdleWarn', function (e, countdown) {
+                    // the countdown arg is the number of seconds remaining until then.
+                    // you can change the title or display a warning dialog from here.
+                    // you can let them resume their session by calling Idle.watch()
+                    $scope.IsVisible = true;
+                    document.getElementById('AppIdleCtrlModal').style.display = "block";
+                });
+
+                $scope.$on('IdleTimeout', function () {
+                    // the user has timed out (meaning idleDuration + timeout has passed without any activity).
+                    // this is where you'd log them.
+                    window.location.href = "/logout";
+                });
+
+                // spring session 재 갱신을 위해 해당url 다시 접근
+                // 레이어만 제어하면 spring session이 변하지 않는다.
+                $scope.Reset = function () {
+                    window.location = window.location.href;
+                }
+                $scope.SignOut = function () {
+                    window.location.href = "/logout";
+                }
+                $scope.$watch('idle', function (value) {
+                    if (value !== null) {
+                        Idle.setIdle(value);
+                    }
+                });
+                $scope.$watch('timeout', function (value) {
+                    if (value !== null) {
+                        Idle.setTimeout(value);
+                    }
+                });
+            }]);
+
+            catloggingNgApp.controller("BeanWizardController", catlogging.ng.BeanWizardController);
+            catloggingNgApp.controller("catloggingRootController", ['$scope', '$uibModal', '$document', function($scope, $uibModal, $document) {
+                $scope.contextPath = catlogging.config.contextPath;
+                $scope.version = catlogging.config.version;
+                catlogging.ng.dateFilter = angular.injector(["ng"]).get("$filter")("date");
+                $scope.zoomEntry = function (context) {
+                    $uibModal.open({
+                        templateUrl: $scope.contextPath + '/templates/entry/zoomEntry',
+                        controller: 'ZoomLogEntryCtrl',
+                        size: 'lg',
+                        windowClass: 'zoom-entry-modal',
+                        appendTo: context.appendTo,
+                        resolve: {
+                            context: function () {
+                                return context;
+                            }
+                        }
+                    });
+                };
+                $scope.systemNotificationSummary = {worstLevel:'[[${systemNotificationSummary?.worstLevel}]]', count: [[${systemNotificationSummary?.count}]]};
+                $scope.$on("systemNotificationSummaryChanged", function(event, summary) {
+                    $scope.systemNotificationSummary = summary;
+                });
+            }]);
+            catloggingNgApp.controller("LocaleMessageController", ['$scope', '$http', '$log', '$sce', function($scope, $http, $log, $sce) {
+                $scope.localeMessageKey= null;
+                $scope.$watch('localeMessageKey', function(newValue, oldValue) {
+                    if (newValue) {
+                        new catlogging.getLocaleMessage($scope, $http, $log, $scope.localeMessageKey);
+                    }
+                }, true);
+                $scope.sanitizeLocalMessage = function() {
+                    return $sce.trustAsHtml($scope.localeMessage);
+                };
+                $scope.getLocalMessage = function(localeMessageKey) {
+                    $scope.localeMessageKey	= localeMessageKey
+                    return $scope.localeMessage;
+                };
+            }]);
+            catloggingNgApp.filter('escape', function() {
+                return window.encodeURIComponent;
+            });
+            $.catlogging.zoomLogEntry = function(context) {
+                angular.element(document.body).scope().zoomEntry(context);
+            };
+        </script>
+    </head>
+</th:block>
+</html>

@@ -1,0 +1,80 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<div id="reader-grok-wizard" class="wizard">
+	<lsf-info-label th:attr="label=#{catlogging.wizard.reader.grok}">
+		<p>[[#{catlogging.wizard.reader.grok.text.1}]]</p>
+	</lsf-info-label>
+	<div class="row">
+		<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(
+		content=~{this::grokPattern},
+		cssClass='form-group col-md-10 required',
+		fieldName='grokPattern',
+		bindErrorsPath='grokBean.pattern')">
+			<th:block th:fragment="grokPattern">
+				<label for="grokPattern" class="control-label">[[#{catlogging.common.form.pattern}]]:</label>
+				<div class="controls controls-row">
+					<input type="text" class="form-control pattern" ng-model="bean.grokBean.pattern" name="grokPattern" id="grokPattern" required/>
+				</div>
+			</th:block>
+		</th:block>
+		<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::charset},'form-group col-md-2','charset')">
+			<th:block th:fragment="charset">
+				<label for="charset" class="control-label">[[#{catlogging.common.form.characterSet}]]*:</label>
+				<select name="charset" id="charset" ng-model="bean.charset" class="form-control" required>
+					<option value="">[[#{catlogging.common.pleaseSelect}]]</option>
+					<th:block th:each="entry : ${T(java.nio.charset.Charset).availableCharsets()}">
+						<option th:value="${entry.key}">[(${entry.key})]</option>
+					</th:block>
+				</select>
+			</th:block>
+		</th:block>
+	</div>
+	
+	<div class="row">
+		<div class="form-group col-md-6">
+			<label class="control-label">[[#{catlogging.common.form.patternFlags}]]:</label>
+			<div class="controls controls-row">
+				<label class="checkbox-inline">
+					<input type="checkbox" ng-model="bean.grokBean.subStringSearch" class="subStringSearch"/> [[#{catlogging.common.form.patternSubString}]]
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" ng-model="bean.grokBean.caseInsensitive" class="caseInsensitive"/> [[#{catlogging.common.form.patternCaseMatch}]]
+				</label>
+				<!-- 
+				<label class="checkbox-inline">
+					<input type="checkbox" ng-model="bean.grokBean.multiLine" class="multiLine"/> Multiline mode
+				</label>
+				<label class="checkbox-inline">
+					<input type="checkbox" ng-model="bean.grokBean.dotAll" class="dotAll"/> Dotall mode
+				</label> -->
+			</div>
+		</div>
+		<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::overflowAttribute},'form-group col-md-6','overflowAttribute')">
+			<th:block th:fragment="overflowAttribute">
+				<lsf-info-label th:attr="label=#{catlogging.common.form.overflowAttr}+':'" for="overflowAttribute">
+					<p>[[#{catlogging.common.form.overflowAttr.text}]]</p>
+				</lsf-info-label>
+				<input type="text" class="form-control pattern" ng-model="bean.overflowAttribute" id="overflowAttribute" name="overflowAttribute" />
+			</th:block>
+		</th:block>
+	</div>
+
+</div>
+</html>

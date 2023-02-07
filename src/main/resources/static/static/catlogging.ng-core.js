@@ -71,7 +71,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 	   controller: function($scope, $log) {
 		    function applayFields(fields) {
 			    $scope.rows = null;
-	
+
 			    var includeMap = {};
 			    if ($scope.include) {
 			    	var include = $scope.include();
@@ -81,7 +81,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 			    		}
 			    	}
 			    }
-			    
+
 			    var ignoreFields = {
 			    	"lf_startOffset": !includeMap["lf_startOffset"],
 			    	"lf_endOffset": !includeMap["lf_endOffset"],
@@ -122,7 +122,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 		    };
 		    $scope.$watch('fields', applayFields);
 	   },
-	   template: 
+	   template:
 	      '<div><div class="panel panel-default" ng-if="rows">'+
 	      	'<table class="attributes table table-condensed table-striped table-bordered entries">'+
 	      		'<tr ng-repeat="row in rows">'+
@@ -156,7 +156,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 	    	   $scope.$emit('openLogPointer', pointer);
 	       };
 	   },
-	   template: 
+	   template:
 	      '<span ng-switch="t" ng-class="t">' +
 		  	'<span ng-switch-when="SEVERITY" class="label label-default severity sc-{{v.c}}">{{v.n}}</span>' +
 		  	'<span ng-switch-when="DATE">{{v | date:\'medium\'}}</span>' +
@@ -182,7 +182,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 		   $scope.loading = newValue;
 	       });
 	   },
-	   template: 
+	   template:
 	      '<div class="busy-container"><div class="backdrop" ng-show="loading"></div><div class="spinner-area" ng-show="loading"><div us-spinner class="spinner"></div></div><div ng-transclude></div></div>'
        };
    })
@@ -217,7 +217,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 		   $scope.infoExpanded = expand;
 	       };
 	   },
-	   template: 
+	   template:
 	      '<div><div class="well well-sm" ng-show="infoExpanded"><button type="button" class="close" ng-click="expand(false)"><span>&times;</span></button><i class="glyphicon glyphicon-info-sign help-icon pull-left" style="margin-right:0.5em"></i> <div ng-transclude></div></div><label class="control-label">{{label}} <a href ng-click="expand(!infoExpanded)"><i class="glyphicon glyphicon-info-sign help-icon"></i></a></label></div>'
        };
    })
@@ -324,7 +324,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 		$scope.getWizardView = function(selectedWizard) {
 		    if (selectedWizard.view.indexOf("/ng/") == 0) {
 			return catlogging.config.contextPath + selectedWizard.view + '?v=' + catlogging.config.version;
-		    } else {			
+		    } else {
 			return catlogging.config.contextPath + '/c/wizards/view?type=' + selectedWizard.beanType + '&v=' + catlogging.config.version;
 		    }
 		};
@@ -333,15 +333,15 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 			$scope.templateLoading = false;
 		};
 	   },
-	   template: 
+	   template:
 	      '<div ng-form="form" class="bean-wizard" ng-class="{\'well well-sm\' : !styleClass, styleClass: styleClass}">' +
 	      	'<lsf-model-editor model="bean" exclude="modelExclude()" name="{{beanTypeLabel}}"></lsf-model-editor>' +
 		    '<div class="row">' +
 	      	'<div class="col-md-6 form-group required" ng-class="{\'has-error\': form.selectedWizard.$invalid && !form.selectedWizard.$pristine}">' +
-			'<label class="control-label" ng-controller="LocaleMessageController" ng-init="localeMessageKey=\'catlogging.common.type\'">{{beanTypeLabel}} {{localeMessage}}</label>' +
+			'<label>{{beanTypeLabel}} '+externalTypeMessage+'</label>' +
 			'<div class="controls">' +
 				'<select ng-model="selectedWizard" name="selectedWizard" ng-change="wizardTypeChanged()" class="form-control" ng-options="w.label for w in wizards" required>' +
-					'<option value="" ng-controller="LocaleMessageController" ng-init="localeMessageKey=\'catlogging.common.pleaseSelect\'">{{localeMessage}}</option>' +
+					'<option value="">'+externalSelectMessage+'</option>' +
 				'</select>' +
 			'</div>' +
 		 '</div>' +
@@ -360,7 +360,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 	var tailMinFollowInterval=50;
 	var slidingWindowEntriesCount = 250;
        return {
-	   restrict: 'AE',
+	   restrict: 'AEM',
 	   replace: true,
 	   transclude: false,
 	   scope: {
@@ -405,7 +405,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 			"BYTE": $scope.source.navigationType=="BYTE",
 			"DATE": $scope.source.navigationType=="DATE" || catlogging.get($scope.source, "reader.fieldTypes.lf_timestamp")=="DATE"
 		};
-		
+
 		var entriesUpdCallback = null;
 		var searchLogPositionerOriginEntry;
 		$scope.cancel=function() {
@@ -436,36 +436,38 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 				    url: $scope.getLoadLogEntriesUrl(pointer?JSON.stringify(pointer):'', $scope.searchSettings.dir * defaultLoadCount, 'search'),
 				    method: "POST",
 				    data: scanner,
-				}).success(function(data, status, headers, config) {
-				    $log.info("Search finished with result", data);
+				}).then(successCallback, errorCallback);
+				function successCallback(response){
+					//success code
+					$log.info("Search finished with result", response.data);
 					if($scope.searchStatus=="cancelled") {
-					    	$log.info("Dismiss serach result due to cancellation");
+						$log.info("Dismiss serach result due to cancellation");
 						return;
 					}
-					if (data.scannedTime>0) {
-						$scope.searchSpeed=bytesToSize(Math.round(data.scannedSize/data.scannedTime*1000),2);
+					if (response.data.scannedTime>0) {
+						$scope.searchSpeed=bytesToSize(Math.round(response.data.scannedSize/response.data.scannedTime*1000),2);
 					}
-					if (data.lastEntry) {
-						$scope.setPointerForEntry(data.lastEntry);
+					if (response.data.lastEntry) {
+						$scope.setPointerForEntry(response.data.lastEntry);
 					}
-					if (data.event) {
-					    $scope.backdropOverlay.hide();
+					if (response.data.event) {
+						$scope.backdropOverlay.hide();
 						$scope.searchStatus="hit";
 						$('#search-progress-modal').modal("hide");
-						entriesUpdCallback(data.entries.entries);
+						entriesUpdCallback(response.data.entries.entries);
 						$("#log-entries-frame tbody tr:eq(0)").addClass("selected");
 						if (document.location.hash!="search-control") {
 							document.location.hash="search-control";
 						}
 						if (angular.isFunction($scope.searchFound)) {
-						    $scope.searchFound({ searchResult:data });
+							$scope.searchFound({ searchResult:response.data });
 						}
 					} else {
 						entriesUpdCallback(null);
-						if (data.lastEntry == null || 
-								(data.lastEntry.lf_startOffset.sof || data.lastEntry.lf_endOffset.eof)
+						if (response.data.lastEntry == null ||
+							(response.data.lastEntry.lf_startOffset.sof || response.data.lastEntry.lf_endOffset.eof)
 						) {
-						    $scope.backdropOverlay.hide();
+							$scope.backdropOverlay.hide();
 							$scope.searchStatus="miss";
 							// End of search
 							$log.info("End of log reached without matching");
@@ -473,28 +475,30 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 								$scope.setPointerForEntry(searchLogPositionerOriginEntry);
 							}
 						} else {
-							console.log("Continue search from new pointer: "+JSON.stringify(data.lastEntry.lf_endOffset));
-							incrementalSearch(data.lastEntry.lf_endOffset.json);
+							console.log("Continue search from new pointer: "+JSON.stringify(response.data.lastEntry.lf_endOffset));
+							incrementalSearch(response.data.lastEntry.lf_endOffset.json);
 						}
 					}
-				}).error(function(data, status, headers, config, statusText) {
-				    $scope.backdropOverlay.hide();
-				    entriesUpdCallback(null);
+				}
+				function errorCallback(response){
+					//error code
+					$scope.backdropOverlay.hide();
+					entriesUpdCallback(null);
 					$scope.searchStatus="error";
-					$scope.searchStatusText = "An error occurred during search: " + status;
-					$log.error("Error occurred during searching", status);
+					$scope.searchStatusText = "An error occurred during search: " + response.status;
+					$log.error("Error occurred during searching", response.status);
 					if (searchLogPositionerOriginEntry) {
 						$scope.setPointerForEntry(searchLogPositionerOriginEntry);
 					}
-					$scope.handleHttpError($scope.searchStatusText, data, status, headers, config, statusText);
-				});
+					$scope.handleHttpError($scope.searchStatusText, response.data, response.status, response.headers, response.config, response.statusText);
+				}
 			}; // incrementalSearch
 			incrementalSearch(pointer);
 		};
-		
+
 		$scope.configureFields = function() {
 			$uibModal.open({
-			      templateUrl: catlogging.config.contextPath + '/ng/entry/viewerFieldsConfig.html',
+			      templateUrl: catlogging.config.contextPath + '/templates/entry/viewerFieldsConfig',
 			      controller: 'ViewerFieldsConfigCtrl',
 			      size: 'lg',
 			      scope: $scope,
@@ -535,7 +539,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 		scope.frameHeightBeforeFullscreen = null;
 		scope.viewerFields = scope.configuredViewerFields();
 		scope.element = element;
-		
+
 		scope.resizeViewerToFullHeight = function (windowRef, count) {
 			$timeout(function() {
 				var searchPanelHeight = $(element).find(".viewer-search .panel-body:visible").outerHeight(true);
@@ -560,7 +564,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 				// Reduce total window height by upper elements height
 				var viewerOffset=$(element).find(".lsf-viewer").offset();
 				windowHeight -= viewerOffset.top;
-				
+
 				var currentEntriesFrameHeight = $(element).find("#log-entries-frame").height();
 				$log.debug("Fullscreen metrics: window, viewer, searchPanel, entriesFrameHeight height: ", windowHeight, viewerScreenHeight, searchPanelHeight, currentEntriesFrameHeight);
 				if (windowHeight < (viewerScreenHeight - searchPanelHeight)) {
@@ -592,8 +596,8 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 				scope.frameHeightBeforeFullscreen = null;
 			}
 		});
-		
-		
+
+
 		function emptyViewerEntries() {
 		    logEntries = {};
 		};
@@ -606,14 +610,14 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 		scope.getLoadLogEntriesUrl = function(mark, count, urlSuffix) {
 			return catlogging.config.contextPath + '/c/sources/'+ scope.source.id +'/'+(urlSuffix?urlSuffix:'entries')+'?log=' + encodeURIComponent(scope.log.path) +'&mark='+ encodeURIComponent(mark) +'&count=' + count;
 		};
-		
+
 		scope.handleHttpError = function(context, data, status, headers, config, statusText) {
 		    if (angular.isFunction(scope.onError())) {
 		    	scope.onError()(context);
 		    };
 		    scope.alerts.httpError(context, data, status, headers, config, statusText);
 		};
-		
+
 		scope.getLoadLogEntriesHttpCall = function(mark, count) {
 		    $log.debug('Loading entries for mark/count/source: ', mark, count, scope.source);
 		    if (scope.source.id) {
@@ -680,9 +684,9 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 		    	if (inprog) {
 		    	    setter();
 		    	} else {
-		    	    scope.$apply(setter);		    	    
+		    	    scope.$apply(setter);
 		    	}
-		    	scope.skipPositioning = false;		    		
+		    	scope.skipPositioning = false;
 		}
 		function bottomSpinner() {
 			return new Spinner().spin($(element).find("#log-entries-frame .spinner.bottom")[0]);
@@ -703,7 +707,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
     		  if (dir > 0) {
     			  nextRow = $(currentRow).next();
     		  } else {
-    			  nextRow = $(currentRow).prev();	        			  
+    			  nextRow = $(currentRow).prev();
     		  }
     		  if (nextRow.length > 0) {
     			  nextId = nextRow.find("td a.zoom").attr("id");
@@ -769,7 +773,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 	        			var idCell = row.find("td.zoom a");
 	        			if (idCell.length > 0) {
 	        			    var entryId = idCell.attr("id");
-	        			    delete logEntries[entryId];			    
+	        			    delete logEntries[entryId];
 	        			}
 	        			table.deleteRow(rowIndex);
         		    }
@@ -782,7 +786,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
         		    $log.debug("Truncated overflow entries from sliding window in ms", overflow, new Date().getTime() - now.getTime());
 		    }
 		};
-		
+
 		function loadRandomAccessEntries(jsonMark, highlight, desiredNavType) {
 		    scope.disableTailFollow();
 			var entriesUpdCallback = scope.getEntriesUpdateCallback();
@@ -806,16 +810,30 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 				});
 			}
 			scope.backdropOverlay.show();
-			entriesCall.success(function(data, status, headers, config) {
-			      emptyViewerEntries();
-			      renderTableHead(data.fieldTypes);
-			      entriesUpdCallback(data.entries, highlight ? data.highlightEntry : -1);
-			      scope.backdropOverlay.hide();
-			}).error(function(data, status, headers, config, statusText) {
-			    entriesUpdCallback(null);
-			    scope.handleHttpError("Failed to load entries", data, status, headers, config, statusText);
-			    scope.backdropOverlay.hide();
-			});
+			entriesCall.then(successCallback,errorCallback);
+			function successCallback(response){
+				//success code
+				var data = response.data;
+				var status = response.status;
+				var statusText = response.statusText;
+				var headers = response.headers;
+				var config = response.config;
+				emptyViewerEntries();
+				renderTableHead(data.fieldTypes);
+				entriesUpdCallback(data.entries, highlight ? data.highlightEntry : -1);
+				scope.backdropOverlay.hide();
+			}
+			function errorCallback(response){
+				//error code
+				var data = response.data;
+				var status = response.status;
+				var statusText = response.statusText;
+				var headers = response.headers;
+				var config = response.config;
+				entriesUpdCallback(null);
+				scope.handleHttpError("Failed to load entries", data, status, headers, config, statusText);
+				scope.backdropOverlay.hide();
+			}
 		};
 		scope.loadRandomAccessEntries = loadRandomAccessEntries;
 
@@ -836,27 +854,37 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 				}
 			};
 			scope.getLoadLogEntriesHttpCall(pStr, (fromTail?-1:1) * defaultLoadCount)
-			  .success(function(data) {
-			    	emptyViewerEntries();
-			    	renderTableHead(data.fieldTypes);
-			    	$(element).find('.log-entries tbody').empty().append($.catlogging.entriesRows(data.fieldTypes, scope.viewerFields, data.entries, renderPrefixCells));
+				.then(_successCallback, _errorCallback);
+			function _successCallback(response){
+				//success code
+				var data = response.data;
+				emptyViewerEntries();
+				renderTableHead(data.fieldTypes);
+				$(element).find('.log-entries tbody').empty().append($.catlogging.entriesRows(data.fieldTypes, scope.viewerFields, data.entries, renderPrefixCells));
 				if (fromTail) {
-				    $(element).find('#log-entries-frame').scrollTop($(element).find('#log-entries-frame')[0].scrollHeight);
-				    // $location.hash("entry-"+(logEntries.length-1));
-				    // $anchorScroll();
+					$(element).find('#log-entries-frame').scrollTop($(element).find('#log-entries-frame')[0].scrollHeight);
+					// $location.hash("entry-"+(logEntries.length-1));
+					// $anchorScroll();
 				} else {
-				    $(element).find('#log-entries-frame').scrollTop(10);
+					$(element).find('#log-entries-frame').scrollTop(10);
 				}
 				updateLogControls();
 				spinner.stop();
 				updateLogPositioner(true, true);
 				if (successCallback) {
-				    successCallback();
+					successCallback();
 				}
-			}).error(function(data, status, headers, config, statusText) {
-			    spinner.stop();
-			    scope.handleHttpError("Failed to load entries", data, status, headers, config, statusText);
-			});
+			}
+			function _errorCallback(response){
+				//error code
+				var data = response.data;
+				var status = response.status;
+				var statusText = response.statusText;
+				var headers = response.headers;
+				var config = response.config;
+				spinner.stop();
+				scope.handleHttpError("Failed to load entries", data, status, headers, config, statusText);
+			};
 			return h;
 		}
 
@@ -890,13 +918,13 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 				};
 			};
 		};
-		
+
 		scope.disableTailFollow = function() {
 		    scope.tailFollowEnabled = false;
 		    followTail(false, true);
 		};
 
-		
+
 		// Init 1
 		scope.reset = function(start) {
         		if (angular.isObject(scope.mark) && catlogging.objSize(scope.mark)>0) {
@@ -905,7 +933,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
         		    	loadEntries(scope.mark, scope.initTail());
         		}
 		};
-        	
+
 		scope.$on('resetLogViewer', function(event, args) {
 		    $log.info("Reseting viewer");
 		    scope.reset();
@@ -932,21 +960,34 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 					}
 		    	};
 		    	scope.getLoadLogEntriesHttpCall(mark, defaultLoadCount)
-			    	.success(function(data) {
-						$(element).find('.log-entries tbody').append($.catlogging.entriesRows(scope.fieldTypes, scope.viewerFields, data.entries, renderPrefixCells));
-						always();
-						if (angular.isFunction(loadingSuccessCallback)) {
-							loadingSuccessCallback();
-	    				}
-			    	})
-			    	.error(function(data, status, headers, config, statusText) {
-					    always();
-					    scope.handleHttpError("Failed to load entries", data, status, headers, config, statusText);
-					    if (angular.isFunction(loadingErrorCallback)) {
-	    					loadingErrorCallback();
-	    				}
-			    	});
-		    	return true;
+					.then(_successCallback, _errorCallback);
+				function _successCallback(response){
+					//success code
+					var data = response.data;
+					var status = response.status;
+					var statusText = response.statusText;
+					var headers = response.headers;
+					var config = response.config;
+					$(element).find('.log-entries tbody').append($.catlogging.entriesRows(scope.fieldTypes, scope.viewerFields, data.entries, renderPrefixCells));
+					always();
+					if (angular.isFunction(loadingSuccessCallback)) {
+						loadingSuccessCallback();
+					}
+				}
+				function _errorCallback(response){
+					//error code
+					var data = response.data;
+					var status = response.status;
+					var statusText = response.statusText;
+					var headers = response.headers;
+					var config = response.config;
+					always();
+					scope.handleHttpError("Failed to load entries", data, status, headers, config, statusText);
+					if (angular.isFunction(loadingErrorCallback)) {
+						loadingErrorCallback();
+					}
+				}
+				return true;
 		    } else if (scrollDirection != 'next' && $(element).find('.log-entries tbody tr:first').attr('sof')!='true') {
 		    	loadingEntries=true;
 		    	var spinner=topSpinner();
@@ -964,27 +1005,40 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 					}
 		    	};
 		    	scope.getLoadLogEntriesHttpCall(mark, -defaultLoadCount)
-	    			.success(function(data) {
-	    				$(element).find('.log-entries tbody').prepend($.catlogging.entriesRows(scope.fieldTypes, scope.viewerFields, data.entries, renderPrefixCells));
-	    				var h = $(scrollArea)[0].scrollHeight - oldHeight;
-	    				$(scrollArea).scrollTop(oldScroll + h);
-	    				always();
-	    				if (angular.isFunction(loadingSuccessCallback)) {
-							loadingSuccessCallback();
-	    				}
-	    			})
-	    			.error(function(data, status, headers, config, statusText) {
-	    				always();
-	    				scope.handleHttpError("Failed to load entries", data, status, headers, config, statusText);
-	    				if (angular.isFunction(loadingErrorCallback)) {
-	    					loadingErrorCallback();
-	    				}
-	    			});
+					.then(_successCallback, _errorCallback);
+				function _successCallback(response){
+					//success code
+					var data = response.data;
+					var status = response.status;
+					var statusText = response.statusText;
+					var headers = response.headers;
+					var config = response.config;
+					$(element).find('.log-entries tbody').prepend($.catlogging.entriesRows(scope.fieldTypes, scope.viewerFields, data.entries, renderPrefixCells));
+					var h = $(scrollArea)[0].scrollHeight - oldHeight;
+					$(scrollArea).scrollTop(oldScroll + h);
+					always();
+					if (angular.isFunction(loadingSuccessCallback)) {
+						loadingSuccessCallback();
+					}
+				}
+				function _errorCallback(response){
+					//error code
+					var data = response.data;
+					var status = response.status;
+					var statusText = response.statusText;
+					var headers = response.headers;
+					var config = response.config;
+					always();
+					scope.handleHttpError("Failed to load entries", data, status, headers, config, statusText);
+					if (angular.isFunction(loadingErrorCallback)) {
+						loadingErrorCallback();
+					}
+				}
 		    }
 		    return true;
 		  };
 		// Init 2
-		{			
+		{
 			var lastEntriesScrollTop=-1;
 			$(element).find('#log-entries-frame').scroll(function() {
 				var scrollTop=$(this).scrollTop();
@@ -1016,7 +1070,14 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 				var mark=$(element).find('.log-entries tbody tr:last').attr('end');
 				console.log('Following tail from mark: ' + mark);
 				scope.getLoadLogEntriesHttpCall(mark, defaultLoadCount)
-				.success(function(data) {
+					.then(_successCallback, _errorCallback);
+				function _successCallback(response){
+					//success code
+					var data = response.data;
+					var status = response.status;
+					var statusText = response.statusText;
+					var headers = response.headers;
+					var config = response.config;
 					var scrollArea=$(element).find("#log-entries-frame");
 					var scrollTop=scrollArea.scrollTop();
 					var scrollHeight=scrollArea[0].scrollHeight;
@@ -1032,23 +1093,30 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 					updateLogControls(true);
 					var nextTimeout;
 					if ($(element).find('.log-entries tbody tr:last').attr('eof')!='true') {
-					    if ($(element).find('#slow-following-popup').next('div.popover:visible').length == 0){
-						    $(element).find('#slow-following-popup').popover('show');
-					    }
-					    nextTimeout=tailMinFollowInterval;
+						if ($(element).find('#slow-following-popup').next('div.popover:visible').length == 0){
+							$(element).find('#slow-following-popup').popover('show');
+						}
+						nextTimeout=tailMinFollowInterval;
 					} else if (data.length>0) {
-					    $(element).find('#slow-following-popup').popover('hide');
-					    nextTimeout=Math.max(tailMinFollowInterval,Math.min(tailMaxFollowInterval, tailMaxFollowInterval/(data.length/defaultLoadCount)));
+						$(element).find('#slow-following-popup').popover('hide');
+						nextTimeout=Math.max(tailMinFollowInterval,Math.min(tailMaxFollowInterval, tailMaxFollowInterval/(data.length/defaultLoadCount)));
 					} else {
-					    $(element).find('#slow-following-popup').popover('hide');
-					    nextTimeout=tailMaxFollowInterval;
+						$(element).find('#slow-following-popup').popover('hide');
+						nextTimeout=tailMaxFollowInterval;
 					}
 					console.log("Going to follow tail the next time in [ms]: "+nextTimeout);
 					followTailTimeout=setTimeout(function() {followTail(true);},nextTimeout);
-				}).error(function(data, status, headers, config, statusText) {
-				    scope.handleHttpError("Failed to load entries", data, status, headers, config, statusText);
-				    scope.disableTailFollow();
-		    		});
+				}
+				function _errorCallback(response){
+					//error code
+					var data = response.data;
+					var status = response.status;
+					var statusText = response.statusText;
+					var headers = response.headers;
+					var config = response.config;
+					scope.handleHttpError("Failed to load entries", data, status, headers, config, statusText);
+					scope.disableTailFollow();
+				}
 
 			} else if (followTailTimeout) {
 				if (followSpinner) {
@@ -1078,15 +1146,15 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
  		   console.log("Changed log pointer, has to load entries from: ", scope.mark);
  		   loadRandomAccessEntries(scope.mark, false, args.navType);
  		});
-		
+
 		scope.fromStart = function() {
 		    loadEntries(null, false);
 		};
-		
+
 		scope.fromTail = function() {
 		    loadEntries(null, true);
 		};
-		
+
 		scope.tailFollowEnabled = false;
 		scope.toggleTailFollow = function() {
 		    scope.tailFollowEnabled = !scope.tailFollowEnabled;
@@ -1094,26 +1162,26 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 		    if (scope.tailFollowEnabled && !isEofReached()) {
 			$log.info("Jump first to tail before following");
 			loadEntries(null, true, true).success(function() {
-			    followTail(true, true);			    
+			    followTail(true, true);
 			});
 		    } else {
 			followTail(scope.tailFollowEnabled, true);
 		    }
 		};
-		
+
 		// Init
 		if (scope.fullHeight=="true") {
 			scope.resizeViewerToFullHeight(window, 1);
 		}
-		
+
 	   },
-	   templateUrl: catlogging.config.contextPath + '/ng/entry/logViewer.html'
+	   templateUrl: catlogging.config.contextPath + '/templates/entry/logViewer'
        };
    }])
    .controller('ViewerFieldsConfigCtrl', function($scope, $uibModalInstance) {
 	   $scope.$watch('viewerFields', function(newValue, oldValue) {
 		  var d = $scope.defaultViewerFields ? $scope.defaultViewerFields() : null;
-		  $scope.isDefault = angular.equals(newValue, d); 
+		  $scope.isDefault = angular.equals(newValue, d);
 	   }, true);
 	   $scope.enableConfig = function() {
 		   $scope.viewerFields = [];
@@ -1131,7 +1199,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
    })
    .directive('lsfLogPosition', function($timeout) {
        return {
-	   restrict: 'AE',
+	   restrict: 'AEM',
 	   replace: true,
 	   transclude: false,
 	   scope: {
@@ -1164,14 +1232,14 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 						scope.pointer = p;
 						scope.$emit('controlPositionChanged', { newPointer: p, navType: 'BYTE' });
 					}
-		    	}); 
+		    	});
 	       });
 	       $timeout(function () {
 	    	   scope.logPosition.init(scope.pointer);
 	    	   scope.initialized = true;
 	       });
 	   },
-	   templateUrl: catlogging.config.contextPath + '/ng/entry/logPosition.html'
+	   templateUrl: catlogging.config.contextPath + '/templates/entry/logPosition'
        };
    })
    .controller("ZoomLogEntryCtrl", ['$scope', '$uibModalInstance', '$log', 'lsfAlerts', 'context', function($scope, $uibModalInstance, $log, lsfAlerts, context) {
@@ -1205,9 +1273,9 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
     			   },
     			   function () {
     	    		   $scope.busy = false;
-    	    		   $scope.alerts.warn("Failed to navigate to the " + (dir > 0 ? "next": "previous") + " log entry. A relaod of the viewer could help.")    				   
+    	    		   $scope.alerts.warn("Failed to navigate to the " + (dir > 0 ? "next": "previous") + " log entry. A relaod of the viewer could help.")
     			   }
-    	   );    	   
+    	   );
        };
        $scope.close = function () {
     	   $uibModalInstance.close();
@@ -1224,7 +1292,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 	       bindErrorsPath: '@',
 	       bindErrors: '='
 	   },
-	   template: 
+	   template:
 	      '<div ng-class="{\'has-error\': $parent.form[fieldName].$invalid || bindErrors[bindErrorsPath?bindErrorsPath:fieldPath]}">' +
 	      '	<div ng-transclude></div><div class="help-block" ng-if="bindErrors[bindErrorsPath?bindErrorsPath:fieldPath]">{{bindErrors[bindErrorsPath?bindErrorsPath:fieldPath]}}</div>' +
 	      '</div>'
@@ -1242,7 +1310,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 	    	   $scope.alerts.remove(index);
 	       };
 	   },
-	   template: 
+	   template:
 	      '<div><div ng-repeat="alert in alerts.alerts" class="alert alert-{{alert.type}}">'+
 	      '<a href class="close" ng-click="removeAlert($index)">&times;</a>'+
 	      '{{alert.message}}'+
@@ -1253,7 +1321,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
    .factory('lsfAlerts', function() {
        return {
 	   create: function () {
-	       	return {	       	    
+	       	return {
         	   alerts: [],
         	   clear: function() {
         	       this.alerts = [];
@@ -1277,7 +1345,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
         	   httpError: function (msg, data, status, headers, config, statusText) {
         	       if (data && data.bindErrors) {
         		   this.add('danger', "Erroneous input! Please correct below errors to continue.");
-        	       } else {        		   
+        	       } else {
                 	   var detail = "HTTP " + status +" status";
                 	   if (statusText) {
                 	       detail += "\n" + statusText;
@@ -1289,10 +1357,10 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
         	       }
         	   },
         	   success: function (msg, detail) {
-        	       this.add('success', msg, detail);	       
+        	       this.add('success', msg, detail);
         	   },
         	   warn: function (msg, detail) {
-        	       this.add('warning', msg, detail);	       
+        	       this.add('warning', msg, detail);
         	   },
         	   buildFromMessages: function (messages) {
         		   if (messages) {
@@ -1350,7 +1418,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 			    });
 	       }
 	   },
-	   template: 
+	   template:
 	      '<span class="fields-teaser">' +
 		   	'<span ng-repeat="p in teaserParts" class="part">' +
 	      		'<span class="label label-default">{{p.key}}</span> <lsf-print-field type="p.type" value="p.value" limit="p.limit"></lsf-print-field>' +
@@ -1398,7 +1466,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 					}
 				}
 			});
-			
+
 			$scope.deleteField = function(index) {
 				$scope.configuredFields.splice(index, 1);
 			};
@@ -1431,7 +1499,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 				}
 			};
 	   },
-	   template: 
+	   template:
 		      '<div><div class="panel panel-default">'+
 		      	'<table class="attributes table table-condensed table-striped table-bordered entries">'+
 		      		'<tr><th>Visible</th><th>Name</th><th>Type</th><th colspan="3">Actions</th></tr>'+
@@ -1450,7 +1518,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 })
 .directive('lsfModelEditor', function() {
     return {
- 	   restrict: 'AE',
+ 	   restrict: 'AEM',
  	   replace: true,
  	   scope: {
  	       model: '=',
@@ -1460,7 +1528,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
  	   controller: function($scope, $uibModal) {
  		   $scope.editModel = function() {
 			$uibModal.open({
-			      templateUrl: catlogging.config.contextPath + '/ng/util/modelEditor.html',
+			      templateUrl: catlogging.config.contextPath + '/templates/utils/modelEditor',
 			      controller: 'ModelEditorCtrl',
 			      size: 'lg',
 			      scope: $scope,
@@ -1474,10 +1542,10 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 			        modelName: function () { return $scope.name; }
 			      }
 			    });
-  
+
  		   };
  	   },
- 	   template: 
+ 	   template:
  	      '<a href class="close" ng-click="editModel()" title="Configure model object in JSON editor"><i class="fa fa-pencil-square-o"></i></a>'
     };
 })
@@ -1528,10 +1596,10 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
         	function customValidator(ngModelValue) {
         		try {
         			JSON.parse(ngModelValue);
-            		ctrl.$setValidity('validJson', true);        			
+            		ctrl.$setValidity('validJson', true);
         		} catch (e) {
         			$log.debug("Invalid JSON: ", ngModelValue, e.message);
-            		ctrl.$setValidity('validJson', false);        			
+            		ctrl.$setValidity('validJson', false);
         		}
         		return ngModelValue;
         	};
@@ -1593,7 +1661,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 				scope.slider.min = min;
 				scope.slider.max = max;
 				scope.slider.step = step;
-				scope.slider.setValue(value);				
+				scope.slider.setValue(value);
 			};
 			scope.$watch('value', function(newValue, oldValue) { sliderUpdater(scope.min, scope.max, scope.step, newValue); });
 			scope.$watch('min', function(newValue, oldValue) { sliderUpdater(newValue, scope.max, scope.step, scope.value); });
@@ -1605,7 +1673,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 })
 .directive('lsfLogNavigatorDate', function($timeout, $log) {
 	return {
-		restrict: 'AE',
+		restrict: 'AEM',
 		replace: true,
 		transclude: false,
 		scope: {
@@ -1634,7 +1702,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 					}
 				};
 			};
-			
+
 			var entry = $scope.initWithEntry();
 			if (entry) {
 				setValueByEntry(entry);
@@ -1659,7 +1727,7 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 			$scope.timeSliderFormater = function(value) {
 				return catlogging.ng.dateFilter(new Date(value), 'mediumTime');
 			};
-			
+
 			$scope.$on('updateCurrentPosition', function(event, args) {
 				setValueByEntry(args.entry);
 			});
@@ -1671,13 +1739,13 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 				$scope.dateSlider.min = new Date($scope.minDate).clearTime().getTime();
 				$scope.dateSlider.max = new Date($scope.maxDate).clearTime().getTime();
 				$scope.dateSlider.value = new Date(newValue.getTime()).clearTime().getTime();
-				
+
 				$scope.timeSlider.min = getTimeSliderMin(newValue).getTime();
 				$scope.timeSlider.max = getTimeSliderMax(newValue).getTime();
 				$scope.timeSlider.value = newValue.getTime();
 			});
 			$scope.onSliderChanged = function() {
-				$scope.applicable = true;				
+				$scope.applicable = true;
 			};
 			$scope.navigate = function() {
 				var d = getDateTimeValue($scope.dateSlider.value, $scope.timeSlider.value);
@@ -1685,6 +1753,6 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 				$scope.$emit('controlPositionChanged', { newPointer: d.getTime(), navType: 'DATE' });
 			};
 		},
-		templateUrl: catlogging.config.contextPath + '/ng/entry/logNavigationByDate.html'
+		templateUrl: catlogging.config.contextPath + '/templates/entry/logNavigationByDate'
 	};
 });

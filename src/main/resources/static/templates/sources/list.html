@@ -1,0 +1,80 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="templates/layouts/layout"
+      th:with="title=#{catlogging.breadcrumb.sources},
+      activeNavbar='sources',
+      ngModules='',
+      isAuth=${catloggingProps['catlogging.enable.auth'] == 'true' ? true : false}"
+>
+
+<!-- 삽입될 각 개별적인 영역을 작성 -->
+<th:block layout:fragment="content" >
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <th:block th:replace="templates/sources/customSidebar :: sidebar"></th:block>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+            <!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+            <th:block th:replace="templates/sources/customListBreadcrumb::breadcrumb"></th:block>
+
+            <!-- 공통 alert-->
+            <th:block th:replace="templates/utils/messages::messages"></th:block>
+
+            <!-- 커스텀 alert-->
+            <th:block th:if="${#lists.isEmpty(logSources)}">
+                <div class="alert alert-info">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <i class="glyphicon glyphicon-exclamation-sign"></i>[[#{catlogging.common.list.text.2}]]
+                </div>
+            </th:block>
+            <!-- 해당 기능에서 커스텀 insert. -->
+            <th:block th:unless="${#lists.isEmpty(logSources)}">
+                <th:block th:each="source : ${logSources}" th:with="url=@{/c/sources} ">
+                    <th:block th:with="logsLink=@{${url}+'/'+${source.id} +'/logs'}">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4><a th:href="@{${logsLink}}">[[${source.name}]]</a></h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <i class="glyphicon glyphicon-list"></i> [[#{catlogging.common.form.logFiles}]]<a th:href="@{${logsLink}}"><span class="label label-info">[[${source.logs.size()}]]</span></a>
+                                        <div class="pull-right">
+                                            <div class="btn-group btn-group-sm" role="group" aria-label="Actions">
+                                                <a th:href="@{${url}+'/'+${source.id}}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-edit"></i> [[#{catlogging.common.form.edit}]]</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="small">
+                    </th:block>
+                </th:block>
+            </th:block>
+        </div>
+    </div>
+</th:block>
+</html>

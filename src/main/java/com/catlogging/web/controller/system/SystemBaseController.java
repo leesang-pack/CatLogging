@@ -51,7 +51,7 @@ public class SystemBaseController {
 		List<NavNode> breadcrumbNodes = new ArrayList<NavNode>();
 		breadcrumbNodes.add(systemNode);
 
-		ModelAndView mv = new ModelAndView("system/main");
+		ModelAndView mv = new ModelAndView("templates/system/content");
 		mv.addObject("rootNode", systemNode);
 		NavNode activeNode = getActiveNode(systemNode, path);
 

@@ -1,0 +1,50 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lagn="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<th:block th:replace="templates/common/config::configFragment"></th:block>
+
+<!--<body >-->
+<body ng-app="catloggingNgApp" ng-controller="catloggingRootController">
+        <div  id="body-wrapper">
+        <!-- header 시작 -->
+        <header th:replace="templates/common/navbar :: topbarFragment"></header>
+        <!-- header 끝 -->
+
+        <div class="container-fluid">
+            <!--breadcrumb과  SystemAbstractController포함한 커스텀 바디-->
+            <!-- content 시작 -->
+            <th:block layout:fragment="content"></th:block>
+            <!-- content 끝 -->
+        </div>
+
+        <div class="push"></div>
+    </div>
+    <hr>
+    <!-- footer 시작 -->
+    <footer th:replace="templates/common/footer :: footerFragment"></footer>
+    <!-- footer 끝 -->
+
+    <div th:replace="templates/common/session :: sessionFragment"></div>
+</body>
+
+</html>

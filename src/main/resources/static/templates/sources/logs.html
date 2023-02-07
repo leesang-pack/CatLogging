@@ -1,0 +1,79 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="templates/layouts/layout"
+      th:with="title=#{catlogging.breadcrumb.sources},
+      activeNavbar='sources',
+      ngModules='',
+      isAuth=${catloggingProps['catlogging.enable.auth'] == 'true' ? true : false}"
+>
+
+<!-- 삽입될 각 개별적인 영역을 작성 -->
+<th:block layout:fragment="content" >
+    <div class="row">
+        <div class="main">
+
+            <!-- 해당 기능에서 head에 추가적인 스크립트가 필요할 시 커스텀 insert. -->
+            <th:block th:replace="templates/sources/customLogsEditBreadcrumb::breadcrumb"></th:block>
+
+            <!-- 공통 alert-->
+            <th:block th:replace="templates/utils/messages::messages"></th:block>
+
+            <!-- 커스텀 alert-->
+            <th:block th:if="${#lists.isEmpty(logs)}">
+                <div class="alert alert-warning">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <i class="glyphicon glyphicon-exclamation-sign"></i> No logs resolvable. Configuration error?
+                </div>
+            </th:block>
+            <!-- 해당 기능에서 커스텀 insert. -->
+            <th:block th:unless="${#lists.isEmpty(logs)}">
+                <th:block th:each="log : ${logs}" th:with="url=@{/c/sources}">
+                    <th:block th:with="
+                    tailUrl=@{${url}+'/'+${activeSource.id}+'/show'(log=${log.path},count='-'+${defaultCount})},
+                    showUrl=@{${url}+'/'+${activeSource.id}+'/show'(log=${log.path})}">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4><a th:href="@{${showUrl}}">[[${log.name}]]</a><br> <small>[[${T(org.apache.commons.io.FilenameUtils).getPathNoEndSeparator(log.path)}]]</small></h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12" th:with="date=${@jstlFunctionsLibraryBean.getTimestampAsDate(log.lastModified)}">
+                                        <a th:href="@{${tailUrl}+'##tail'}"><i class="glyphicon glyphicon-hand-down"></i> Tail</a>
+                                        |
+                                        Last modified: [[${#calendars.format(date)}]]
+                                        |
+                                        Size: [[${@jstlFunctionsLibraryBean.bytesToSize(log.size, 2)}]]
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="small">
+                    </th:block>
+                </th:block>
+            </th:block>
+        </div>
+    </div>
+</th:block>
+</html>
+

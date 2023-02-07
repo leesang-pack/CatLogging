@@ -1,0 +1,89 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="wrapper" th:with="v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'}">
+<script type="text/javascript">
+catloggingNgApp.controllerProvider.register(
+	"LocaleTimeZoneFieldsController", ['$scope', '$http', 'lsfAlerts', '$log',
+	function ($scope, $http, lsfAlerts, $log) {
+		$scope.alerts = lsfAlerts.create();
+		$scope.busy = false;
+		$scope.locales = [];
+		$scope.timezones = [];
+		
+		$log.info("Resolving locales and timezones");
+		$http({
+        		url : $scope.contextPath + "/c/utils/i18n/localesAndTimezones",
+        		method : "GET"
+        	}).then(successCallback,errorCallback);
+		function successCallback(response){
+			//success code
+			var data = response.data;
+			var status = response.status;
+			var statusText = response.statusText;
+			var headers = response.headers;
+			var config = response.config;
+			$scope.busy = false;
+			$scope.locales = data.locales;
+			$scope.timezones = data.timezones;
+			$log.info("Loaded Locales and timezones: ", data);
+		}
+		function errorCallback(response){
+			//error code
+			var data = response.data;
+			var status = response.status;
+			var statusText = response.statusText;
+			var headers = response.headers;
+			var config = response.config;
+			$scope.busy = false;
+			$scope.alerts.httpError("Failed to load available locales/timezones", data, status, headers, config, statusText);
+		}
+
+	}]);
+</script>
+
+<div ng-controller="LocaleTimeZoneFieldsController">
+	<div lsf-alerts alerts="alerts"></div>
+	<div lsf-busy-container busy="busy">
+		<div class="col-md-3">
+			<lsf-form-group class="form-group" field-name="locale" field-path="locale" bind-errors="bindErrors">
+				<lsf-info-label th:attr="label=#{catlogging.common.timestampLocale}+':'" for="locale">
+					<p>[[#{catlogging.common.timestampLocale.text.1}]]</p>
+				</lsf-info-label>
+				<select ng-model="bean.locale" name="locale" id="locale"
+					ng-options="locale for locale in locales | orderBy : locale" class="form-control">
+					<option value="">[[#{catlogging.common.defaultLocale}]]</option>
+				</select>
+			</lsf-form-group>
+		</div>
+		<div class="col-md-3">
+			<lsf-form-group class="form-group" field-name="timeZone" field-path="timeZone" bind-errors="bindErrors">
+				<lsf-info-label th:attr="label=#{catlogging.common.timestampLocale}+':'" for="timeZone">
+					<p>[[#{catlogging.common.timeZone.text.1}]]</p>
+				</lsf-info-label>
+				<select ng-model="bean.timeZone" name="timeZone" id="timeZone"
+					ng-options="timezone for timezone in timezones | orderBy : timezone" class="form-control">
+					<option value="">[[#{catlogging.common.deriveInput}]]</option>
+				</select>
+			</lsf-form-group>
+		</div>
+	</div>
+</div>
+</th:block>
+</html>

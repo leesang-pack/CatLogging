@@ -1,0 +1,87 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" >
+<th:block th:fragment="wrapper" th:with="v=${not #maps.isEmpty(catloggingProps)?catloggingProps['catlogging.version']:'1.0.0'}">
+<script type="text/javascript">
+	catloggingNgApp.controllerProvider.register(
+		"GroksHelpController", ['$scope', '$log', '$uibModal', function ($scope, $log, $uibModal) {
+
+		$scope.showGroks = function () {
+			$uibModal.open({
+			      templateUrl: $scope.contextPath + '/templates/help/listGroks',
+			      controller: 'GroksListController',
+			      size: 'lg',
+			      windowClass: 'groks-list-modal',
+			      scope: $scope
+			    });
+		};
+	}]);
+    catloggingNgApp.controllerProvider.register(
+        "GroksListController", ['$scope', '$http', '$log', '$uibModalInstance', 'lsfAlerts', function ($scope, $http, $log, $uibModalInstance, lsfAlerts) {
+            $scope.alerts = lsfAlerts.create();
+            $scope.busy = false;
+
+            $scope.close = function () {
+                $uibModalInstance.close();
+            };
+
+            $log.info("Resolving grok groups");
+            $http({
+                url : $scope.contextPath + "/c/utils/groks/groups",
+                method : "GET"
+            })
+                .then(successCallback,errorCallback);
+            function successCallback(response){
+                //success code
+                var data = response.data;
+                var status = response.status;
+                var statusText = response.statusText;
+                var headers = response.headers;
+                var config = response.config;
+
+                $scope.busy = false;
+                $scope.grokGroups = data;
+                $log.info("Grok groups loaded: ", $scope.grokGroups);
+            }
+            function errorCallback(response){
+                //error code
+                var data = response.data;
+                var status = response.status;
+                var statusText = response.statusText;
+                var headers = response.headers;
+                var config = response.config;
+
+                $scope.busy = false;
+                $scope.alerts.httpError("Failed to load predefined Grok patterns", data, status, headers, config, statusText);
+            }
+        }
+        ]);
+</script>
+
+<span ng-controller="GroksHelpController">
+The supported pattern syntax is described on this <a href="http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html" target="_blank">JavaDoc</a> page.
+Rugular expressions can be mixed with grok patterns, click <a href ng-click="showGroks()">here</a>
+to get more information regarding grok and for a list of predefined grok patterns. Use named capturing or grok groups to extract matching text groups from the input and to assign it to destined fields.
+The simpliest pattern you can start with is <code>(?&lt;myField&gt;.+)</code> which matches the whole input text and assigns the content to the <code>myField</code> field.
+<br>Apache's web server request log can be parsed it its compound parts by the simple grok pattern <code>%{COMBINEDAPACHELOG}</code>. See the
+<a href ng-click="showGroks()">complete grok pattern list</a>.
+</span>
+</th:block>
+</html>

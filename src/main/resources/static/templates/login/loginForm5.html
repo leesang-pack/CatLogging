@@ -1,0 +1,80 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<title th:text="#{catlogging.bt.login} + ' | catlogging'"></title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<!-- Tell the browser to be responsive to screen width -->
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+	<link rel="stylesheet" th:href="@{'/static/bootstrap/3.3.6/css/bootstrap.min.css?v=' + ${@catloggingProps['catlogging.version']}}">
+	<link rel="stylesheet" th:href="@{'/static/fontawesome/css/font-awesome.min.css?v=' + ${@catloggingProps['catlogging.version']}}">
+	<link rel="stylesheet" type="text/css" th:href="@{/static/loginForm5.css}">
+</head>
+<body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-lg-3 col-md-2"></div>
+		<div class="col-lg-6 col-md-8 login-box">
+			<div class="col-lg-12  login-key">
+			</div>
+			<div class="col-lg-12 login-title">
+				<i class="fa fa-user" aria-hidden="true" style="font-size:36px" th:utext="#{catlogging.form.login}"></i>
+			</div>
+
+			<div class="col-lg-12 login-form">
+				<div class="col-lg-12 login-form">
+					<form th:action="@{/loginauth}" method="post">
+						<div class="form-group">
+							<label class="form-control-label" name="username" th:utext="#{catlogging.text.login.username}"></label>
+							<input type="text" name="username" class="form-control"/>
+						</div>
+						<div class="form-group">
+							<label class="form-control-label" name="password" th:utext="#{catlogging.text.login.password}"></label>
+							<input type="password" name="password" class="form-control" autocomplete="on"/>
+						</div>
+
+						<div class="col-lg-12 loginbttm">
+							<div class="col-lg-8 login-btm login-text">
+								<!-- Error Message -->
+								<div th:if="${param.error}">
+									<span th:if="${session['SPRING_SECURITY_LAST_EXCEPTION']} != null and ${session['SPRING_SECURITY_LAST_EXCEPTION'].message} != null" >
+										<p class="text-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
+									</span>
+									<div th:text="${@thymeleafUtil.removeSessionLastSecurityException()}"></div>
+								</div>
+							</div>
+							<div class="col-lg-4 login-btm login-button">
+<!--								<button type="button" class="btn btn-outline-primary" th:onclick="'location.href=\'' + @{/member/new} + '\';'" th:utext="#{catlogging.bt.login.signup}"></button>-->
+								<button class="btn btn-outline-primary" type="submit" th:utext="#{catlogging.bt.login}"></button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col-lg-3 col-md-2"></div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<script type="text/javascript">
+	$(function() {
+		$("#reader-log4j-wizard .help-popup").popover({placement:"top"});
+	});
+	catloggingNgApp.controllerProvider.register(
+		"Log4jWizardController", ['$scope', function ($scope) {
+		$scope.placeHolders = {
+			c: "category",
+			t: "thread",
+			m: "message",
+			p: "priority",
+			d: "date"
+		};
+		$scope.getUsedSpecifiers = function(formatPattern) {
+			var specifiers=[];
+			var re = /%[\d-\.]*([a-z]+)/gi;
+			var m;
+			do {
+			    m = re.exec(formatPattern);
+			    if (m) {
+			    	specifiers.push(m[1]);
+			    }
+			} while (m);
+			return specifiers;
+		};
+	}]);
+</script>
+<div id="reader-log4j-wizard" class="wizard" ng-controller="Log4jWizardController">
+	<div class="row">
+		<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::formatPattern},'form-group col-md-10','formatPattern')">
+			<th:block th:fragment="formatPattern">
+				<label class="control-label" for="formatPattern">[[#{catlogging.wizard.reader.conversion}]]*:
+					<i class="glyphicon glyphicon-info-sign help-popup" data-container="body" data-html="true"
+					   th:attr="data-content=#{catlogging.wizard.reader.conversion.text.1},data-title=#{catlogging.wizard.reader.conversion.label.1}"></i>
+				</label>
+				<div class="controls controls-row">
+					<input type="text" class="form-control pattern" ng-model="bean.formatPattern" name="formatPattern" id="formatPattern" required/>
+				</div>
+			</th:block>
+		</th:block>
+		<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::charset},'form-group col-md-2','charset')">
+			<th:block th:fragment="charset">
+				<label for="charset" class="control-label">[[#{catlogging.common.form.characterSet}]]*:</label>
+				<select name="charset" id="charset" ng-model="bean.charset" class="form-control" required>
+					<option value="">[[#{catlogging.common.pleaseSelect}]]</option>
+					<th:block th:each="entry : ${T(java.nio.charset.Charset).availableCharsets()}">
+						<option th:value="${entry.key}">[(${entry.key})]</option>
+					</th:block>
+				</select>
+			</th:block>
+		</th:block>
+	</div>
+	<div class="row">
+		<th:block th:replace="templates/wizards/filter/util/localeTimeZoneFields::wrapper"></th:block>
+	</div>
+	<div class="row">
+		<div class="form-group col-md-12">
+			<label class="control-label">[[#{catlogging.wizard.reader.conversion.mapping}]]:
+				<i class="glyphicon glyphicon-info-sign help-popup" data-container="body" data-html="true"
+				   th:attr="data-content=#{catlogging.wizard.reader.conversion.mapping.text.1},data-title=#{catlogging.wizard.reader.conversion.mapping.label.1}"></i>
+			</label>
+			<div class="row form-group form-horizontal" ng-repeat="c in getUsedSpecifiers(bean.formatPattern)" ng-if="c!='n'">
+				<div class="col-md-1 cc"><label class="control-label">%{{c}}:</label></div>				
+				<div class="col-md-5">
+					<div class="controls controls-row">
+						<input type="text" class="form-control" ng-model="bean.specifiersFieldMapping[c]" placeholder="{{placeHolders[c]}}" />
+					</div>
+				</div>
+			</div>
+			<div class="help-block" ng-if="getUsedSpecifiers(bean.formatPattern).length==0">[[#{catlogging.wizard.reader.conversion.mapping.text.2}]]</div>
+		</div>
+	</div>
+</div>
+</html>

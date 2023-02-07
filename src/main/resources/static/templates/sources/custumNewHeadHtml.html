@@ -1,0 +1,84 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="htmlHead">
+    <!-- NG New page -->
+    <script type="text/javascript" th:src="@{/ng/source/readerTest.js}"></script>
+    <script th:inline="javascript">
+        var SourceEditorModule=angular.module('SourceEditorModule', ['ui.bootstrap', 'angularSpinner', 'lsfReaderTestModule']);
+        SourceEditorModule.controller(
+            "SourceEditController", ['$scope', '$http', '$location', '$anchorScroll', 'usSpinnerService', '$window',
+                function($scope, $http, $location, $anchorScroll, usSpinnerService, $window) {
+                    $scope.catlogging = catlogging;
+                    $scope.bindErrors={
+                        /*<![CDATA[*/
+                        /*[+ [#th:block th:if="${#fields.hasErrors('*{errorForm.value}')}"] +]*/
+                        /*[+    [#th:block th:each="err : ${#fields.errors('errorForm.value')}"] +]*/
+                        /*[+    "[[${err.field}]]":"[[#{${err.code}}]]", +]*/
+                        /*[+    [/th:block] +]*/
+                        /*[+ [/th:block] +]*/
+                        /*]]>*/
+                    };
+                    $scope.beanWrapper = [];
+
+                    $scope.submit = function(form) {
+                        $(".backdrop-overlay").show();
+                        usSpinnerService.spin('update');
+                        form.$setPristine();
+                        var data=$scope.beanWrapper[0];
+                        var always = function() {
+                            $(".backdrop-overlay").hide();
+                            $location.hash('top');
+                            $anchorScroll();
+                            usSpinnerService.stop('update');
+                        };
+                        $http({
+                            url: "/c/sources",
+                            method: "POST",
+                            data: data
+                        })
+                            .then(successCallback,errorCallback);
+                        function successCallback(response){
+                            //success code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+                            $window.location = "/c/sources/" + data + "?created=true";
+                        }
+                        function errorCallback(response){
+                            //error code
+                            var data = response.data;
+                            var status = response.status;
+                            var statusText = response.statusText;
+                            var headers = response.headers;
+                            var config = response.config;
+                            always();
+                            if (data && data.bindErrors) {
+                                $scope.bindErrors = data.bindErrors;
+                            }
+                        }
+                    };
+                }
+            ]);
+    </script>
+</th:block>
+</html>

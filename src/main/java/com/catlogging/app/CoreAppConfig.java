@@ -35,6 +35,7 @@ import org.apache.commons.lang.ArrayUtils;
 //import org.apache.logging.log4j.core.config.xml.XmlConfigurationFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -67,6 +68,9 @@ public class CoreAppConfig {
 	@Autowired
 	private ApplicationContext context;
 
+	@Value(value = "${catlogging.home}")
+	private String catloggingHomeDir;
+
 	/**
 	 * Registers the {@link ContextProvider}.
 	 * 
@@ -84,11 +88,9 @@ public class CoreAppConfig {
 		if (ctx.getEnvironment().acceptsProfiles("!" + ContextProvider.PROFILE_NONE_QA)) {
 			final File qaFile = File.createTempFile("catlogging", "qa");
 			qaFile.delete();
-			final String qaHomeDir = qaFile.getPath();
-			log.info("QA mode active, setting random home directory: {}", qaHomeDir);
-			System.setProperty("catlogging.home", qaHomeDir);
+//			final String qaHomeDir = qaFile.getPath();
+//			log.info("QA mode active, setting random home directory: {}", qaHomeDir);
 		}
-
 		log.info("Init [Custom Web CatloggingProperties] Start...");
 
 		final PathMatchingResourcePatternResolver pathMatcher = new PathMatchingResourcePatternResolver();
@@ -98,7 +100,7 @@ public class CoreAppConfig {
 		for (final Resource r : metainfProperties) {
 			classPathProperties = (Resource[]) ArrayUtils.add(classPathProperties, r);
 		}
-		classPathProperties = (Resource[]) ArrayUtils.add(classPathProperties, new FileSystemResource(System.getProperty("catlogging.home") + "/" + catlogging_PROPERTIES_FILE));
+		classPathProperties = (Resource[]) ArrayUtils.add(classPathProperties, new FileSystemResource(catloggingHomeDir + "/" + catlogging_PROPERTIES_FILE));
 		p.setLocations(classPathProperties);
 		p.setProperties(System.getProperties());
 		p.setLocalOverride(true);
@@ -108,7 +110,7 @@ public class CoreAppConfig {
 
 	/**
 	 * Returns a general properties placeholder configurer based on
-	 * {@link #catloggingProperties()}.
+	 *
 	 * 
 	 * @param props
 	 *            autowired catloggingProperties bean

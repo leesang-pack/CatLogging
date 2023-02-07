@@ -1,0 +1,96 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<script type="text/javascript">
+	// Requires the "source" attribute set in the parent scope
+	catloggingNgApp.controllerProvider.register(
+		"LevelScannerController", ['$scope', '$http',
+	function ($scope, $http) {
+		var sourcesUrl = '/c/sources';
+		var loadSeverities = function(source) {
+			$scope.supportedSeverities=[];
+			if (source) {
+				$scope.severitiesHelpInfo="Loading values...";
+				$http({
+				    url: sourcesUrl + "/" + source.id+"/reader/supportedSeverities",
+				    method: "GET"
+				}).then(successCallback,errorCallback);
+				function successCallback(response){
+					//success code
+					var data = response.data;
+					var status = response.status;
+					var statusText = response.statusText;
+					var headers = response.headers;
+					var config = response.config;
+					$scope.supportedSeverities = data;
+					$scope.severitiesHelpInfo=null;
+
+				}
+				function errorCallback(response){
+					//error code
+					var data = response.data;
+					var status = response.status;
+					var statusText = response.statusText;
+					var headers = response.headers;
+					var config = response.config;
+					$scope.severitiesHelpInfo="Failed to load supported severities";
+
+				}
+			} else {
+				$scope.severitiesHelpInfo = "Values not accessible due to undefined log source";
+			}
+		};
+		$scope.$parent.$watch('sharedScope.source', function(newValue, oldValue) {
+			console.log("Loading supported severities for source " + newValue);
+			loadSeverities(newValue);
+	    });
+	}]);
+</script>
+
+<span class="text-muted">Scans the log for entries matching the given severity level</span>
+<div class="row" ng-controller="LevelScannerController" ng-form="form">
+	<div class="form-group col-md-6 required" ng-class="{'has-error': (form.comparator.$invalid && !form.comparator.$pristine) || (form.severityNumber.$invalid && !form.severityNumber.$pristine)}">
+		<label class="control-label">Matching level:</label>
+		<div class="row" ng-init="bean.comparator=bean.comparator?bean.comparator:'EQ_OR_GREATER'">
+			<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::comparator},'col-md-3','comparator')">
+				<th:block th:fragment="comparator">
+				<select ng-model="bean.comparator" name="comparator" class="form-control" required>
+					<option value="LESS">&lt;</option>
+					<option value="EQ_OR_LESS">&lt;=</option>
+					<option value="EQ">=</option>
+					<option value="NEQ">!=</option>
+					<option value="EQ_OR_GREATER">&gt;=</option>
+					<option value="GREATER">&gt;</option>
+				</select>
+				</th:block>
+			</th:block>
+			<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::severityNumber},'col-md-9','severityNumber')">
+				<th:block th:fragment="severityNumber">
+				<select ng-model="bean.severityNumber" name="severityNumber" class="form-control" required
+					ng-options="s.o as s.n for s in supportedSeverities">
+					<option value="">[[#{catlogging.common.pleaseSelect}]]</option>
+				</select>
+				<div class="help-block" ng-if="severitiesHelpInfo">{{severitiesHelpInfo}}</div>
+				</th:block>
+			</th:block>
+		</th:block>
+	</div>
+</div>
+</html>

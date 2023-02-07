@@ -35,6 +35,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Data
+@Builder
 @ToString
 public class Member {
 

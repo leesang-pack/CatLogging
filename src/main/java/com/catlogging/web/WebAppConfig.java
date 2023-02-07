@@ -27,29 +27,24 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.type.MapType;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.spring5.ISpringTemplateEngine;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ITemplateResolver;
 
 /**
  * Main web app config.
@@ -62,9 +57,40 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 public class WebAppConfig implements WebMvcConfigurer {
 
 	/**
+	 * anglerjs에서 route사용 시 html말고 binding된 템플릿을 사용 시
+	 * 해당 html을 view에 등록해줘야함.
+	 * viewName으로 angler에서 접근함.
+	 * @return
+	 */
+	@Override
+	public void addViewControllers(ViewControllerRegistry registry) {
+		registry.addViewController("/templates/sniffers/event/detail/**").setViewName("templates/sniffers/event/detail/eventDetail"); //At here, you mapping the nick name and indicate the template is actually located under templates/pages
+		registry.addViewController("/templates/sniffers/event/list/**").setViewName("templates/sniffers/event/list/eventsList"); //At here, you mapping the nick name and indicate the template is actually located under templates/pages
+
+		//angler 1.5.3 route를 쓰지 않으면 단순 html load만됨.. angular 안태우고 직접호출 시에는 binding됨.
+		//1.8.2 bugfix
+		registry.addViewController("/templates/entry/logNavigationByDate").setViewName("templates/entry/logNavigationByDate");
+		registry.addViewController("/templates/entry/logPosition").setViewName("templates/entry/logPosition");
+		registry.addViewController("/templates/entry/logViewer").setViewName("templates/entry/logViewer");
+
+
+		// AE 'M' 이아닌 view들.. M은 코멘트 포함
+		registry.addViewController("/templates/utils/modelEditor").setViewName("templates/utils/modelEditor");
+		registry.addViewController("/templates/entry/viewerFieldsConfig").setViewName("templates/entry/viewerFieldsConfig");
+		registry.addViewController("/templates/entry/zoomEntry").setViewName("templates/entry/zoomEntry");
+		registry.addViewController("/templates/help/listGroks").setViewName("templates/help/listGroks");
+		registry.addViewController("/templates/sources/log/readerTest").setViewName("templates/sources/log/readerTest");
+		registry.addViewController("/templates/sniffers/event/snifferTest").setViewName("templates/sniffers/event/snifferTest");
+		registry.addViewController("/templates/sniffers/event/statusReposition").setViewName("templates/sniffers/event/statusReposition");
+		registry.addViewController("/templates/sniffers/event/statusRepositionZoomBottomBar").setViewName("templates/sniffers/event/statusRepositionZoomBottomBar");
+
+		registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+	}
+
+	/**
 	 * static 말고 view 딴에서 추가적인 url이 필요 시에 다음과 같이 설정해야함
 	 * sources/*.jsp
-	 * index.jsp
+	 * index.html
 	 * ...
 	 * 뷰들이 /c/sources/* 로 접근할 수 있다.
 	 * @return
@@ -91,16 +117,16 @@ public class WebAppConfig implements WebMvcConfigurer {
 	 * jsp파일 보는 뷰
 	 * @return
 	 */
-	@Bean
-	public ViewResolver jspViewResolver() {
-		log.debug("INIT [jspViewResolver] Start.");
-		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-		resolver.setPrefix("/WEB-INF/views/");
-		resolver.setSuffix(".jsp");
-		resolver.setOrder(1);
-
-		return resolver;
-	}
+//	@Bean
+//	public ViewResolver jspViewResolver() {
+//		log.debug("INIT [jspViewResolver] Start.");
+//		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+//		resolver.setPrefix("/WEB-INF/views/");
+//		resolver.setSuffix(".jsp");
+//		resolver.setOrder(1);
+//
+//		return resolver;
+//	}
 
 	/**
 	 * Thymeleaf 뷰 리졸버 설정
@@ -126,16 +152,27 @@ public class WebAppConfig implements WebMvcConfigurer {
 	@Bean
 	public SpringTemplateEngine templateEngine() {
 		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-		templateEngine.setTemplateResolver(templateResolver());
+		templateEngine.addTemplateResolver(templateResolver());
+		// Dialect를 쓰기위해 반드시 추가해야함.
+		templateEngine.addDialect(layoutDialect());
 		return templateEngine;
 	}
+	@Bean
+	public LayoutDialect layoutDialect() {
+		return new LayoutDialect();
+	}
+
 	@Bean
 	ThymeleafViewResolver viewResolver() {
 		log.debug("INIT [ThymeleafViewResolver] Start.");
 		ThymeleafViewResolver resolver = new ThymeleafViewResolver();
 		resolver.setTemplateEngine(templateEngine());
 		// static의 디렉토리 안에 커스텀한 th 디렉토리의 파일, 뷰어주소를 맵핑한다.
-		resolver.setViewNames(new String[] {"th/*"});
+		// thumeleaf에서는 안할 시 setViewNames해도 기본적으로 /resources/templates로 찾는다.
+		// 하지만 앞에 /static의 기준이므로 서로 찾는 위치가 달라 파일을 접근할 수 없다.
+		// 위의 값 토대로
+		// static/templates/로 찾게된다.
+		resolver.setViewNames(new String[] {"templates/*"});
 
 		// 한글 깨짐(???) 방지
 		resolver.setCharacterEncoding("UTF-8");;

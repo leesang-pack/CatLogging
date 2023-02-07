@@ -1,0 +1,61 @@
+<!--/*******************************************************************************-->
+<!--* catlogging, open source tool for viewing, monitoring and analysing log data.-->
+<!--* Copyright (c) 2021 xzpluszone, www.catlogging.com-->
+<!--*-->
+<!--* catlogging is free software: you can redistribute it and/or modify-->
+<!--* it under the terms of the GNU General Public License as published by-->
+<!--* the Free Software Foundation, either version 3 of the License, or-->
+<!--* (at your option) any later version.-->
+<!--*-->
+<!--* catlogging is distributed in the hope that it will be useful,-->
+<!--* but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--* GNU General Public License for more details.-->
+<!--*-->
+<!--* You should have received a copy of the GNU General Public License-->
+<!--* along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+<!--*******************************************************************************/-->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<div id="source-wildcard-rolling-file-wizard">
+	<lsf-info-label th:attr="label=#{catlogging.common.timestampStatic.label.1}" class="text-muted">
+		<p> [(#{catlogging.common.timestampStatic.text.1})]</p>
+	</lsf-info-label>
+	<div class="row">
+<!--<%&#45;&#45;		<div class="col-md-12">&#45;&#45;%>-->
+		<lsf-form-group class="form-group required" field-name="pattern" field-path="pattern" bind-errors="bindErrors">
+			<th:block th:replace="templates/layouts/ngFormFieldWrapper::wrapper(~{this::pattern},'form-group col-md-12 required','pattern')">
+				<th:block th:fragment="pattern">
+					<lsf-info-label th:attr="label=#{catlogging.common.timestampStatic.label.4}+':'" for="pattern">
+						<p> [(#{catlogging.common.timestampStatic.text.2})]</p>
+						<p> [(#{catlogging.common.fileWildcard.text.3})]</p>
+					</lsf-info-label>
+					<input type="text" ng-model="bean.pattern" name="pattern" id="pattern" th:attr="ng-pattern='/'+${@catloggingProps['catlogging.validationPath']}+'/'" class="form-control" required>
+				</th:block>
+			</th:block>
+		</lsf-form-group>
+<!--<%&#45;&#45;		</div>&#45;&#45;%>-->
+	</div>
+	<div class="row">
+		<div class="col-md-8">
+			<lsf-form-group class="form-group required" field-name="pastLogsSuffixPattern" field-path="pastLogsSuffixPattern" bind-errors="bindErrors">
+				<lsf-info-label th:attr="label=#{catlogging.common.timestampStatic.label.2}+':'" for="pastLogsSuffixPattern">
+					<p> [(#{catlogging.common.timestampStatic.text.3})]</p>
+				</lsf-info-label>
+				<input type="text" ng-model="bean.pastLogsSuffixPattern" name="pastLogsSuffixPattern" id="pastLogsSuffixPattern" class="form-control" required>
+			</lsf-form-group>
+		</div>
+		<div class="col-md-4">
+			<lsf-form-group class="form-group required" field-name="pastLogsType" field-path="pastLogsType" bind-errors="bindErrors">
+				<lsf-info-label th:attr="label=#{catlogging.common.orderRollFile}+':'" for="pastLogsType">
+					<p> [(#{catlogging.common.orderRollFile.text})]</p>
+				</lsf-info-label>
+				<select ng-model="bean.pastLogsType" name="pastLogsType" id="pastLogsType" class="form-control" required>
+					<option value="NAME">[[#{catlogging.common.filename}]]</option>
+					<option value="LAST_MODIFIED">[[#{catlogging.common.lastofmodify}]] </option>
+				</select>
+			</lsf-form-group>
+		</div>
+	</div>
+</div>
+</html>

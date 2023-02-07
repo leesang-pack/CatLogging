@@ -912,15 +912,28 @@ catlogging.getLocaleMessage = function($scope, $http, $log, localeMessageKey) {
 			'messageKey': localeMessageKey
 		}
 	})
-	.success(
-		function(data, status, headers, config) {
-			$scope.busy = false;
-			$scope.localeMessage = data.messageValue;
-		})
-	.error(
-		function(data, status, headers, config, statusText) {
-			$scope.busy = false;
-			$log.error("Failed to get lang" + data, status, headers, config, statusText);
-		}
-	);
+		.then(successCallback,errorCallback);
+	function successCallback(response){
+		//success code
+		var data = response.data;
+		var status = response.status;
+		var statusText = response.statusText;
+		var headers = response.headers;
+		var config = response.config;
+
+		$scope.busy = false;
+		$scope.localeMessage = data.messageValue;
+
+	}
+	function errorCallback(response){
+		//error code
+		var data = response.data;
+		var status = response.status;
+		var statusText = response.statusText;
+		var headers = response.headers;
+		var config = response.config;
+
+		$scope.busy = false;
+		$log.error("Failed to get lang" + data, status, headers, config, statusText);
+	}
 }
