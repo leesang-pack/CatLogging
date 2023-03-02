@@ -22,7 +22,9 @@ import com.catlogging.model.LogInputStream;
 import com.catlogging.model.LogRawAccess;
 import com.catlogging.reader.FormatException;
 import com.catlogging.reader.LogEntryReader;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode
 public class FilteredScanner implements Scanner {
 	@JsonProperty
 	@Valid
@@ -104,8 +106,7 @@ public class FilteredScanner implements Scanner {
 	 * 
 	 * @author Tester
 	 */
-	public static abstract class FilteredScannerWrapper extends FilteredScanner
-			implements WrappedBean<FilteredScanner> {
+	public static abstract class FilteredScannerWrapper extends FilteredScanner implements WrappedBean<FilteredScanner> {
 		private FilteredScanner wrapped;
 
 		public static final FilteredScanner unwrap(final FilteredScanner possiblyWrapped) {

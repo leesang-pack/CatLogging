@@ -34,6 +34,7 @@ import com.catlogging.model.LogPointerFactory;
 import com.catlogging.model.LogRawAccess;
 import com.catlogging.reader.FormatException;
 import com.catlogging.reader.LogEntryReader;
+import lombok.EqualsAndHashCode;
 
 /**
  * Incremental event scanner.
@@ -79,8 +80,7 @@ public interface Scanner extends ConfiguredBean, FieldsHost {
 	 * 
 	 * @author Tester
 	 */
-	public static abstract class LogEntryReaderStrategyWrapper
-			implements LogEntryReaderStrategy, WrappedBean<LogEntryReaderStrategy> {
+	public static abstract class LogEntryReaderStrategyWrapper implements LogEntryReaderStrategy, WrappedBean<LogEntryReaderStrategy> {
 		private LogEntryReaderStrategy wrapped;
 
 		public static final LogEntryReaderStrategy unwrap(final LogEntryReaderStrategy possiblyWrapped) {

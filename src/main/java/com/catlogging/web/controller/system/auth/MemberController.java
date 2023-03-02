@@ -18,7 +18,7 @@
 
 package com.catlogging.web.controller.system.auth;
 
-import com.catlogging.event.h2.jpa.MemberRepository;
+import com.catlogging.h2.jpa.MemberRepository;
 import com.catlogging.model.auth.Member;
 import com.catlogging.model.auth.Result;
 import lombok.AllArgsConstructor;
@@ -124,6 +124,8 @@ public class MemberController {
         return members.isPresent() ? Collections.singletonList(members.get()) : Collections.emptyList();
     }
 
+    /////////////////////////////////////
+    // default user
     @PostConstruct
     public void init(){
         if(ListUtils.isEmpty(getMember("admin"))) {

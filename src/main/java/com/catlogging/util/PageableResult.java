@@ -21,7 +21,7 @@ package com.catlogging.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.catlogging.util.messages.Message;
+import com.catlogging.model.messages.Message;
 
 /**
  * Result wrapper for pageable result items.

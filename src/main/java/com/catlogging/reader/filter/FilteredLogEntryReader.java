@@ -41,7 +41,7 @@ import com.catlogging.model.LogRawAccess;
 import com.catlogging.model.SeverityLevel;
 import com.catlogging.reader.FormatException;
 import com.catlogging.reader.LogEntryReader;
-import com.catlogging.util.json.Views;
+import com.catlogging.model.json.Views;
 
 /**
  * Proxy {@link LogEntryReader} with filtering support.

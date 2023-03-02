@@ -221,29 +221,6 @@ angular.module('catloggingCore', ['jsonFormatter','ui.bootstrap'])
 	      '<div><div class="well well-sm" ng-show="infoExpanded"><button type="button" class="close" ng-click="expand(false)"><span>&times;</span></button><i class="glyphicon glyphicon-info-sign help-icon pull-left" style="margin-right:0.5em"></i> <div ng-transclude></div></div><label class="control-label">{{label}} <a href ng-click="expand(!infoExpanded)"><i class="glyphicon glyphicon-info-sign help-icon"></i></a></label></div>'
        };
    })
-	.directive('lsfInfoLabelKey', function() {
-		return {
-			restrict: 'AE',
-			replace: true,
-			transclude: true,
-			scope: {
-				labelKey: '@',
-				label: '@'
-			},
-			controller: function($scope, $http, $log) {
-				$scope.infoExpanded = false;
-				$scope.expand = function(expand) {
-					$scope.infoExpanded = expand;
-				};
-				$scope.$watch('labelKey', function(newValue, oldValue) {
-					$scope.labelKey = newValue;
-					new catlogging.getLocaleMessage($scope, $http, $log, $scope.labelKey);
-				});
-			},
-			template:
-				'<div><div class="well well-sm" ng-show="infoExpanded"><button type="button" class="close" ng-click="expand(false)"><span>&times;</span></button><i class="glyphicon glyphicon-info-sign help-icon pull-left" style="margin-right:0.5em"></i> <div ng-transclude></div></div><label class="control-label">{{localeMessage}}{{label}} <a href ng-click="expand(!infoExpanded)"><i class="glyphicon glyphicon-info-sign help-icon"></i></a></label></div>'
-		};
-	})
 	.directive('lfsBeanWizard', function() {
        return {
 	   restrict: 'AE',

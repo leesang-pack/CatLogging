@@ -23,20 +23,12 @@ import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.MigrationVersion;
 import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.h2.jdbcx.JdbcConnectionPool;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-//import org.springframework.boot.autoconfigure.jdbc.JdbcOperationsDependsOnPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import javax.sql.DataSource;
 import java.nio.charset.Charset;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -50,7 +42,6 @@ import java.sql.SQLException;
 public class DataSourceAppConfig {
 	private static final String DB_SETUP_VERSION = "0.5.5";
 
-
 	@Value(value = "${catlogging.h2.user}")
 	private String user;
 
@@ -63,114 +54,30 @@ public class DataSourceAppConfig {
 	@Value(value = "${catlogging.h2.maxPoolConnections:5}")
 	private final int maxPoolConnections = 5;
 
-	private boolean newSchema = false;
-
-	/**
-	 * Used to indicate if DB is initialized the first time. It helps to drive
-	 * further DB initializations.
-	 * 
-	 * @author Tester
-	 * 
-	 */
-	public static interface DBInitIndicator {
-		/**
-		 * Returns true if DB was initialized.
-		 * 
-		 */
-		boolean isNewSchema();
-	}
-
 	/**
 	 * @return H2 pooled data source
 	 * @throws SQLException
 	 */
 	@Bean(destroyMethod = "dispose")
-	public DataSource dataSource() throws SQLException {
+	public DataSource dataSource() {
 		final JdbcConnectionPool pool = JdbcConnectionPool.create(url, user, password);
 		pool.setMaxConnections(maxPoolConnections);
-		Connection con = null;
-		con = pool.getConnection();
 
 		FluentConfiguration flyway = Flyway.configure()
 				.locations("classpath:sql/migration")
 				.dataSource(pool)
 				.sqlMigrationPrefix("VOS-")
-//				.schemas("PUBLIC")
-//				.defaultSchema("PUBLIC")
 				.encoding(Charset.forName("UTF-8"))
 				.ignoreFutureMigrations(true);
-//		final Flyway flyway = new Flyway();
-//		flyway.setLocations("classpath:sql/migration");
-//		flyway.setDataSource(pool);
-//		flyway.setSqlMigrationPrefix("VOS-");
-//		flyway.setIgnoreFutureMigrations(true);
 
-		final JdbcTemplate tpl = new JdbcTemplate(pool);
-		boolean isExist = false;
-		try{
-			isExist = tpl.queryForObject("select count(*) from information_schema.tables where table_name = 'LOG_SOURCES'", int.class) == 0 ? false : true ;
-		}catch (Exception e){ }
-
-		if (!isExist) {
-			log.info("H2 database STATUS : [Not Found], creating new schema and populate with default data");
 			flyway.baselineVersion(MigrationVersion.fromVersion(DB_SETUP_VERSION));
 			flyway.baselineOnMigrate(true);
 
-			try {
-				final ResourceDatabasePopulator dbPopulator = new ResourceDatabasePopulator();
-//				dbPopulator.addScript(new ClassPathResource("/sql/quartz/tables_h2.sql_"));
-				dbPopulator.addScript(new ClassPathResource("/sql/model/schema_h2.sql"));
-				dbPopulator.addScript(new ClassPathResource("/sql/model/schema_h2_data.sql"));
-				dbPopulator.populate(con);
-				log.info("Established H2 connection pool with new database");
-			} finally {
-				if (con != null) {
-					con.close();
-				}
-			}
-		} else {
-			log.info("H2 database STATUS : [Found] Established H2 connection pool with existing database");
-			try {
-				final ResourceDatabasePopulator dbPopulator = new ResourceDatabasePopulator();
-				dbPopulator.addScript(new ClassPathResource("/sql/model/schema_h2_data.sql"));
-				dbPopulator.populate(con);
-			} finally {
-				if (con != null) {
-					con.close();
-				}
-			}
-			if (tpl.queryForObject("select count(*) from information_schema.tables where table_name = 'schema_version'", int.class) == 0) {
-				log.info("Flyway's DB migration not setup in this version, set baseline version to 0.5.0");
-				flyway.baselineVersion(MigrationVersion.fromVersion("0.5.0"));
-				flyway.baselineOnMigrate(true);
-			}
-		}
-
-		log.debug("Migrating database, base version is: {}", flyway.getBaselineVersion());
+		log.debug("[INIT] Migrating database, base version is: {}", flyway.getBaselineVersion());
 		flyway.load().migrate();
 		log.debug("Database migrated from base version: {}", flyway.getBaselineVersion());
-
-		if(!isExist)
-			newSchema = true;
 
 		return pool;
 	}
 
-	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	@Autowired
-	public JdbcTemplate jdbcTemplate(final DataSource dataSource) {
-		return new JdbcTemplate(dataSource);
-	}
-
-	@Bean
-	public DBInitIndicator dbInitPopulate() {
-		return new DBInitIndicator() {
-
-			@Override
-			public boolean isNewSchema() {
-				return newSchema;
-			}
-		};
-	}
 }

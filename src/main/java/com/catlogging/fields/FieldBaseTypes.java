@@ -35,10 +35,20 @@ import com.catlogging.model.support.JsonLogPointer;
  * 
  */
 public enum FieldBaseTypes {
-	BYTE(byte.class), BOOLEAN(boolean.class), STRING(String.class), DATE(Date.class), SEVERITY(
-			SeverityLevel.class), INTEGER(int.class), LONG(long.class), FLOAT(float.class), DOUBLE(
-					double.class), LPOINTER(LogPointer.class, JsonLogPointer.class), LENTRY(LogEntry.class), FIELDS_MAP(
-							FieldsMap.class), LIST(Collection.class, List.class), OBJECT(null);
+	BYTE(byte.class),
+	BOOLEAN(boolean.class),
+	STRING(String.class),
+	DATE(Date.class),
+	SEVERITY(SeverityLevel.class),
+	INTEGER(int.class),
+	LONG(long.class),
+	FLOAT(float.class),
+	DOUBLE(double.class),
+	LPOINTER(LogPointer.class, JsonLogPointer.class),
+	LENTRY(LogEntry.class),
+	FIELDS_MAP(FieldsMap.class),
+	LIST(Collection.class, List.class),
+	OBJECT(null);
 
 	private Class<?> deserializationType;
 	private Class<?> serializationType;

@@ -20,6 +20,7 @@ package com.catlogging.config;
 
 import java.io.IOException;
 
+import com.catlogging.util.grok.GrokPatternConstraint;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -36,6 +37,11 @@ import com.fasterxml.jackson.databind.deser.ResolvableDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 import com.catlogging.app.ContextProvider;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 /**
  * Marker interface with required JSON anotations.
@@ -48,48 +54,38 @@ import com.catlogging.app.ContextProvider;
 @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE)
 public interface ConfiguredBean {
 
-	public static class ConfiguredBeanTypeIdResolver implements TypeIdResolver {
+	Logger logger = LoggerFactory.getLogger(ConfiguredBean.class);
+	class ConfiguredBeanTypeIdResolver implements TypeIdResolver {
 		private JavaType baseType;
 		private ConfigBeanTypeResolver beanTypeResolver;
 
 		@Override
 		public void init(final JavaType baseType) {
 			this.baseType = baseType;
-			this.beanTypeResolver = ContextProvider.getContext().getBean(
-					ConfigBeanTypeResolver.class);
+			// TODO : context가 초기에 늦어져서 없을 수 있음.
+			this.beanTypeResolver = ContextProvider.getContext().getBean(ConfigBeanTypeResolver.class);
 		}
 
 		@Override
 		public String idFromValue(final Object value) {
-			return this.beanTypeResolver
-					.resolveTypeName(((ConfiguredBean) value).getClass());
+			return this.beanTypeResolver.resolveTypeName(((ConfiguredBean) value).getClass());
 		}
 
 		@Override
-		public String idFromValueAndType(final Object value,
-				final Class<?> suggestedType) {
+		public String idFromValueAndType(final Object value, final Class<?> suggestedType) {
 			return idFromValue(value);
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
 		public String idFromBaseType() {
-			return beanTypeResolver
-					.resolveTypeName((Class<ConfiguredBean>) baseType
-							.getRawClass());
+			return beanTypeResolver.resolveTypeName((Class<ConfiguredBean>) baseType.getRawClass());
 		}
-
-//		@Override
-//		public JavaType typeFromId(final String id) {
-//			return null;
-//		}
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public JavaType typeFromId(final DatabindContext context,
-				final String id) {
-			return context.constructType(beanTypeResolver.resolveTypeClass(id,
-					(Class<ConfiguredBean>) baseType.getRawClass()));
+		public JavaType typeFromId(final DatabindContext context, final String id) {
+			return context.constructType(beanTypeResolver.resolveTypeClass(id, (Class<ConfiguredBean>) baseType.getRawClass()));
 		}
 
 		@Override
@@ -111,21 +107,17 @@ public interface ConfiguredBean {
 	 * @author Tester
 	 * 
 	 */
-	public static class ConfiguredBeanDeserializer extends
-			StdDeserializer<ConfiguredBean> implements ResolvableDeserializer {
+	class ConfiguredBeanDeserializer extends StdDeserializer<ConfiguredBean> implements ResolvableDeserializer {
 		private static final long serialVersionUID = 8978550911628758105L;
 		private final JsonDeserializer<?> defaultDeserializer;
 
-		protected ConfiguredBeanDeserializer(
-				final JsonDeserializer<?> defaultDeserializer) {
+		protected ConfiguredBeanDeserializer(final JsonDeserializer<?> defaultDeserializer) {
 			super(ConfiguredBean.class);
 			this.defaultDeserializer = defaultDeserializer;
 		}
 
 		@Override
-		public ConfiguredBean deserialize(final JsonParser jp,
-				final DeserializationContext ctxt) throws IOException,
-				JsonProcessingException {
+		public ConfiguredBean deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
 			ConfiguredBean bean = (ConfiguredBean) defaultDeserializer
 					.deserialize(jp, ctxt);
 			ContextProvider.getContext()
@@ -138,8 +130,7 @@ public interface ConfiguredBean {
 		// modifying BeanDeserializer
 		// otherwise deserializing throws JsonMappingException??
 		@Override
-		public void resolve(final DeserializationContext ctxt)
-				throws JsonMappingException {
+		public void resolve(final DeserializationContext ctxt) throws JsonMappingException {
 			if (defaultDeserializer instanceof ResolvableDeserializer) {
 				((ResolvableDeserializer) defaultDeserializer).resolve(ctxt);
 			}

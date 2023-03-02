@@ -18,24 +18,19 @@
 
 package com.catlogging.config.web;
 
-import com.catlogging.event.h2.jpa.MemberRepository;
+import com.catlogging.h2.jpa.MemberRepository;
 import com.catlogging.model.auth.Member;
 import com.catlogging.model.auth.Role;
-import com.catlogging.web.controller.system.auth.MemberController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.util.ListUtils;
 
-import javax.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.Set;
 

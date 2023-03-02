@@ -21,7 +21,7 @@ import com.catlogging.app.ContextProvider;
 import com.catlogging.aspect.AspectHost;
 import com.catlogging.model.RollingLog;
 import com.catlogging.web.wizard.WizardInfo;
-import com.catlogging.web.wizard.WizardInfoController;
+import com.catlogging.web.controller.wizard.WizardInfoController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
@@ -167,8 +167,7 @@ public class JstlFunctionsLibraryBean {
 	 * @throws ClassNotFoundException
 	 * @throws BeansException
 	 */
-	public  List<WizardInfo> getWizardsInfo(final String beanTypeStr, final Locale locale)
-			throws BeansException, ClassNotFoundException {
+	public  List<WizardInfo> getWizardsInfo(final String beanTypeStr, final Locale locale) throws BeansException, ClassNotFoundException {
 		return ContextProvider.getContext().getBean(WizardInfoController.class).getWizardsInfo(beanTypeStr, locale);
 	}
 

@@ -1,6 +1,25 @@
+/*******************************************************************************
+ * catlogging, open source tool for viewing, monitoring and analysing log data.
+ * Copyright (c) 2021 xzpluszone, www.catlogging.com
+ *
+ * catlogging is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * catlogging is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
+
 package com.catlogging.system.notification;
 
-import com.catlogging.system.notification.Notification.Level;
+import com.catlogging.model.notification.Notification;
+import com.catlogging.model.notification.Notification.Level;
 import com.catlogging.util.PageableResult;
 
 /**

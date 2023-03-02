@@ -22,7 +22,7 @@
 	<th:block th:if="${not #strings.isEmpty(message)}">
 		<div class="alert" th:classappend="|alert-${#strings.toLowerCase(message.type)}|">
 			<button type="button" class="close" data-dismiss="alert">&times;</button>
-			[[${message.text}]]
+			[[${message.message}]]
 		</div>
 	</th:block>
 </th:block>

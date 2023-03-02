@@ -48,8 +48,7 @@ public interface LogEntryReaderStrategy extends ConfiguredBean {
 	 *            the start position in log when the reader starts reading,
 	 *            possibly null
 	 */
-	public void reset(Log log, LogPointerFactory pointerFactory,
-			LogPointer start) throws IOException;
+	public void reset(Log log, LogPointerFactory pointerFactory, LogPointer start) throws IOException;
 
 	/**
 	 * Returns true to indicate the scanner to continue with scanning. If false
@@ -64,6 +63,5 @@ public interface LogEntryReaderStrategy extends ConfiguredBean {
 	 * @return true to indicate the scanner to continue with scanning and false
 	 *         to stop.
 	 */
-	public boolean continueReading(Log log, LogPointerFactory pointerFactory,
-			LogEntry currentReadEntry) throws IOException;
+	public boolean continueReading(Log log, LogPointerFactory pointerFactory, LogEntry currentReadEntry) throws IOException;
 }

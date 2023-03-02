@@ -32,8 +32,7 @@ public class DefaultTxExecutor implements TxExecutor {
 
 	@Transactional(rollbackFor = TxNestedException.class)
 	@Override
-	public <ReturnType> ReturnType execute(Execution<ReturnType> exec)
-			throws TxNestedException {
+	public <ReturnType> ReturnType execute(Execution<ReturnType> exec) throws TxNestedException {
 		return exec.execute();
 	}
 

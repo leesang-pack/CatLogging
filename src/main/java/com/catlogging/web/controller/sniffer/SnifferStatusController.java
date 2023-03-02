@@ -19,7 +19,7 @@
 package com.catlogging.web.controller.sniffer;
 
 import com.catlogging.event.IncrementData;
-import com.catlogging.event.Sniffer;
+import com.catlogging.model.sniffer.Sniffer;
 import com.catlogging.model.Log;
 import com.catlogging.model.LogPointer;
 import com.catlogging.model.LogRawAccess;

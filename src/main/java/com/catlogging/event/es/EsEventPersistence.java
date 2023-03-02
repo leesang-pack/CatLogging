@@ -75,7 +75,7 @@ import com.catlogging.aspect.AspectProvider;
 import com.catlogging.aspect.PostAspectProvider;
 import com.catlogging.event.Event;
 import com.catlogging.event.EventPersistence;
-import com.catlogging.event.Sniffer;
+import com.catlogging.model.sniffer.Sniffer;
 import com.catlogging.event.SnifferPersistence;
 import com.catlogging.event.SnifferPersistence.AspectSniffer;
 import com.catlogging.event.SnifferPersistence.SnifferChangedEvent;
@@ -88,7 +88,7 @@ import com.catlogging.model.LogSource;
 import com.catlogging.model.LogSourceProvider;
 import com.catlogging.model.support.JsonLogPointer;
 import com.catlogging.reader.FormatException;
-import com.catlogging.util.DataAccessException;
+import com.catlogging.util.excption.DataAccessException;
 
 import net.sf.json.util.JSONBuilder;
 
@@ -564,6 +564,7 @@ public class EsEventPersistence implements EventPersistence {
 		};
 	}
 
+	// Event 받는부분
 	@EventListener
 	public void handleOrderCreatedEvent(final SnifferChangedEvent event) {
 		prepareMapping(event.getSniffer().getId());

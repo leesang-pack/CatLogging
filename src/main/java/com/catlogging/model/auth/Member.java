@@ -24,13 +24,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(
-        name="Member",
-        uniqueConstraints={
-                @UniqueConstraint(
-                        name = "NAME_AGE_UNIQUE",
-                        columnNames={"memberId"}
-                )
-        }
+        name="member"
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -43,9 +37,11 @@ public class Member {
     @GeneratedValue
     private Long id;
 
+    @Column(name = "member_id")
     private String memberId;
 
     private String password;
 
+    @Column(name = "is_admin")
     private Boolean isAdmin;
 }

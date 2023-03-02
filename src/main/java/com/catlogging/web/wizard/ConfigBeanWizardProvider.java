@@ -37,12 +37,11 @@ public class ConfigBeanWizardProvider {
 	private ConfigBeanWizard<?>[] wizards;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public <BeanType extends ConfiguredBean> ConfigBeanWizard<BeanType>[] getWizards(
-			final Class<BeanType> supportType) {
+	public <BeanType extends ConfiguredBean> ConfigBeanWizard<BeanType>[] getWizards(final Class<BeanType> supportType) {
 		final ArrayList<ConfigBeanWizard<BeanType>> wzs = new ArrayList<ConfigBeanWizard<BeanType>>();
 		for (final ConfigBeanWizard<?> wizard : wizards) {
 			if (wizard instanceof ExclusiveConfigBeanWizard
-					&& ((ExclusiveConfigBeanWizard) wizard).getExclusiveType() != null) {
+			&& ((ExclusiveConfigBeanWizard) wizard).getExclusiveType() != null) {
 				if (supportType == ((ExclusiveConfigBeanWizard) wizard).getExclusiveType()) {
 					wzs.add((ConfigBeanWizard<BeanType>) wizard);
 				}
@@ -56,8 +55,7 @@ public class ConfigBeanWizardProvider {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public <BeanType extends ConfiguredBean> ConfigBeanWizard<BeanType> getWizard(
-			final Class<BeanType> actualBeanClass) {
+	public <BeanType extends ConfiguredBean> ConfigBeanWizard<BeanType> getWizard(final Class<BeanType> actualBeanClass) {
 		for (final ConfigBeanWizard<?> wizard : wizards) {
 			if (wizard instanceof ExclusiveConfigBeanWizard
 					&& ((ExclusiveConfigBeanWizard) wizard).getExclusiveType() != null) {

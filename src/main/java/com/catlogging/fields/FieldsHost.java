@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.catlogging.fields.filter.FieldsFilter;
 import com.catlogging.reader.FormatException;
-import com.catlogging.util.json.Views;
+import com.catlogging.model.json.Views;
 
 /**
  * Hosts fields.
