@@ -20,7 +20,9 @@ package com.catlogging.web.controller.sniffer;
 
 import java.util.Locale;
 
+import com.catlogging.event.SnifferPersistence;
 import com.catlogging.model.ErrorForm;
+import com.catlogging.model.messages.Message;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -32,12 +34,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.catlogging.event.Sniffer;
-import com.catlogging.event.SnifferPersistence.AspectSniffer;
+import com.catlogging.model.sniffer.Sniffer;
 import com.catlogging.util.PageableResult;
 import com.catlogging.web.ViewController;
-import com.catlogging.web.controller.FlashMessage;
-import com.catlogging.web.controller.FlashMessage.MessageType;
 import com.catlogging.util.excption.ActionViolationException;
 import com.catlogging.util.excption.ResourceNotFoundException;
 
@@ -59,7 +58,7 @@ public class SnifferManageController extends SniffersBaseController {
 	@RequestMapping(value = "/sniffers", method = RequestMethod.GET)
 	ModelAndView listSniffers() {
 		final ModelAndView mv = new ModelAndView("templates/sniffers/list");
-		final PageableResult<AspectSniffer> result = snifferPersistence.getSnifferListBuilder()
+		final PageableResult<SnifferPersistence.AspectSniffer> result = snifferPersistence.getSnifferListBuilder()
 				.withEventsCounter(eventPersistence.getEventsCounter())
 				.withScheduleInfo(snifferScheduler.getScheduleInfoAspectAdaptor()).list();
 		mv.addObject("result", result);
@@ -74,18 +73,17 @@ public class SnifferManageController extends SniffersBaseController {
 	}
 
 	@RequestMapping(value = "/sniffers/{snifferId}", method = RequestMethod.GET)
-	String editSniffer(@PathVariable("snifferId") final long snifferId, final Model model)
-			throws ResourceNotFoundException, SchedulerException {
+	String editSniffer(@PathVariable("snifferId") final long snifferId, final Model model) throws ResourceNotFoundException, SchedulerException {
 		model.addAttribute(new ErrorForm());
 		getAndBindActiveSniffer(model, snifferId);
 		return "templates/sniffers/edit";
 	}
 
 	@RequestMapping(value = "/sniffers/{snifferId}", method = RequestMethod.POST)
-	String redirectAfterUpdate(@PathVariable("snifferId") final long snifferId, final Locale locale,
-			final RedirectAttributes redirectAttrs) {
+	String redirectAfterUpdate(@PathVariable("snifferId") final long snifferId, final Locale locale, final RedirectAttributes redirectAttrs) {
 		final Sniffer sniffer = snifferPersistence.getSniffer(snifferId);
-		redirectAttrs.addFlashAttribute("message", new FlashMessage(MessageType.SUCCESS,
+
+		redirectAttrs.addFlashAttribute("message", new Message(Message.MessageType.SUCCESS,
 				messageSource.getMessage("catlogging.sniffers.edited", new String[] { sniffer.getName() }, locale)));
 
 		return "redirect:{snifferId}";
@@ -93,14 +91,18 @@ public class SnifferManageController extends SniffersBaseController {
 
 	@RequestMapping(value = "/sniffers/{snifferId}/delete", method = RequestMethod.POST)
 	@Transactional(rollbackFor = Exception.class)
-	String deleteSniffer(@PathVariable("snifferId") final long snifferId, final Locale locale,
-			final RedirectAttributes redirectAttrs)
-					throws ResourceNotFoundException, SchedulerException, ActionViolationException {
+	String deleteSniffer(
+			@PathVariable("snifferId") final long snifferId,
+			final Locale locale,
+			final RedirectAttributes redirectAttrs) throws ResourceNotFoundException, SchedulerException, ActionViolationException {
 		// TODO Duplicate code
 		final Sniffer sniffer = snifferPersistence.getSniffer(snifferId);
 		sniffersResourceController.deleteSniffer(snifferId);
-		redirectAttrs.addFlashAttribute("message", new FlashMessage(MessageType.SUCCESS,
-				messageSource.getMessage("catlogging.sniffers.deleted", new String[] { sniffer.getName() }, locale)));
+		redirectAttrs.addFlashAttribute(
+				"message",
+				new Message(Message.MessageType.SUCCESS,
+						messageSource.getMessage("catlogging.sniffers.deleted", new String[] { sniffer.getName() }, locale)
+				));
 		return "redirect:../../sniffers";
 	}
 }

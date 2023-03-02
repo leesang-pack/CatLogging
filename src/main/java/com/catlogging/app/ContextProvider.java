@@ -18,6 +18,7 @@
  *******************************************************************************/
 package com.catlogging.app;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -28,6 +29,7 @@ import org.springframework.context.ApplicationContextAware;
  * @author Tester
  * 
  */
+@Slf4j
 public class ContextProvider implements ApplicationContextAware {
 	private static ApplicationContext context;
 
@@ -49,9 +51,9 @@ public class ContextProvider implements ApplicationContextAware {
 	}
 
 	@Override
-	public void setApplicationContext(ApplicationContext context)
-			throws BeansException {
+	public void setApplicationContext(ApplicationContext context) throws BeansException {
 		setContext(context);
+		log.debug("[INIT] Load application Context Done." + ContextProvider.getContext());
 	}
 
 }

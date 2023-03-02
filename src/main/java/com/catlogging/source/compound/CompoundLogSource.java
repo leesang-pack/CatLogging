@@ -14,7 +14,6 @@ import javax.validation.constraints.Size;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.catlogging.config.BeanConfigFactoryManager;
 import com.catlogging.config.BeanPostConstructor;
 import com.catlogging.config.ConfigException;
 import com.catlogging.config.PostConstructed;
@@ -38,7 +36,7 @@ import com.catlogging.model.support.DefaultLog;
 import com.catlogging.reader.filter.FilteredLogEntryReader;
 import com.catlogging.reader.filter.FilteredLogEntryReader.FilteredLogEntryReaderWithNotConfigurableTarget;
 import com.catlogging.source.compound.CompoundLogSource.ComposedLogSourceProducer;
-import com.catlogging.util.json.Views;
+import com.catlogging.model.json.Views;
 import com.catlogging.validators.NotDefaultPrimitiveValue;
 
 /**

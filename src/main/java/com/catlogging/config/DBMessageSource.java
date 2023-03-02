@@ -17,8 +17,8 @@
  *******************************************************************************/
 package com.catlogging.config;
 
-import com.catlogging.message.h2.H2MessageProvider;
-import com.catlogging.message.h2.LanguageEntity;
+import com.catlogging.h2.H2MessageProvider;
+import com.catlogging.model.locale.LanguageEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractMessageSource;

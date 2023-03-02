@@ -20,9 +20,11 @@ package com.catlogging.web.controller.source;
 
 import com.catlogging.fields.FieldBaseTypes;
 import com.catlogging.model.*;
+import com.catlogging.model.auth.Member;
 import com.catlogging.model.support.BaseLogsSource;
-import com.catlogging.util.json.Views;
+import com.catlogging.model.json.Views;
 import com.catlogging.util.excption.ResourceNotFoundException;
+import com.catlogging.web.app.SniffMePopulator;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
@@ -32,7 +34,9 @@ import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.thymeleaf.util.ListUtils;
 
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
@@ -52,6 +56,8 @@ public class SourcesResourceController {
 	@Autowired
 	private LogSourceProvider logsSourceProvider;
 
+	@Autowired
+	private SniffMePopulator sniffMePopulator;
 	@RequestMapping(value = "/sources/{logSource}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	LogSource<?> getSource(@PathVariable("logSource") final long logSourceId) throws ResourceNotFoundException {
@@ -67,16 +73,14 @@ public class SourcesResourceController {
 
 	@RequestMapping(value = "/sources/{logSource}/reader/supportedSeverities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	List<SeverityLevel> getReaderSupportedSeverities(@PathVariable("logSource") final long logSourceId)
-			throws ResourceNotFoundException {
+	List<SeverityLevel> getReaderSupportedSeverities(@PathVariable("logSource") final long logSourceId) throws ResourceNotFoundException {
 		return getActiveSource(logSourceId).getReader().getSupportedSeverities();
 	}
 
 	@RequestMapping(value = "/sources", method = RequestMethod.POST)
 	@Transactional(rollbackFor = Exception.class)
 	@ResponseBody
-	long createSource(@Valid @RequestBody final LogSource<?> newSource, final RedirectAttributes redirectAttrs)
-			throws ResourceNotFoundException, SchedulerException, ParseException {
+	long createSource(@Valid @RequestBody final LogSource<?> newSource, final RedirectAttributes redirectAttrs) throws ResourceNotFoundException, SchedulerException, ParseException {
 		final long id = logsSourceProvider.createSource(newSource);
 		log.info("Created new log source: {}", newSource);
 		return id;
@@ -85,9 +89,7 @@ public class SourcesResourceController {
 	@RequestMapping(value = "/sources/{logSource}", method = RequestMethod.PUT)
 	@Transactional(rollbackFor = Exception.class)
 	@ResponseStatus(HttpStatus.OK)
-	void updateSource(@PathVariable("logSource") final long logSourceId,
-			@Valid @RequestBody final LogSource<?> newSource)
-					throws ResourceNotFoundException, SchedulerException, ParseException {
+	void updateSource(@PathVariable("logSource") final long logSourceId, @Valid @RequestBody final LogSource<?> newSource) throws ResourceNotFoundException, SchedulerException, ParseException {
 		((BaseLogsSource<?>) newSource).setId(logSourceId);
 		logsSourceProvider.updateSource(newSource);
 	}
@@ -103,8 +105,7 @@ public class SourcesResourceController {
 
 	@RequestMapping(value = "/sources/{logSource}/logs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	Log[] getSourceLogs(@PathVariable("logSource") final long logSourceId)
-			throws ResourceNotFoundException, IOException {
+	Log[] getSourceLogs(@PathVariable("logSource") final long logSourceId) throws ResourceNotFoundException, IOException {
 		final LogSource<?> source = getActiveSource(logSourceId);
 		return source.getLogs().toArray(new Log[0]);
 	}
@@ -117,8 +118,14 @@ public class SourcesResourceController {
 
 	@RequestMapping(value = "/sources/potentialFields", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	LinkedHashMap<String, FieldBaseTypes> getPotentialFields(@Valid @RequestBody final LogSource<?> source)
-			throws IOException {
+	LinkedHashMap<String, FieldBaseTypes> getPotentialFields(@Valid @RequestBody final LogSource<?> source) throws IOException {
 		return source.getReader().getFieldTypes();
+	}
+
+	/////////////////////////////////////
+	// default log
+	@PostConstruct
+	public void init(){
+		sniffMePopulator.populate();
 	}
 }

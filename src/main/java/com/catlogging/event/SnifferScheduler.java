@@ -20,10 +20,12 @@ package com.catlogging.event;
 
 import java.util.Date;
 
+import com.catlogging.model.sniffer.ScheduleInfo;
 import org.quartz.SchedulerException;
 
 import com.catlogging.aspect.sql.QueryAdaptor;
 import com.catlogging.event.SnifferPersistence.AspectSniffer;
+
 
 /**
  * Scheduler for sniffers.
@@ -38,51 +40,6 @@ public interface SnifferScheduler {
 	 * @author Tester
 	 * 
 	 */
-	public static class ScheduleInfo {
-		private boolean scheduled;
-		private Date lastFireTime;
-
-		public ScheduleInfo(final boolean scheduled, final Date lastFireTime) {
-			super();
-			this.scheduled = scheduled;
-			this.lastFireTime = lastFireTime;
-		}
-
-		public ScheduleInfo() {
-			super();
-		}
-
-		/**
-		 * @param scheduled
-		 *            the scheduled to set
-		 */
-		public void setScheduled(final boolean scheduled) {
-			this.scheduled = scheduled;
-		}
-
-		/**
-		 * @param lastFireTime
-		 *            the lastFireTime to set
-		 */
-		public void setLastFireTime(final Date lastFireTime) {
-			this.lastFireTime = lastFireTime;
-		}
-
-		/**
-		 * @return the scheduled
-		 */
-		public boolean isScheduled() {
-			return scheduled;
-		}
-
-		/**
-		 * @return the lastFireTime
-		 */
-		public Date getLastFireTime() {
-			return lastFireTime;
-		}
-
-	}
 
 	public void startSniffing(long snifferId) throws SchedulerException;
 

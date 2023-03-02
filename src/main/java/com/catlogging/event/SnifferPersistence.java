@@ -22,15 +22,22 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.catlogging.aspect.sql.QueryAdaptor;
+import com.catlogging.model.sniffer.ScheduleInfo;
+import com.catlogging.model.sniffer.Sniffer;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.catlogging.aspect.AspectHost;
 import com.catlogging.aspect.AspectProvider;
-import com.catlogging.aspect.sql.QueryAdaptor;
-import com.catlogging.event.SnifferScheduler.ScheduleInfo;
 import com.catlogging.model.Log;
 import com.catlogging.model.LogSource;
 import com.catlogging.util.ListQueryBuilder;
 import com.catlogging.util.PageableResult;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+import javax.persistence.*;
+
 
 /**
  * Persistence for observers.
@@ -39,8 +46,16 @@ import com.catlogging.util.PageableResult;
  * 
  */
 public interface SnifferPersistence {
-	public static class AspectSniffer extends Sniffer implements AspectHost {
+
+	// Sniffer에서 정의되었기때문에 여긴 JPA 알림용도
+	@Entity
+	@DiscriminatorValue("AspectSniffer")
+	@Getter
+	@SuperBuilder
+	@NoArgsConstructor
+	class AspectSniffer extends Sniffer implements AspectHost {
 		@JsonProperty
+		@Transient	//jpa 무시
 		private final HashMap<String, Object> aspects = new HashMap<String, Object>();
 
 		@Override
@@ -55,7 +70,7 @@ public interface SnifferPersistence {
 		}
 	}
 
-	public static interface SnifferListBuilder extends ListQueryBuilder<PageableResult<AspectSniffer>> {
+	interface SnifferListBuilder extends ListQueryBuilder<PageableResult<AspectSniffer>> {
 		SnifferListBuilder withEventsCounter(AspectProvider<AspectSniffer, Integer> eventsCounter);
 
 		SnifferListBuilder withScheduleInfo(QueryAdaptor<AspectSniffer, ScheduleInfo> adaptor);
@@ -67,7 +82,7 @@ public interface SnifferPersistence {
 	 * @author Tester
 	 *
 	 */
-	public static class SnifferChangedEvent {
+	class SnifferChangedEvent {
 		private final Sniffer sniffer;
 
 		public SnifferChangedEvent(final Sniffer sniffer) {

@@ -1,8 +1,26 @@
+/*******************************************************************************
+ * catlogging, open source tool for viewing, monitoring and analysing log data.
+ * Copyright (c) 2021 xzpluszone, www.catlogging.com
+ *
+ * catlogging is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * catlogging is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
+
 package com.catlogging.system.version;
 
-import com.catlogging.system.notification.Notification;
-import com.catlogging.system.notification.Notification.Level;
-import com.catlogging.system.notification.Notification.Type;
+import com.catlogging.model.notification.Notification;
+import com.catlogging.model.notification.Notification.Level;
+import com.catlogging.model.notification.Notification.Type;
 import com.catlogging.system.notification.NotificationProvider;
 import com.catlogging.system.version.UpdatesInfoProvider.UpdatesInfoContext;
 import com.catlogging.util.value.ConfigValue;
@@ -53,7 +71,7 @@ public class SystemUpdatesCheckTask {
 		try {
 			notificationProvider.delete("updateAvailable/" + currentVersion);
 		} catch (final Exception e) {
-			log.warn("Failed to delete obsolete notification for current version", e);
+			log.warn("Failed to delete obsolete notification for current version : {}", e.getMessage());
 		}
 	}
 
@@ -81,13 +99,13 @@ public class SystemUpdatesCheckTask {
 				String processTitle = templateEngine.process("templates/system/utils/systemUpdatesNotificationTitle", ctx);
 				String processBody = templateEngine.process("templates/system/utils/systemUpdatesNotificationBody", ctx);
 
-				final Notification n = new Notification();
-				n.setId("updateAvailable/" + latestStableVersion.getName());
-				n.setTitle(processTitle);
-				n.setMessage(processBody);
-				n.setLevel(Level.INFO);
-				n.setType(Type.TOPIC);
-				n.setExpirationDate(new Date(new Date().getTime() + FREQUENCY));
+				final Notification n = Notification.builder()
+				.id("updateAvailable/" + latestStableVersion.getName())
+				.title(processTitle)
+				.message(processBody)
+				.level(Level.INFO)
+				.type(Type.TOPIC)
+				.expirationDate(new Date(new Date().getTime() + FREQUENCY)).build();
 				notificationProvider.store(n, false);
 			} else {
 				log.debug("System is up to date, got latest stable version: {}", latestStableVersion);

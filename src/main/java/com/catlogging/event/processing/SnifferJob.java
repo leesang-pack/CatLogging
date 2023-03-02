@@ -22,8 +22,10 @@ import com.catlogging.app.ContextProvider;
 import com.catlogging.event.*;
 import com.catlogging.event.Publisher.PublishException;
 import com.catlogging.event.Scanner.EventConsumer;
-import com.catlogging.event.SnifferScheduler.ScheduleInfo;
+import com.catlogging.h2.ScheduleInfoAccess;
 import com.catlogging.model.*;
+import com.catlogging.model.sniffer.ScheduleInfo;
+import com.catlogging.model.sniffer.Sniffer;
 import com.catlogging.reader.FormatException;
 import com.catlogging.reader.LogEntryReader;
 import com.catlogging.util.StatisticsLogger;
@@ -36,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -96,8 +99,7 @@ public class SnifferJob implements ContextAwareJob, InterruptableJob {
 			deleteJob(jobCtx.getScheduler(), snifferId);
 			return;
 		}
-		final LogSource<LogRawAccess<? extends LogInputStream>> logSource = logSourceProvider
-				.getSourceById(logSourceId);
+		final LogSource<LogRawAccess<? extends LogInputStream>> logSource = logSourceProvider.getSourceById(logSourceId);
 		if (logSource == null) {
 			log.error("Log source not found for id {}, stopping cron job for sniffer {}", logSourceId, snifferId);
 			deleteJob(jobCtx.getScheduler(), snifferId);

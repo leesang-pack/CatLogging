@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 
 import com.catlogging.event.EventPersistence;
-import com.catlogging.event.Sniffer;
+import com.catlogging.model.sniffer.Sniffer;
 import com.catlogging.event.SnifferPersistence;
 import com.catlogging.event.SnifferScheduler;
 import com.catlogging.model.LogSource;

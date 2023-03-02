@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.catlogging.model.*;
+import com.catlogging.model.messages.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.catlogging.util.excption.ReferenceIntegrityException;
 import com.catlogging.web.ViewController;
-import com.catlogging.web.controller.FlashMessage;
-import com.catlogging.web.controller.FlashMessage.MessageType;
 import com.catlogging.util.excption.ResourceNotFoundException;
 
 @Slf4j
@@ -77,7 +76,7 @@ public class SourcesManageController {
 			final RedirectAttributes redirectAttrs) throws ResourceNotFoundException {
 
 		final LogSource<?> source = getAndBindActiveSource(logSourceId, null);
-		redirectAttrs.addFlashAttribute("message", new FlashMessage(MessageType.SUCCESS,
+		redirectAttrs.addFlashAttribute("message", new Message(Message.MessageType.SUCCESS,
 				messageSource.getMessage("catlogging.source.edited", new String[] { source.getName() }, locale)));
 		return "redirect:{logSource}";
 	}
@@ -88,8 +87,11 @@ public class SourcesManageController {
 			final RedirectAttributes redirectAttrs) throws ResourceNotFoundException, ReferenceIntegrityException {
 		final LogSource<?> source = getAndBindActiveSource(logSourceId, model);
 		logsSourceProvider.deleteSource(source);
-		redirectAttrs.addFlashAttribute("message", new FlashMessage(MessageType.SUCCESS,
-				messageSource.getMessage("catlogging.source.deleted", new String[] { source.getName() }, locale)));
+		redirectAttrs.addFlashAttribute(
+				"message",
+				new Message(Message.MessageType.SUCCESS,
+						messageSource.getMessage("catlogging.source.deleted", new String[] { source.getName() }, locale)
+				));
 		return "redirect:../../sources";
 	}
 

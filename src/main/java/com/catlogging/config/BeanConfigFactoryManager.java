@@ -73,8 +73,7 @@ public class BeanConfigFactoryManager implements ConfigBeanTypeResolver {
 		jsonMapper.registerModule(module);
 
 		// Register sub beans
-		final ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(
-				false);
+		final ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
 		final AssignableTypeFilter filter4configBenas = new AssignableTypeFilter(ConfiguredBean.class);
 		scanner.addIncludeFilter(filter4configBenas);
 
@@ -183,7 +182,6 @@ public class BeanConfigFactoryManager implements ConfigBeanTypeResolver {
 				}
 			}
 		}
-		throw new ConfigException(
-				"Couldn't resolve type for name '" + searchNname + "' of type base: " + wantedSuperType);
+		throw new ConfigException("Couldn't resolve type for name '" + searchNname + "' of type base: " + wantedSuperType);
 	}
 }

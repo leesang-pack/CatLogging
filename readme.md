@@ -18,7 +18,7 @@
 - Add Support Log Validation path (For inaccessibility of basic system path.)
 - Change Dark theme UI
 ![login-sample](image/Dashboard-Sample.png)
-- Change SpringBoot 2.x App
+- Change SpringBoot 2.x App, Jpa
 - Enable Spring Secure
 ![login-sample](image/Login-Sample.png)
     - [properties] default web.servlet.session.timeout : 1800sec(30min) 
@@ -37,6 +37,10 @@
 - Enable external tomcat Run (default embed tomcat 9.x)
 - Enable SpringBoot 2.x Run
 - Enable H2 Remote access. (default : false)
+- Version Management `pom.xml`
+```xml
+<version>1.0.0</version>
+```
 
 ### H2 Connection Info 
 - username : catlogging

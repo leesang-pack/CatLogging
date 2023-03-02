@@ -78,7 +78,7 @@ public class CoreAppConfig {
 	 */
 	@Bean
 	public ContextProvider contextProvider() {
-		ContextProvider.setContext(context);
+//		ContextProvider.setContext(context);
 		return new ContextProvider();
 	}
 
@@ -120,8 +120,7 @@ public class CoreAppConfig {
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 	@Autowired
-	public static PropertyPlaceholderConfigurer propertyPlaceholderConfigurer(
-			@Qualifier(BEAN_catlogging_PROPS) final Properties props) throws IOException {
+	public static PropertyPlaceholderConfigurer propertyPlaceholderConfigurer(@Qualifier(BEAN_catlogging_PROPS) final Properties props) throws IOException {
 		final PropertyPlaceholderConfigurer c = new PropertyPlaceholderConfigurer();
 		c.setIgnoreResourceNotFound(true);
 		c.setIgnoreUnresolvablePlaceholders(true);

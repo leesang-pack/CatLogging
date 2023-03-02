@@ -21,8 +21,6 @@ package com.catlogging.model.support;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -33,7 +31,7 @@ import com.catlogging.model.LogRawAccess;
 import com.catlogging.model.LogSource;
 import com.catlogging.model.Navigation.NavigationType;
 import com.catlogging.reader.filter.FilteredLogEntryReader;
-import com.catlogging.util.json.Views;
+import com.catlogging.model.json.Views;
 
 /**
  * Base log source.
@@ -41,8 +39,7 @@ import com.catlogging.util.json.Views;
  * @author Tester
  * 
  */
-public abstract class BaseLogsSource<ACCESSTYPE extends LogRawAccess<? extends LogInputStream>>
-		implements LogSource<ACCESSTYPE> {
+public abstract class BaseLogsSource<ACCESSTYPE extends LogRawAccess<? extends LogInputStream>> implements LogSource<ACCESSTYPE> {
 	@JsonProperty
 	@JsonView(Views.Info.class)
 	private long id;

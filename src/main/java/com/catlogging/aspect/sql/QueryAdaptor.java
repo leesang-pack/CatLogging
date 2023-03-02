@@ -35,9 +35,6 @@ import com.catlogging.aspect.AspectProvider;
  */
 public interface QueryAdaptor<T extends AspectHost, AspectType> extends
 		AspectProvider<T, AspectType> {
-	public String getQuery(String innerQuery);
-
 	public List<Object> getQueryArgs(List<Object> innerArgs);
 
-	public RowMapper<T> getRowMapper(RowMapper<? extends T> innerMapper);
 }

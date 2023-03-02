@@ -25,6 +25,7 @@ import com.catlogging.model.LogPointer;
 import com.catlogging.model.LogPointerFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.Min;

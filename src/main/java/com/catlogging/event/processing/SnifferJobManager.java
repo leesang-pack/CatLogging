@@ -19,21 +19,20 @@
 package com.catlogging.event.processing;
 
 import com.catlogging.aspect.sql.QueryAdaptor;
-import com.catlogging.event.Sniffer;
+import com.catlogging.model.sniffer.Sniffer;
 import com.catlogging.event.SnifferPersistence;
 import com.catlogging.event.SnifferPersistence.AspectSniffer;
 import com.catlogging.event.SnifferScheduler;
+import com.catlogging.h2.ScheduleInfoAccess;
+import com.catlogging.model.sniffer.ScheduleInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.spi.MutableTrigger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -67,20 +66,21 @@ public class SnifferJobManager implements SnifferScheduler {
 		stopAndDeleteAllSnifferJobs(sniffer.getId());
 		MutableTrigger trigger;
 		try {
-			trigger = CronScheduleBuilder.cronScheduleNonvalidatedExpression(sniffer.getScheduleCronExpression())
-					.withMisfireHandlingInstructionDoNothing().build();
+			trigger = CronScheduleBuilder.cronScheduleNonvalidatedExpression(sniffer.getScheduleCronExpression()).withMisfireHandlingInstructionDoNothing().build();
 		} catch (final ParseException e) {
 			throw new SchedulerException("Failed to parse cron expression", e);
 		}
 		trigger.setKey(getKey(sniffer, sniffer.getLogSourceId()));
-		final JobDetail jobDetail = JobBuilder.newJob(SnifferJob.class).requestRecovery()
-				.withIdentity(getJobKey(sniffer, sniffer.getLogSourceId())).build();
+		final JobDetail jobDetail = JobBuilder
+				.newJob(SnifferJob.class)
+				.requestRecovery()
+				.withIdentity(getJobKey(sniffer, sniffer.getLogSourceId()))
+				.build();
 		scheduler.scheduleJob(jobDetail, trigger);
 		final ScheduleInfo scheduleInfo = scheduleInfoAccess.getScheduleInfo(snifferId);
 		scheduleInfo.setScheduled(true);
 		scheduleInfoAccess.updateScheduleInfo(snifferId, scheduleInfo);
-		log.info("Scheduled cron job for sniffer {} and log source {} with trigger {}", sniffer,
-				sniffer.getLogSourceId(), trigger);
+		log.info("Scheduled cron job for sniffer {} and log source {} with trigger {}", sniffer, sniffer.getLogSourceId(), trigger);
 	}
 
 	protected TriggerKey getKey(final Sniffer sniffer, final long logSourceId) {
@@ -132,7 +132,7 @@ public class SnifferJobManager implements SnifferScheduler {
 		return SCHEDULE_INFO_ADAPTOR;
 	}
 
-	private static final QueryAdaptor<SnifferPersistence.AspectSniffer, SnifferScheduler.ScheduleInfo> SCHEDULE_INFO_ADAPTOR = new QueryAdaptor<SnifferPersistence.AspectSniffer, SnifferScheduler.ScheduleInfo>() {
+	private static final QueryAdaptor<SnifferPersistence.AspectSniffer, ScheduleInfo> SCHEDULE_INFO_ADAPTOR = new QueryAdaptor<SnifferPersistence.AspectSniffer, ScheduleInfo>() {
 
 		@Override
 		public ScheduleInfo getApsect(final AspectSniffer host) {
@@ -140,27 +140,10 @@ public class SnifferJobManager implements SnifferScheduler {
 		}
 
 		@Override
-		public RowMapper<AspectSniffer> getRowMapper(final RowMapper<? extends AspectSniffer> innerMapper) {
-			return new RowMapper<SnifferPersistence.AspectSniffer>() {
-				@Override
-				public AspectSniffer mapRow(final ResultSet rs, final int rowNum) throws SQLException {
-					final AspectSniffer sniffer = innerMapper.mapRow(rs, rowNum);
-					sniffer.setAspect("scheduleInfo", ScheduleInfoAccess.SCHEDULE_INFO_MAPPER.mapRow(rs, rowNum));
-					return sniffer;
-				}
-			};
-		}
-
-		@Override
 		public List<Object> getQueryArgs(final List<Object> innerArgs) {
 			return innerArgs;
 		}
 
-		@Override
-		public String getQuery(final String innerQuery) {
-			return "SELECT oxy.*, ssi.SCHEDULED, ssi.LAST_FIRE FROM (" + innerQuery
-					+ ") oxy LEFT JOIN SNIFFERS_SCHEDULE_INFO ssi ON (oxy.ID=ssi.SNIFFER)";
-		}
 	};
 
 	@Override

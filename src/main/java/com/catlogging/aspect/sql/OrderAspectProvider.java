@@ -20,8 +20,6 @@ package com.catlogging.aspect.sql;
 
 import java.util.List;
 
-import org.springframework.jdbc.core.RowMapper;
-
 import com.catlogging.aspect.AspectHost;
 
 /**
@@ -32,25 +30,11 @@ import com.catlogging.aspect.AspectHost;
  * @param <T>
  * @param <AspectType>
  */
-public class OrderAspectProvider<T extends AspectHost, AspectType> implements
-		QueryAdaptor<T, AspectType> {
+public class OrderAspectProvider<T extends AspectHost, AspectType> implements QueryAdaptor<T, AspectType> {
 
-	private final String orderBy;
 
-	public OrderAspectProvider(final String orderBy) {
+	public OrderAspectProvider() {
 		super();
-		this.orderBy = orderBy;
-	}
-
-	@Override
-	public String getQuery(final String innerQuery) {
-		return "SELECT * FROM (" + innerQuery + ") ORDER BY " + orderBy;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public RowMapper<T> getRowMapper(final RowMapper<? extends T> innerMapper) {
-		return (RowMapper<T>) innerMapper;
 	}
 
 	@Override

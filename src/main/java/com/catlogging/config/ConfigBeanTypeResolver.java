@@ -36,8 +36,7 @@ public interface ConfigBeanTypeResolver {
 	 *         corresponding class
 	 * @return in case no names are defined for the given type
 	 */
-	String resolveTypeName(Class<? extends ConfiguredBean> clazz)
-			throws ConfigException;
+	String resolveTypeName(Class<? extends ConfiguredBean> clazz) throws ConfigException;
 
 	/**
 	 * Resolves the config bean class which corresponds to the given name. Note
@@ -53,6 +52,5 @@ public interface ConfigBeanTypeResolver {
 	 *             in case of no class could be found which matches the given
 	 *             name or in case of embedded exceptions
 	 */
-	<T extends ConfiguredBean> Class<? extends T> resolveTypeClass(String name,
-			Class<T> wantedSuperType) throws ConfigException;
+	<T extends ConfiguredBean> Class<? extends T> resolveTypeClass(String name, Class<T> wantedSuperType) throws ConfigException;
 }

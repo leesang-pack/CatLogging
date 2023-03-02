@@ -65,6 +65,5 @@ public interface TxExecutor {
 	 * @throws TxNestedException
 	 *             thrown to perform a rollback
 	 */
-	public <ReturnType> ReturnType execute(Execution<ReturnType> exec)
-			throws TxNestedException;
+	public <ReturnType> ReturnType execute(Execution<ReturnType> exec) throws TxNestedException;
 }

@@ -3,6 +3,7 @@ package com.catlogging.web.controller.system;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.catlogging.system.notification.Notification;
+import com.catlogging.model.notification.Notification;
 import com.catlogging.system.notification.NotificationProvider;
 import com.catlogging.system.notification.NotificationProvider.NotificationSummary;
 import com.catlogging.user.UserTokenProvider;
@@ -25,6 +26,7 @@ import com.catlogging.util.PageableResult;
  * @author Tester
  *
  */
+@Slf4j
 @RestController
 public class SystemNotificationsResource {
 	@Autowired

@@ -33,8 +33,7 @@ import com.catlogging.reader.filter.FilteredLogEntryReader;
  * @author Tester
  * 
  */
-public interface LogSource<ACCESSTYPE extends LogRawAccess<? extends LogInputStream>>
-		extends ConfiguredBean, LogRawAccessor<ACCESSTYPE, Log> {
+public interface LogSource<ACCESSTYPE extends LogRawAccess<? extends LogInputStream>> extends ConfiguredBean, LogRawAccessor<ACCESSTYPE, Log> {
 	/**
 	 * @return the id
 	 */
@@ -76,13 +75,11 @@ public interface LogSource<ACCESSTYPE extends LogRawAccess<? extends LogInputStr
 	 * @author Tester
 	 * 
 	 */
-	public static abstract class LogSourceWrapper implements LogSource<LogRawAccess<? extends LogInputStream>>,
-			WrappedBean<LogSource<LogRawAccess<? extends LogInputStream>>> {
+	public static abstract class LogSourceWrapper implements LogSource<LogRawAccess<? extends LogInputStream>>,	WrappedBean<LogSource<LogRawAccess<? extends LogInputStream>>> {
 		private LogSource<LogRawAccess<? extends LogInputStream>> wrapped;
 
 		@SuppressWarnings("unchecked")
-		public static final LogSource<LogRawAccess<? extends LogInputStream>> unwrap(
-				final LogSource<? extends LogRawAccess<? extends LogInputStream>> possiblyWrapped) {
+		public static final LogSource<LogRawAccess<? extends LogInputStream>> unwrap(final LogSource<? extends LogRawAccess<? extends LogInputStream>> possiblyWrapped) {
 			if (possiblyWrapped instanceof LogSourceWrapper) {
 				return ((LogSourceWrapper) possiblyWrapped).getSource();
 			}
